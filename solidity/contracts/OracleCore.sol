@@ -8,8 +8,8 @@ contract OracleCore {
         public
         returns (bytes32 _queryId)
     {
-        bytes32 myQueryId = keccak256(now, _callee, _requests);
-        ToOracleNode(myQueryId, _requests);
+        bytes32 myQueryId = keccak256(abi.encodePacked(now, _callee, _requests));
+        emit ToOracleNode(myQueryId, _requests);
         queryId2Address[myQueryId] = _callee;
         return myQueryId;
     }
