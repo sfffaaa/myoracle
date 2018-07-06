@@ -5,9 +5,10 @@ import {OracleBase} from "./OracleBase.sol";
 import {OracleStorage} from "./OracleStorage.sol";
 
 contract OracleCore {
+    OracleStorage private myStorage = OracleStorage(0);
+
     event ToOracleNode(bytes32 queryId, string requests);
     event ToOracleCallee(bytes32 queryId, address callee, bytes32 hash, string response);
-    OracleStorage myStorage = OracleStorage(0);
 
     constructor (address _storage) public {
         myStorage = OracleStorage(_storage);
