@@ -44,14 +44,14 @@ contract('OracleCoreBasic', () => {
         const testOracleExampleInst = await TestOracleExample.deployed();
 
         let queryId = 0;
-        let tx = await oracleCoreInst.QuerySentNode(testOracleExampleInst.address, 'fake request');
+        let tx = await oracleCoreInst.querySentNode(testOracleExampleInst.address, 'fake request');
         truffleAssert.eventEmitted(tx, 'ToOracleNode', (ev) => {
             const { queryId: queryIdTmp } = ev;
             queryId = queryIdTmp;
             return true;
         });
 
-        tx = await oracleCoreInst.ResultSentBack(queryId, 'fake response', web3.sha3('fake response'));
+        tx = await oracleCoreInst.resultSentBack(queryId, 'fake response', web3.sha3('fake response'));
         truffleAssert.eventEmitted(tx, 'ToOracleCallee', (ev) => {
             return ev.queryId === queryId && ev.callee === TestOracleExample.address;
         });
