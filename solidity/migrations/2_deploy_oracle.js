@@ -1,10 +1,18 @@
-var OracleCore = artifacts.require("./OracleCore");
-var TestOracleExample = artifacts.require("./TestOracleExample");
+/* global artifacts */
 
-module.exports = function(deployer) {
-    deployer.deploy(OracleCore).then(function(inst) {
+const OracleStorage = artifacts.require('./OracleStorage');
+const OracleCore = artifacts.require('./OracleCore');
+const TestOracleExample = artifacts.require('./TestOracleExample');
+
+module.exports = (deployer) => {
+    deployer.deploy(OracleStorage).then((inst) => {
+        console.log(`OracleStorage address: ${inst.address}`);
+        return deployer.deploy(OracleCore, inst.address);
+    }).then((inst) => {
+        console.log(`OracleCore address: ${inst.address}`);
         return deployer.deploy(TestOracleExample);
-    }).then(function(inst) {
+    }).then((inst) => {
+        console.log(`TestOracleExample address: ${inst.address}`);
         // do nothing right now
     });
- }
+};
