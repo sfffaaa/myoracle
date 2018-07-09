@@ -3,7 +3,6 @@
 
 from base_chain_node import BaseChainNode
 import my_config
-# from proved_db import ProvedDB
 from contract_handler import ContractHandler
 
 
@@ -12,14 +11,11 @@ class OracleNodeClient(BaseChainNode):
     def __init__(self,
                  config_path=my_config.CONFIG_PATH,
                  wait_time=3):
-        # [TODO] NOT YET...
-        # self._proved_db_mgr = ProvedDB(config_path, 'json')
         self.to_oracle_node_callback_objs = [self]
         super(OracleNodeClient, self).__init__(config_path,
                                                wait_time)
 
     def toOracleNodeEventCallback(self, node, event):
-        # [TODO] NOT YET...
         query_id = event['args']['queryId']
         requests = event['args']['requests']
         print('event: query id {0}, requests {1}'.format(query_id, requests))
