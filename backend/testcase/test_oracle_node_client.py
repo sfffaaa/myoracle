@@ -40,7 +40,7 @@ class TestOracleNodeClient(unittest.TestCase):
 
         # use oracle_node to trigger event
         node = OracleCore(_TEST_CONFIG)
-        node.querySentNode('0xF2E246BB76DF876Cef8b38ae84130F4F55De395b', 'show me the money')
+        node.query_sent_node('0xF2E246BB76DF876Cef8b38ae84130F4F55De395b', 'show me the money')
 
         gevent.sleep(1)
         # check the result is correct

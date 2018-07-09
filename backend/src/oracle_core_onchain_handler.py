@@ -15,8 +15,8 @@ class OracleCoreOnChainHandler():
         self._w3 = self._contract_handler.get_w3()
         self._contract_inst = self._contract_handler.get_contract()
 
-    def querySentNode(self, address, requests):
-        print('==== querySentNode start ====')
+    def query_sent_node(self, address, requests):
+        print('==== query_sent_node start ====')
         tx_hash = self._contract_inst.functions.querySentNode(address, requests) \
                                                .transact({'from': self._w3.eth.accounts[0],
                                                           'gas': GAS_SPENT})
@@ -24,15 +24,15 @@ class OracleCoreOnChainHandler():
         wait_miner(self._w3, tx_hash)
         if check_transaction_meet_assert(self._w3, tx_hash):
             raise IOError('assert encounter..')
-        print('==== querySentNode finish ====')
+        print('==== query_sent_node finish ====')
 
-    def resultSentBack(self, query_id, response, hash_val):
-        print('==== resultSentBack start ====')
+    def result_sent_back(self, query_id, response, hash_val):
+        print('==== result_sent_back start ====')
 
         self._contract_inst.functions.resultSentBack(convert_to_bytes(query_id),
                                                      response,
                                                      convert_to_bytes(hash_val)).call()
-        print('==== resultSentBack end ====')
+        print('==== result_sent_back end ====')
 
 
 if __name__ == '__main__':

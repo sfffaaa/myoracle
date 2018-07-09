@@ -11,11 +11,11 @@ class OracleCore():
         self._onchain_handler = OracleCoreOnChainHandler(config)
 
     # This function should use in node, but I still implement it...
-    def querySentNode(self, address, requests):
-        self._onchain_handler.querySentNode(address, requests)
+    def query_sent_node(self, address, requests):
+        self._onchain_handler.query_sent_node(address, requests)
 
-    def resultSentBack(self, query_id, response, hash_val):
-        self._onchain_handler.resultSentBack(query_id, response, hash_val)
+    def result_sent_back(self, query_id, response, hash_val):
+        self._onchain_handler.result_sent_back(query_id, response, hash_val)
 
 
 if __name__ == '__main__':
