@@ -2,13 +2,13 @@
 # encoding: utf-8
 
 import my_config
-from oracle_node_onchain_handler import OracleNodeOnChainHandler
+from oracle_core_onchain_handler import OracleCoreOnChainHandler
 
 
-class OracleNode():
+class OracleCore():
 
     def __init__(self, config=my_config.CONFIG_PATH):
-        self._onchain_handler = OracleNodeOnChainHandler(config)
+        self._onchain_handler = OracleCoreOnChainHandler(config)
 
     # This function should use in node, but I still implement it...
     def querySentNode(self, address, requests):
@@ -19,4 +19,4 @@ class OracleNode():
 
 
 if __name__ == '__main__':
-    OracleNode()
+    OracleCore()

@@ -20,6 +20,12 @@ def convert_to_bytes(val):
         return Web3.toBytes(text=val)
 
 
+def convert_to_address(val):
+    if str == type(val):
+        return val
+    return Web3.toHex(val)
+
+
 def wait_miner(w3, tx_hashs):
     if type(tx_hashs) == list:
         test_tx_hashs = tx_hashs

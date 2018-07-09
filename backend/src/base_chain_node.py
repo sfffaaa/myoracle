@@ -27,9 +27,13 @@ class BaseChainNode(gevent.Greenlet):
         if not all(k in setting.keys() for k in SETUP_EVENT_KEYS):
             raise IOError('{0} doesn\'t have {1}'.format(setting.keys(), SETUP_EVENT_KEYS))
 
-        for k, v in setting.items:
+        for k, v in setting.items():
             if k in ['contract_name', 'event_name']:
                 continue
+            if setting['contract_name'] not in self._event_emitter:
+                self._event_emitter[setting['contract_name']] = {}
+            if setting['event_name'] not in self._event_emitter[setting['contract_name']]:
+                self._event_emitter[setting['contract_name']][setting['event_name']] = {}
             self._event_emitter[setting['contract_name']][setting['event_name']][k] = v
         '''
             setting: {
