@@ -9,15 +9,9 @@ from my_deployer import MyDeployer
 from oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG
 from oracle_core import OracleCore
-from chain_utils import convert_to_address
 
 
 class TestOracleNodeClient(unittest.TestCase):
-
-    def toOracleNodeEventCallback(self, node, event):
-        query_id = event['args']['queryId']
-        requests = event['args']['requests']
-        print('event- query id: {0}, requests: {1}'.format(convert_to_address(query_id), requests))
 
     @classmethod
     def setUpClass(cls):
@@ -32,6 +26,11 @@ class TestOracleNodeClient(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def to_oracle_node_event_callback(self, node, event):
+        # query_id = event['args']['queryId']
+        requests = event['args']['requests']
+        self.assertEqual(requests, 'show me the money')
 
     def test_single_event(self):
         private_daemon = OracleNodeClient(config_path=_TEST_CONFIG,

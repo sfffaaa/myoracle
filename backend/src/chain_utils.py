@@ -20,7 +20,7 @@ def convert_to_bytes(val):
         return Web3.toBytes(text=val)
 
 
-def convert_to_address(val):
+def convert_to_hex(val):
     if str == type(val):
         return val
     return Web3.toHex(val)
