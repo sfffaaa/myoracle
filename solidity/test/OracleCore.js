@@ -3,37 +3,8 @@
 const OracleCore = artifacts.require('OracleCore');
 const TestOracleExample = artifacts.require('TestOracleExample');
 const truffleAssert = require('truffle-assertions');
+const TestUtils = require('./TestUtils.js');
 
-const WaitContractEventGet = (myevent) => {
-    return new Promise((resolve, reject) => {
-        myevent.get((error, resp) => {
-            if (error !== null) {
-                reject(error);
-            }
-            resolve(resp);
-        });
-    });
-};
-
-const CheckObjectEqual = (ol, or) => {
-    const olKeys = Object.keys(ol).sort();
-    const orKeys = Object.keys(or).sort();
-
-    if (olKeys.length !== orKeys.length) {
-        console.log(`show me compare result: ${olKeys} v.s. ${orKeys}`);
-        return false;
-    }
-
-    for (let i = 0; i < olKeys.length; i += 1) {
-        const olKey = olKeys[i];
-        const orKey = orKeys[i];
-        if (olKey !== orKey || ol[olKey] !== or[orKey]) {
-            console.log(`show me compare result ${olKey}: ${ol[olKey]} v.s. ${orKey}: ${or[orKey]}`);
-            return false;
-        }
-    }
-    return true;
-};
 
 contract('OracleCoreBasic', () => {
     it('Basic test', async () => {
@@ -58,15 +29,15 @@ contract('OracleCoreBasic', () => {
 
         let oracleData = {};
         const toOracleCalleeEvent = oracleCoreInst.ToOracleCallee({}, { fromBlock: 0, toBlock: 'latest' });
-        const oracleLogs = await WaitContractEventGet(toOracleCalleeEvent);
+        const oracleLogs = await TestUtils.WaitContractEventGet(toOracleCalleeEvent);
         oracleData = oracleLogs[oracleLogs.length - 1].args;
 
         let calleeData = {};
         const showCallbackEvent = testOracleExampleInst.ShowCallback({}, { fromBlock: 0, toBlock: 'latest' });
-        const calleeLogs = await WaitContractEventGet(showCallbackEvent);
+        const calleeLogs = await TestUtils.WaitContractEventGet(showCallbackEvent);
         calleeData = calleeLogs[calleeLogs.length - 1].args;
         calleeData.callee = testOracleExampleInst.address;
-        if (CheckObjectEqual(oracleData, calleeData) === false) {
+        if (TestUtils.CheckObjectEqual(oracleData, calleeData) === false) {
             assert.equal(oracleData, calleeData, 'Two object should be the same');
         }
     });
