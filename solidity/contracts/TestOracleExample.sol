@@ -10,11 +10,21 @@ contract TestOracleExample is OracleBase {
         public
     {}
 
-    function querySentNode()
+    function querySentNode(string _data)
         public
     {
-        bytes32 queryId = __querySentNode('Just for test');
+        bytes32 queryId = __querySentNode(_data);
         OracleStorage(myStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
+    }
+
+    function getLastestQueryId()
+        view
+        public
+        returns (bytes32)
+    {
+        uint queryIdsLength = OracleStorage(myStorageAddr).getBytes32ArrayLength('TestOracleExampleQueryIds');
+        require(queryIdsLength > 0);
+        return OracleStorage(myStorageAddr).getBytes32ArrayEntry('TestOracleExampleQueryIds', queryIdsLength - 1);
     }
 
     // [TODO] We should have permission restriction
