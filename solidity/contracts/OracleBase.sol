@@ -17,11 +17,12 @@ contract OracleBase {
 
     function querySentNode(string _requests)
         public
+        returns (bytes32)
     {
         address oracleCoreAddress = OracleStorage(myStorageAddr).getBytes32ToAddress('OracleAddress', 'OracleCore');
         require(oracleCoreAddress != 0);
 
-        OracleCore(oracleCoreAddress).querySentNode(this, _requests);
+        return OracleCore(oracleCoreAddress).querySentNode(this, _requests);
     }
 
     function __callback(bytes32 _queryId, bytes32 _hash, string _response) public;
