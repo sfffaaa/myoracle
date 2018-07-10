@@ -10,7 +10,7 @@ module.exports = (deployer) => {
         return deployer.deploy(OracleCore, inst.address);
     }).then((inst) => {
         console.log(`OracleCore address: ${inst.address}`);
-        return deployer.deploy(TestOracleExample);
+        return deployer.deploy(TestOracleExample, OracleStorage.address);
     }).then((inst) => {
         console.log(`TestOracleExample address: ${inst.address}`);
         // do nothing right now
