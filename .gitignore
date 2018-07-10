@@ -4,3 +4,4 @@ __pycache__
 *.pyc
 etc/
 solidity/tmp/
+.gdf_*
