@@ -3,6 +3,8 @@ permission
 
 Because I want to test the backend script, so ...
 1. Add test smart contract with sent requests to oraclecore
+	1.1. When I implement the base class and try to test how example oracle communicate to oraclecore, I found I need
+		 to add an array for verifying queryId is correct or not.
 2. After calling that, the callback should be called, so the smart contract needs have related function to verify.
 3. Implement the testcase in javascirpt
 4. Implemetn the testcase in python
