@@ -38,46 +38,54 @@ contract('OracleStorageBasic', () => {
     });
 
     it('Action on addressArray checking', async () => {
-        const ARRAY_TEST_KEYS = 'AddressArrayChecking';
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 0,
+        const ARRAY_TEST_KEYS = 'Bytes32ArrayChecking';
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 0,
             'There is no any array entry');
 
-        oracleStorageInst.pushAddressArrayEntry(ARRAY_TEST_KEYS, 0x01);
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 1,
+        oracleStorageInst.pushBytes32ArrayEntry(ARRAY_TEST_KEYS,
+            '0x0000000000000000000000000000000000000000000000000000000000000001');
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 1,
             'Length should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 0), 0x01,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 0),
+            '0x0000000000000000000000000000000000000000000000000000000000000001',
             'Entry should be the same');
 
-        await oracleStorageInst.setAddressArrayEntry(ARRAY_TEST_KEYS, 0, 0x02);
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 1,
+        await oracleStorageInst.setBytes32ArrayEntry(ARRAY_TEST_KEYS, 0,
+            '0x2000000000000000000000000000000000000000000000000000000000000000');
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 1,
             'Length should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 0), 0x02,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 0),
+            '0x2000000000000000000000000000000000000000000000000000000000000000',
             'Entry should be the same');
 
-        await oracleStorageInst.pushAddressArrayEntry(ARRAY_TEST_KEYS, 0x03);
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 2,
+        await oracleStorageInst.pushBytes32ArrayEntry(ARRAY_TEST_KEYS,
+            '0x3000000000000000000000000000000000000000000000000000000000000000');
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 2,
             'Length should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 0), 0x02,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 0),
+            '0x2000000000000000000000000000000000000000000000000000000000000000',
             'Entry should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 1), 0x03,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 1),
+            '0x3000000000000000000000000000000000000000000000000000000000000000',
             'Entry should be the same');
 
-        await oracleStorageInst.delAddressArrayEntry(ARRAY_TEST_KEYS, 0);
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 2,
+        await oracleStorageInst.delBytes32ArrayEntry(ARRAY_TEST_KEYS, 0);
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 2,
             'Length should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 0), 0,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 0), 0,
             'Entry should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 1), 0x03,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 1),
+            '0x3000000000000000000000000000000000000000000000000000000000000000',
             'Entry should be the same');
 
-        await oracleStorageInst.changeAddressArrayLength(ARRAY_TEST_KEYS, 1);
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 1,
+        await oracleStorageInst.changeBytes32ArrayLength(ARRAY_TEST_KEYS, 1);
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 1,
             'Length should be the same');
-        assert.equal(await oracleStorageInst.getAddressArrayEntry(ARRAY_TEST_KEYS, 0), 0,
+        assert.equal(await oracleStorageInst.getBytes32ArrayEntry(ARRAY_TEST_KEYS, 0), 0,
             'Entry should be the same');
 
-        await oracleStorageInst.delAddressArray(ARRAY_TEST_KEYS);
-        assert.equal(await oracleStorageInst.getAddressArrayLength(ARRAY_TEST_KEYS), 0,
+        await oracleStorageInst.delBytes32Array(ARRAY_TEST_KEYS);
+        assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 0,
             'Length should be the same');
     });
 });

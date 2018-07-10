@@ -15,7 +15,7 @@ contract OracleBase {
         myStorageAddr = _oracleStorageAddr;
     }
 
-    function querySentNode(string _requests)
+    function __querySentNode(string _requests)
         public
         returns (bytes32)
     {
