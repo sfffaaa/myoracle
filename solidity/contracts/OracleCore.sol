@@ -17,7 +17,7 @@ contract OracleCore {
 
     function querySentNode(address _callee, string _requests)
         public
-        returns (bytes32 _queryId)
+        returns (bytes32)
     {
         bytes32 myQueryId = keccak256(abi.encodePacked(now, _callee, _requests));
         myStorage.setBytes32ToAddress('OracleCoreNode', myQueryId, _callee);
