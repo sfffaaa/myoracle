@@ -12,6 +12,7 @@ contract OracleCore {
 
     constructor (address _storage) public {
         myStorage = OracleStorage(_storage);
+        myStorage.setBytes32ToAddress('OracleAddress', 'OracleCore', this);
     }
 
     function querySentNode(address _callee, string _requests)

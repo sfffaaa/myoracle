@@ -1,0 +1,9 @@
+permission
+
+
+Because I want to test the backend script, so ...
+1. Add test smart contract with sent requests to oraclecore
+2. After calling that, the callback should be called, so the smart contract needs have related function to verify.
+3. Implement the testcase in javascirpt
+4. Implemetn the testcase in python
+5. After finished it, the oraclecore function should be change and it will influence the testcase, too.
