@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 from utils import my_config
-from contract_handler import ContractHandler
+from handler.contract_handler import ContractHandler
 
 
 class BaseContractOnChainHandler():

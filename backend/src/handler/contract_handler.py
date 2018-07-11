@@ -1,6 +1,6 @@
 from utils import my_config
 from web3 import Web3
-from config_handler import ConfigHandler
+from handler.config_handler import ConfigHandler
 import os
 import json
 

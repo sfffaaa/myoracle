@@ -7,7 +7,7 @@ import json
 from web3 import Web3
 import hexbytes
 import time
-from config_handler import ConfigHandler
+from handler.config_handler import ConfigHandler
 from utils.my_config import RETRY_TIMES, CONFIG_PATH
 
 
