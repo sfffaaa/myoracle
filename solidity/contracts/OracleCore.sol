@@ -7,8 +7,8 @@ import {OracleStorage} from "./OracleStorage.sol";
 contract OracleCore {
     OracleStorage private myStorage = OracleStorage(0);
 
-    event ToOracleNode(bytes32 queryId, string requests);
-    event ToOracleCallee(bytes32 queryId, address callee, bytes32 hash, string response);
+    event ToOracleNode(bytes32 queryId, string request);
+    event ToOracleCallee(bytes32 queryId, address callee, string response, bytes32 hash);
 
     constructor (address _storage) public {
         myStorage = OracleStorage(_storage);
@@ -30,7 +30,7 @@ contract OracleCore {
     {
         address callee = myStorage.getBytes32ToAddress('OracleCoreNode', _queryId);
         require(callee != 0);
-        emit ToOracleCallee(_queryId, callee, _hash, _response);
-        OracleBase(callee).__callback(_queryId, _hash, _response);
+        emit ToOracleCallee(_queryId, callee, _response, _hash);
+        OracleBase(callee).__callback(_queryId, _response, _hash);
     }
 }

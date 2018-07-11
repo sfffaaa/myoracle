@@ -25,5 +25,5 @@ contract OracleBase {
         return OracleCore(oracleCoreAddress).querySentNode(this, _requests);
     }
 
-    function __callback(bytes32 _queryId, bytes32 _hash, string _response) public;
+    function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;
 }

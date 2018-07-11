@@ -15,7 +15,7 @@ contract('TestOracleExample', () => {
         const toOracleNodeEvent = oracleCoreInst.ToOracleNode({}, { fromBlock: 0, toBlock: 'latest' });
         let oracleLogs = await TestUtils.WaitContractEventGet(toOracleNodeEvent);
         oracleData = oracleLogs[oracleLogs.length - 1].args;
-        assert.equal(oracleData.requests, 'fake request', 'Request should be the same');
+        assert.equal(oracleData.request, 'fake request', 'Request should be the same');
 
         const queryId = await testOracleExampleInst.getLastestQueryId();
         assert.equal(oracleData.queryId, queryId, 'QueryId should be the same');

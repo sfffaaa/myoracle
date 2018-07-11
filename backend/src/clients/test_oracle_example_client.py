@@ -21,13 +21,13 @@ class TestOracleExampleClient(BaseChainNode):
 
     def sent_event_callback(self, node, event):
         query_id = convert_to_hex(event['args']['queryId'])
-        data = event['args']['data']
+        data = event['args']['request']
         print('in TestOracleExampleClient(sent_event_callback) - event: query id {0}, data {1}'.format(query_id, data))
 
     def show_event_callback(self, node, event):
         query_id = convert_to_hex(event['args']['queryId'])
-        hash_resp = convert_to_hex(event['args']['hash'])
         response = event['args']['response']
+        hash_resp = convert_to_hex(event['args']['hash'])
         print('in TestOracleExampleClient(show_event_callback) - event: query id {0}, hash {1}, response {2}'
               .format(query_id, hash_resp, response))
 

@@ -21,8 +21,8 @@ class OracleNodeClient(BaseChainNode):
 
     def to_oracle_node_event_callback(self, node, event):
         query_id = convert_to_hex(event['args']['queryId'])
-        requests = event['args']['requests']
-        print('in OracleNodeClient - event: query id {0}, requests {1}'.format(query_id, requests))
+        request = event['args']['request']
+        print('in OracleNodeClient - event: query id {0}, request {1}'.format(query_id, request))
         response = 'I am your father'
         OracleCore(self._config_path).result_sent_back(query_id,
                                                        response,

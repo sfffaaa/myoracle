@@ -37,21 +37,20 @@ class TestTestOracleExample(unittest.TestCase):
     def to_oracle_node_event_callback(self, node, event):
         self.to_oracle_node_data.append({
             'queryId': convert_to_hex(event['args']['queryId']),
-            'requests': event['args']['requests']
+            'request': event['args']['request']
         })
 
     def sent_event_callback(self, node, event):
-        # [TODO] Should change the event input parameter name
         self.sent_event_data.append({
             'queryId': convert_to_hex(event['args']['queryId']),
-            'data': event['args']['data']
+            'request': event['args']['request']
         })
 
     def show_event_callback(self, node, event):
         self.show_event_data.append({
             'queryId': convert_to_hex(event['args']['queryId']),
-            'hash': convert_to_hex(event['args']['hash']),
-            'response': event['args']['response']
+            'response': event['args']['response'],
+            'hash': convert_to_hex(event['args']['hash'])
         })
 
     def test_single_event(self):
@@ -86,8 +85,8 @@ class TestTestOracleExample(unittest.TestCase):
                              'query id {0} != {1}'.format(test_list[0]['queryId'], test_example_queryid))
 
         # check resquest
-        self.assertEqual(self.to_oracle_node_data[0]['requests'],
-                         self.sent_event_data[0]['data'],
+        self.assertEqual(self.to_oracle_node_data[0]['request'],
+                         self.sent_event_data[0]['request'],
                          'two request should be the same')
 
         # check response

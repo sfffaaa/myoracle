@@ -29,7 +29,7 @@ class TestOracleNodeClient(unittest.TestCase):
 
     def to_oracle_node_event_callback(self, node, event):
         # query_id = event['args']['queryId']
-        requests = event['args']['requests']
+        requests = event['args']['request']
         self.assertEqual(requests, 'show me the money')
 
     def test_single_event(self):
