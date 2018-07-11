@@ -2,17 +2,19 @@
 # encoding: utf-8
 
 import my_config
+from base_contract import BaseContract
 from oracle_core_onchain_handler import OracleCoreOnChainHandler
 
 
-class OracleCore():
+class OracleCore(BaseContract):
 
     def __init__(self, config=my_config.CONFIG_PATH):
-        self._onchain_handler = OracleCoreOnChainHandler(config)
+        super().__init__(config)
 
-    def get_all_events(self):
-        return self._onchain_handler.get_all_events()
+    def create_onchain_handler(self, config):
+        return OracleCoreOnChainHandler(config)
 
+    # --- Customize function for their onw function ---
     # This function should use in node, but I still implement it...
     def query_sent_node(self, address, requests):
         self._onchain_handler.query_sent_node(address, requests)
