@@ -5,6 +5,8 @@ from base_chain_node import BaseChainNode
 import my_config
 from contract_handler import ContractHandler
 from chain_utils import convert_to_hex
+from web3 import Web3
+from oracle_core import OracleCore
 
 
 class OracleNodeClient(BaseChainNode):
@@ -13,15 +15,19 @@ class OracleNodeClient(BaseChainNode):
                  config_path=my_config.CONFIG_PATH,
                  to_oracle_node_callback_objs=[],
                  wait_time=3):
+        self._config_path = config_path
         self.to_oracle_node_callback_objs = [self] + to_oracle_node_callback_objs
         super(OracleNodeClient, self).__init__(config_path,
                                                wait_time)
 
     def to_oracle_node_event_callback(self, node, event):
-        query_id = event['args']['queryId']
+        query_id = convert_to_hex(event['args']['queryId'])
         requests = event['args']['requests']
-        print('in OracleNodeClient - event: query id {0}, requests {1}'.format(convert_to_hex(query_id),
-                                                                               requests))
+        print('in OracleNodeClient - event: query id {0}, requests {1}'.format(query_id, requests))
+        response = 'show me the money'
+        OracleCore(self._config_path).result_sent_back(query_id,
+                                                       response,
+                                                       convert_to_hex(Web3.sha3(text=response)))
 
     def setup_contract(self, config_path):
         oracle_core_hdr = ContractHandler('OracleCore', config_path)
