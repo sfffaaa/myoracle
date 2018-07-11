@@ -6,6 +6,7 @@ Because I want to test the backend script, so ...
 	1.1. When I implement the base class and try to test how example oracle communicate to oraclecore, I found I need
 		 to add an array for verifying queryId is correct or not.
 2. After calling that, the callback should be called, so the smart contract needs have related function to verify.
+	2.1. callback cannot be called due to node daemon doesn't run... but we can do it manually by myself..
 3. Implement the testcase in javascirpt
 4. Implemetn the testcase in python
 5. After finished it, the oraclecore function should be change and it will influence the testcase, too.
