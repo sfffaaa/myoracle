@@ -8,7 +8,7 @@ sys.path.append('src')
 from my_deployer import MyDeployer
 from oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG
-from oracle_core import OracleCore
+from oracle_core.oracle_core import OracleCore
 
 
 class TestOracleNodeClient(unittest.TestCase):

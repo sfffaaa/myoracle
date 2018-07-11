@@ -5,7 +5,7 @@ from base_object.base_chain_node import BaseChainNode
 from utils import my_config
 from utils.chain_utils import convert_to_hex
 from web3 import Web3
-from oracle_core import OracleCore
+from oracle_core.oracle_core import OracleCore
 
 
 class OracleNodeClient(BaseChainNode):

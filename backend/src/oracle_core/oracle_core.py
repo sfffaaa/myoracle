@@ -3,7 +3,7 @@
 
 from utils import my_config
 from base_object.base_contract import BaseContract
-from oracle_core_onchain_handler import OracleCoreOnChainHandler
+from oracle_core.oracle_core_onchain_handler import OracleCoreOnChainHandler
 
 
 class OracleCore(BaseContract):
