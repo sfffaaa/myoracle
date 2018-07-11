@@ -7,7 +7,7 @@ import sys
 sys.path.append('src')
 
 from utils.my_deployer import MyDeployer
-from oracle_node_client import OracleNodeClient
+from clients.oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG
 from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_hex

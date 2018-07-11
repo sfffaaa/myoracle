@@ -6,7 +6,7 @@ import unittest
 import sys
 sys.path.append('src')
 from utils.my_deployer import MyDeployer
-from oracle_node_client import OracleNodeClient
+from clients.oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG
 from oracle_core.oracle_core import OracleCore
 
