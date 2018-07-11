@@ -39,4 +39,21 @@ contract('TestOracleExample', () => {
             assert.equal(oracleData, calleeData, 'Two object should be the same');
         }
     });
+
+    it('trigger test', async () => {
+        const oracleCoreInst = await OracleCore.deployed();
+        const testOracleExampleInst = await TestOracleExample.deployed();
+
+        await testOracleExampleInst.trigger();
+        let oracleData = {};
+        const toOracleNodeEvent = oracleCoreInst.ToOracleNode({}, { fromBlock: 0, toBlock: 'latest' });
+        const oracleLogs = await TestUtils.WaitContractEventGet(toOracleNodeEvent);
+        oracleData = oracleLogs[oracleLogs.length - 1].args;
+        assert.equal(oracleData.request,
+            'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.0',
+            'Request should be the same');
+
+        const queryId = await testOracleExampleInst.getLastestQueryId();
+        assert.equal(oracleData.queryId, queryId, 'QueryId should be the same');
+    });
 });

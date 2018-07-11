@@ -11,6 +11,13 @@ contract TestOracleExample is OracleBase {
         public
     {}
 
+    function trigger()
+        public
+    {
+        string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.0';
+        querySentNode(request);
+    }
+
     function querySentNode(string _data)
         public
     {
