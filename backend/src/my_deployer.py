@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-from deployer_base import DeployerBase
+from base_object.base_deployer import BaseDeployer
 
 
-class MyDeployer(DeployerBase):
+class MyDeployer(BaseDeployer):
 
     def deploy_implement(self, config_handler):
 

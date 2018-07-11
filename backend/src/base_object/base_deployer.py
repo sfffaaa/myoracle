@@ -12,7 +12,7 @@ from my_config import RETRY_TIMES, CONFIG_PATH
 
 
 # User should implement compose_smart_contract_args + deploy_implement
-class DeployerBase():
+class BaseDeployer():
     def __init__(self, config_path=CONFIG_PATH):
         self._config_path = config_path
 

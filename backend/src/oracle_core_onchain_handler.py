@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import my_config
-from base_contract_onchain_handler import BaseContractOnChainHandler
+from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
 from chain_utils import convert_to_bytes, wait_miner, check_transaction_meet_assert
 
 GAS_SPENT = 1000000

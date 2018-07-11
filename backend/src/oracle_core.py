@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import my_config
-from base_contract import BaseContract
+from base_object.base_contract import BaseContract
 from oracle_core_onchain_handler import OracleCoreOnChainHandler
 
 

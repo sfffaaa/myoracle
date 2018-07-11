@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-from base_chain_node import BaseChainNode
+from base_object.base_chain_node import BaseChainNode
 import my_config
-from contract_handler import ContractHandler
 from chain_utils import convert_to_hex
 from web3 import Web3
 from oracle_core import OracleCore
