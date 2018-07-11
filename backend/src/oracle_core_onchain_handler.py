@@ -15,6 +15,9 @@ class OracleCoreOnChainHandler():
         self._w3 = self._contract_handler.get_w3()
         self._contract_inst = self._contract_handler.get_contract()
 
+    def get_all_events(self):
+        return self._contract_handler.get_all_events()
+
     def query_sent_node(self, address, requests):
         print('==== query_sent_node start ====')
         tx_hash = self._contract_inst.functions.querySentNode(address, requests) \

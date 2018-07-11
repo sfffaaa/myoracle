@@ -32,6 +32,9 @@ class ContractHandler():
     def get_contract(self):
         return self._contract_inst
 
+    def get_all_events(self):
+        return self._contract_inst.events
+
     def _get_contract_info(self, contract_name):
         file_path = os.path.join(self._config_handler.get_chain_config('Output', 'file_path'),
                                  '{0}.json'.format(contract_name))

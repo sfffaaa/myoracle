@@ -10,6 +10,9 @@ class OracleCore():
     def __init__(self, config=my_config.CONFIG_PATH):
         self._onchain_handler = OracleCoreOnChainHandler(config)
 
+    def get_all_events(self):
+        return self._onchain_handler.get_all_events()
+
     # This function should use in node, but I still implement it...
     def query_sent_node(self, address, requests):
         self._onchain_handler.query_sent_node(address, requests)

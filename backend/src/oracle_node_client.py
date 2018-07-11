@@ -30,15 +30,14 @@ class OracleNodeClient(BaseChainNode):
                                                        convert_to_hex(Web3.sha3(text=response)))
 
     def setup_contract(self, config_path):
-        oracle_core_hdr = ContractHandler('OracleCore', config_path)
+        all_events = OracleCore(config_path).get_all_events()
         return [{
             'contract_name': 'OracleCore',
             'event_name': 'ToOracleNode',
-            'contract_handler': oracle_core_hdr,
             'callback_objs': self.to_oracle_node_callback_objs,
             'callback_name': 'to_oracle_node_event_callback',
             'event_filter':
-                oracle_core_hdr._contract_inst.events.ToOracleNode.createFilter(fromBlock='latest')
+                all_events.ToOracleNode.createFilter(fromBlock='latest')
         }]
 
 

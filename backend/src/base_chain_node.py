@@ -4,8 +4,7 @@
 import gevent
 import my_config
 
-SETUP_EVENT_KEYS = ['contract_name', 'event_name', 'callback_objs', 'event_filter', 'contract_handler',
-                    'callback_name']
+SETUP_EVENT_KEYS = ['contract_name', 'event_name', 'callback_objs', 'event_filter', 'callback_name']
 
 
 class BaseChainNode(gevent.Greenlet):
