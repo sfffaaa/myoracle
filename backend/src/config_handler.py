@@ -3,7 +3,7 @@
 
 
 import configparser
-from my_config import CONFIG_PATH
+from utils.my_config import CONFIG_PATH
 
 
 class ConfigHandler():

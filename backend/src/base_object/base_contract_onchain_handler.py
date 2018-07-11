@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-import my_config
+from utils import my_config
 from contract_handler import ContractHandler
 
 

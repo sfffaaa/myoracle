@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-import my_config
+from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
-from chain_utils import convert_to_bytes, wait_miner, check_transaction_meet_assert
-
-GAS_SPENT = 1000000
+from utils.chain_utils import convert_to_bytes, wait_miner, check_transaction_meet_assert
 
 
 class OracleCoreOnChainHandler(BaseContractOnChainHandler):
@@ -23,7 +21,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         print('==== query_sent_node start ====')
         tx_hash = self.get_contract_inst().functions.querySentNode(address, requests) \
                                                     .transact({'from': w3.eth.accounts[0],
-                                                               'gas': GAS_SPENT})
+                                                               'gas': my_config.GAS_SPENT})
 
         wait_miner(w3, tx_hash)
         if check_transaction_meet_assert(w3, tx_hash):

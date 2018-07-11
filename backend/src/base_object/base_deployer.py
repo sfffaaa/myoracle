@@ -8,7 +8,7 @@ from web3 import Web3
 import hexbytes
 import time
 from config_handler import ConfigHandler
-from my_config import RETRY_TIMES, CONFIG_PATH
+from utils.my_config import RETRY_TIMES, CONFIG_PATH
 
 
 # User should implement compose_smart_contract_args + deploy_implement

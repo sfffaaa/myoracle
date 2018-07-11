@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-import my_config
+from utils import my_config
 from base_object.base_contract import BaseContract
 from oracle_core_onchain_handler import OracleCoreOnChainHandler
 

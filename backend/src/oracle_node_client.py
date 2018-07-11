@@ -2,8 +2,8 @@
 # encoding: utf-8
 
 from base_object.base_chain_node import BaseChainNode
-import my_config
-from chain_utils import convert_to_hex
+from utils import my_config
+from utils.chain_utils import convert_to_hex
 from web3 import Web3
 from oracle_core import OracleCore
 

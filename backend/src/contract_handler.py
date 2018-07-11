@@ -1,4 +1,4 @@
-import my_config
+from utils import my_config
 from web3 import Web3
 from config_handler import ConfigHandler
 import os
