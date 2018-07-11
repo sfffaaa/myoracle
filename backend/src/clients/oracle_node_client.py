@@ -23,7 +23,7 @@ class OracleNodeClient(BaseChainNode):
         query_id = convert_to_hex(event['args']['queryId'])
         requests = event['args']['requests']
         print('in OracleNodeClient - event: query id {0}, requests {1}'.format(query_id, requests))
-        response = 'show me the money'
+        response = 'I am your father'
         OracleCore(self._config_path).result_sent_back(query_id,
                                                        response,
                                                        convert_to_hex(Web3.sha3(text=response)))

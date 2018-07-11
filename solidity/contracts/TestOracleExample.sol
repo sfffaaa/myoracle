@@ -4,6 +4,7 @@ import {OracleBase} from "./OracleBase.sol";
 import {OracleStorage} from "./OracleStorage.sol";
 
 contract TestOracleExample is OracleBase {
+    event SentCallback(bytes32 queryId, string data);
     event ShowCallback(bytes32 queryId, bytes32 hash, string response);
 
     constructor (address _oracleStorage) OracleBase( _oracleStorage)
@@ -15,6 +16,7 @@ contract TestOracleExample is OracleBase {
     {
         bytes32 queryId = __querySentNode(_data);
         OracleStorage(myStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
+        emit SentCallback(queryId, _data);
     }
 
     function getLastestQueryId()

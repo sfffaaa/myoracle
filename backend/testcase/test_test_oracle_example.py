@@ -8,11 +8,14 @@ sys.path.append('src')
 
 from utils.my_deployer import MyDeployer
 from clients.oracle_node_client import OracleNodeClient
+from clients.test_oracle_example_client import TestOracleExampleClient
 from test_utils import _TEST_CONFIG
 from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_hex
+from web3 import Web3
 
 TEST_REQUEST_STR = 'Show me the money'
+TEST_RESPONSE_STR = 'I am your father'
 
 
 class TestTestOracleExample(unittest.TestCase):
@@ -32,26 +35,70 @@ class TestTestOracleExample(unittest.TestCase):
         pass
 
     def to_oracle_node_event_callback(self, node, event):
-        self.query_id = convert_to_hex(event['args']['queryId'])
-        requests = event['args']['requests']
-        self.assertEqual(requests, TEST_REQUEST_STR, 'Request should be the same')
+        self.to_oracle_node_data.append({
+            'queryId': convert_to_hex(event['args']['queryId']),
+            'requests': event['args']['requests']
+        })
+
+    def sent_event_callback(self, node, event):
+        # [TODO] Should change the event input parameter name
+        self.sent_event_data.append({
+            'queryId': convert_to_hex(event['args']['queryId']),
+            'data': event['args']['data']
+        })
+
+    def show_event_callback(self, node, event):
+        self.show_event_data.append({
+            'queryId': convert_to_hex(event['args']['queryId']),
+            'hash': convert_to_hex(event['args']['hash']),
+            'response': event['args']['response']
+        })
 
     def test_single_event(self):
-        private_daemon = OracleNodeClient(config_path=_TEST_CONFIG,
-                                          to_oracle_node_callback_objs=[self],
-                                          wait_time=1)
-        private_daemon.start()
+        self.to_oracle_node_data = []
+        self.show_event_data = []
+        self.sent_event_data = []
+        example_daemon = TestOracleExampleClient(config_path=_TEST_CONFIG,
+                                                 sent_callback_objs=[self],
+                                                 show_callback_objs=[self],
+                                                 wait_time=1)
+        example_daemon.start()
+
+        node_daemon = OracleNodeClient(config_path=_TEST_CONFIG,
+                                       to_oracle_node_callback_objs=[self],
+                                       wait_time=1)
+        node_daemon.start()
 
         test_example = TestOracleExample(_TEST_CONFIG)
         # self.assertEqual(0, test_example.get_lastest_query_id(), 'There is no query id')
 
         test_example.query_sent_node(TEST_REQUEST_STR)
         test_example_queryid = test_example.get_lastest_query_id()
-        gevent.sleep(2)
-        self.assertEqual(test_example_queryid, self.query_id, 'Two query id should be the same')
+        gevent.sleep(5)
+
+        for test_list in [self.to_oracle_node_data, self.sent_event_data, self.show_event_data]:
+            self.assertEqual(len(test_list), 1, '{0} has more than one entry'.format(test_list))
+
+        # check queryid
+        for test_list in [self.to_oracle_node_data, self.sent_event_data, self.show_event_data]:
+            self.assertEqual(test_list[0]['queryId'],
+                             test_example_queryid,
+                             'query id {0} != {1}'.format(test_list[0]['queryId'], test_example_queryid))
+
+        # check resquest
+        self.assertEqual(self.to_oracle_node_data[0]['requests'],
+                         self.sent_event_data[0]['data'],
+                         'two request should be the same')
+
+        # check response
+        self.assertEqual(self.show_event_data[0]['response'], TEST_RESPONSE_STR)
+
+        self.assertEqual(convert_to_hex(self.show_event_data[0]['hash']),
+                         convert_to_hex(Web3.sha3(text=TEST_RESPONSE_STR)))
 
         # check the result is correct
-        private_daemon.kill()
+        example_daemon.kill()
+        node_daemon.kill()
 
 
 if __name__ == '__main__':

@@ -29,11 +29,17 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         print('==== query_sent_node finish ====')
 
     def result_sent_back(self, query_id, response, hash_val):
+        w3 = self.get_w3_inst()
         print('==== result_sent_back start ====')
 
-        self.get_contract_inst().functions.resultSentBack(convert_to_bytes(query_id),
-                                                          response,
-                                                          convert_to_bytes(hash_val)).call()
+        tx_hash = self.get_contract_inst().functions.resultSentBack(convert_to_bytes(query_id),
+                                                                    response,
+                                                                    convert_to_bytes(hash_val)) \
+                                                    .transact({'from': w3.eth.accounts[0],
+                                                               'gas': my_config.GAS_SPENT})
+        wait_miner(w3, tx_hash)
+        if check_transaction_meet_assert(w3, tx_hash):
+            raise IOError('assert encounter..')
         print('==== result_sent_back end ====')
 
 
