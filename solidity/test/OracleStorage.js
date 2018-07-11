@@ -10,7 +10,8 @@ contract('OracleStorageBasic', () => {
         oracleStorageInst = await OracleStorage.deployed();
     });
 
-    it('Get/Set/Delete checking', async () => {
+    // Bytes32ToAddress related test
+    it('Get/Set/Delete Bytes32ToAddress checking', async () => {
         await oracleStorageInst.setBytes32ToAddress(TEST_STORAGE_NAME, 'key', oracleStorageInst.address);
         let myAddress = await oracleStorageInst.getBytes32ToAddress(TEST_STORAGE_NAME, 'key');
         assert.equal(myAddress, oracleStorageInst.address, 'Two address should be the same');
@@ -37,6 +38,7 @@ contract('OracleStorageBasic', () => {
         assert.equal(myAddress, 0, 'Two address should be the same');
     });
 
+    // Bytes32Array related test
     it('Action on addressArray checking', async () => {
         const ARRAY_TEST_KEYS = 'Bytes32ArrayChecking';
         assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 0,
@@ -87,5 +89,15 @@ contract('OracleStorageBasic', () => {
         await oracleStorageInst.delBytes32Array(ARRAY_TEST_KEYS);
         assert.equal(await oracleStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 0,
             'Length should be the same');
+    });
+
+    // addressToUint related test
+    it('Get/Set/Delete addressToUint checking', async () => {
+        await oracleStorageInst.setAddressToUint(TEST_STORAGE_NAME, 0x01, 2);
+        let addressUint = await oracleStorageInst.getAddressToUint(TEST_STORAGE_NAME, 0x01);
+        assert.equal(2, addressUint, 'Two uint return should be the same');
+        await oracleStorageInst.delAddressToUint(TEST_STORAGE_NAME, 0x01);
+        addressUint = await oracleStorageInst.getAddressToUint(TEST_STORAGE_NAME, 0x01);
+        assert.equal(addressUint, 0, 'Two address should be the same');
     });
 });

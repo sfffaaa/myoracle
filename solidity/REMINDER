@@ -1,6 +1,5 @@
 permission
 
-
 Because I want to test the backend script, so ...
 1. Add test smart contract with sent requests to oraclecore
 	1.1. When I implement the base class and try to test how example oracle communicate to oraclecore, I found I need
@@ -10,3 +9,6 @@ Because I want to test the backend script, so ...
 3. Implement the testcase in javascirpt
 4. Implemetn the testcase in python
 5. After finished it, the oraclecore function should be change and it will influence the testcase, too.
+
+Pending:
+Report of address called.
