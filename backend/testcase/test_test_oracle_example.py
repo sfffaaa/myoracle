@@ -14,8 +14,8 @@ from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_hex
 from web3 import Web3
 
-TEST_REQUEST_STR = 'Show me the money'
-TEST_RESPONSE_STR = 'I am your father'
+TEST_REQUEST_STR = 'json(https://api.kraken.com/0/public/Ticker)["error"][0]'
+TEST_RESPONSE_STR = 'EGeneral:Invalid arguments'
 
 
 class TestTestOracleExample(unittest.TestCase):
