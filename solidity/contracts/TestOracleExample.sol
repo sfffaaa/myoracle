@@ -14,6 +14,8 @@ contract TestOracleExample is OracleBase {
     function trigger()
         public
     {
+        // all people can call this
+        // maybe I need to design pause
         string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"]["0"]';
         querySentNode(request);
     }
@@ -21,6 +23,7 @@ contract TestOracleExample is OracleBase {
     function querySentNode(string _data)
         public
     {
+        // only myself can call this and owner
         bytes32 queryId = __querySentNode(_data);
         OracleStorage(myStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
         emit SentCallback(queryId, _data);
@@ -31,6 +34,7 @@ contract TestOracleExample is OracleBase {
         public
         returns (bytes32)
     {
+        // all people can call this
         uint queryIdsLength = OracleStorage(myStorageAddr).getBytes32ArrayLength('TestOracleExampleQueryIds');
         require(queryIdsLength > 0);
         return OracleStorage(myStorageAddr).getBytes32ArrayEntry('TestOracleExampleQueryIds', queryIdsLength - 1);
@@ -40,6 +44,7 @@ contract TestOracleExample is OracleBase {
     function __callback(bytes32 _queryId, string _response, bytes32 _hash)
         public
     {
+        // only oraclecore and owner can call this
         emit ShowCallback(_queryId, _response, _hash);
     }
 }

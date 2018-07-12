@@ -9,6 +9,7 @@ contract OracleStorage {
     function delBytes32ToAddress(string _name, bytes32 _key)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         delete bytes32ToAddress[name][_key];
     }
@@ -16,6 +17,7 @@ contract OracleStorage {
     function setBytes32ToAddress(string _name, bytes32 _key, address _val)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         bytes32ToAddress[name][_key] = _val;
     }
@@ -25,6 +27,7 @@ contract OracleStorage {
         public
         returns(address)
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         return bytes32ToAddress[name][_key];
     }
@@ -37,6 +40,7 @@ contract OracleStorage {
         public
         returns(uint)
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         return bytes32Array[name].length;
     }
@@ -46,6 +50,7 @@ contract OracleStorage {
         public
         returns(bytes32)
     {
+        // only two contract can call this (and owner)
         require(getBytes32ArrayLength(_name) > _idx);
 
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -55,6 +60,7 @@ contract OracleStorage {
     function setBytes32ArrayEntry(string _name, uint _idx, bytes32 _val)
         public
     {
+        // only two contract can call this (and owner)
         require(getBytes32ArrayLength(_name) > _idx);
         bytes32 name = keccak256(abi.encodePacked(_name));
         bytes32Array[name][_idx] = _val;
@@ -63,6 +69,7 @@ contract OracleStorage {
     function pushBytes32ArrayEntry(string _name, bytes32 _val)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         bytes32Array[name].push(_val);
     }
@@ -70,6 +77,7 @@ contract OracleStorage {
     function delBytes32ArrayEntry(string _name, uint _idx)
         public
     {
+        // only two contract can call this (and owner)
         require(getBytes32ArrayLength(_name) > _idx);
 
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -79,6 +87,7 @@ contract OracleStorage {
     function delBytes32Array(string _name)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         delete bytes32Array[name];
     }
@@ -86,6 +95,7 @@ contract OracleStorage {
     function changeBytes32ArrayLength(string _name, uint _length)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         bytes32Array[name].length = _length;
     }
@@ -95,6 +105,7 @@ contract OracleStorage {
     function delAddressToUint(string _name, address _key)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         delete addressToUint[name][_key];
     }
@@ -102,6 +113,7 @@ contract OracleStorage {
     function setAddressToUint(string _name, address _key, uint _val)
         public
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         addressToUint[name][_key] = _val;
     }
@@ -111,6 +123,7 @@ contract OracleStorage {
         public
         returns(uint)
     {
+        // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         return addressToUint[name][_key];
     }

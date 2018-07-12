@@ -19,6 +19,7 @@ contract OracleBase {
         public
         returns (bytes32)
     {
+        // only self and owner can call this
         address oracleCoreAddress = OracleStorage(myStorageAddr).getBytes32ToAddress('OracleAddress', 'OracleCore');
         require(oracleCoreAddress != 0);
 

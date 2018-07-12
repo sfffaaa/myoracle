@@ -19,6 +19,7 @@ contract OracleCore {
         public
         returns (bytes32)
     {
+        // all user can call this
         bytes32 myQueryId = keccak256(abi.encodePacked(now, _callee, _requests));
         myStorage.setBytes32ToAddress('OracleCoreNode', myQueryId, _callee);
         emit ToOracleNode(myQueryId, _requests);
@@ -28,6 +29,7 @@ contract OracleCore {
     function resultSentBack(bytes32 _queryId, string _response, bytes32 _hash)
         external
     {
+        // only some register node and owner can call this
         address callee = myStorage.getBytes32ToAddress('OracleCoreNode', _queryId);
         require(callee != 0);
         emit ToOracleCallee(_queryId, callee, _response, _hash);
