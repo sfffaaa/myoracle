@@ -26,7 +26,7 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'OracleStorage':
             return []
         elif contract_name == 'TestOracleExample':
-            return [my_args['OracleStorage']['contractAddress']]
+            return [self._w3.eth.accounts[0], my_args['OracleStorage']['contractAddress']]
         else:
             raise IOError('Wrong contract name {0}'.format(contract_name))
 

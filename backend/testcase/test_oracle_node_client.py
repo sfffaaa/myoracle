@@ -38,7 +38,7 @@ class TestOracleNodeClient(unittest.TestCase):
     def to_oracle_node_event_success_callback(self, node, event):
         # query_id = event['args']['queryId']
         requests = event['args']['request']
-        self.assertEqual(requests, 'json(https://api.kraken.com/0/public/Ticker)["error"][0]a')
+        self.assertEqual(requests, 'json(https://api.kraken.com/0/public/Ticker)["error"][0]')
         # fail if sent different request
 
     def test_single_success_event(self):

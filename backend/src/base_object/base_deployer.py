@@ -41,37 +41,31 @@ class BaseDeployer():
         with open(file_path, 'w') as f:
             json.dump(json_data, f)
 
-    def _start_multiple_deploy_to_chain(self, config_handler, contract_dict):
-        file_ipc = config_handler.get_chain_config('Ethereum', 'file_ipc')
-        w3 = Web3(Web3.IPCProvider(file_ipc))
-
+    def _start_multiple_deploy_to_chain(self, contract_dict):
         contract_tx_hash = {}
         for contract_name, contract_inst in contract_dict.items():
-            tx_hash = contract_inst.transact({'from': w3.eth.accounts[0]})
+            tx_hash = contract_inst.transact({'from': self._w3.eth.accounts[0]})
             contract_tx_hash[contract_name] = tx_hash
 
-        tx_receipts = {contract_name: w3.eth.getTransactionReceipt(tx_hash)
+        tx_receipts = {contract_name: self._w3.eth.getTransactionReceipt(tx_hash)
                        for contract_name, tx_hash in contract_tx_hash.items()}
-        w3.miner.start(1)
+        self._w3.miner.start(1)
         retry_time = 0
         while None in tx_receipts.values() and retry_time < RETRY_TIMES:
             print('    wait for miner!')
             time.sleep(2)
-            tx_receipts = {contract_name: w3.eth.getTransactionReceipt(tx_hash)
+            tx_receipts = {contract_name: self._w3.eth.getTransactionReceipt(tx_hash)
                            for contract_name, tx_hash in contract_tx_hash.items()}
             retry_time += 1
             print("wait...")
 
-        w3.miner.stop()
+        self._w3.miner.stop()
         if None in tx_receipts.values():
             raise IOError('still cannot get contract result')
 
-        return tx_receipts, w3.eth.accounts[0]
+        return tx_receipts, self._w3.eth.accounts[0]
 
     def _get_contract_instance(self, config_handler, contract_name):
-        file_ipc = config_handler.get_chain_config('Ethereum', 'file_ipc')
-        w3 = Web3(Web3.IPCProvider(file_ipc))
-
         print('==== Deploy started {0} ===='.format(contract_name))
         build_path = config_handler.get_chain_config('Deploy', 'truffle_build_path')
         contract_path = self._compose_contract_build_path(build_path, contract_name)
@@ -80,7 +74,7 @@ class BaseDeployer():
         abi = self._get_build_contract_json_file_attribute(contract_path, 'abi')
         bytecode = self._get_build_contract_json_file_attribute(contract_path, 'bytecode')
 
-        return w3.eth.contract(abi=abi, bytecode=bytecode)
+        return self._w3.eth.contract(abi=abi, bytecode=bytecode)
 
     def _dump_multiple_smart_contract(self, config_handler, contract_detail_dict, contract_owner):
         for contract_name, contract_detail in contract_detail_dict.items():
@@ -118,8 +112,7 @@ class BaseDeployer():
             contract_inst = contract_inst.constructor(*my_args)
             contract_insts[contract_name] = contract_inst
 
-        contract_detail_dict, contract_owner = self._start_multiple_deploy_to_chain(config_handler,
-                                                                                    contract_insts)
+        contract_detail_dict, contract_owner = self._start_multiple_deploy_to_chain(contract_insts)
         self._dump_multiple_smart_contract(config_handler, contract_detail_dict, contract_owner)
 
         self._show_multiple_smart_contract_detail(contract_detail_dict, contract_owner)
@@ -127,6 +120,8 @@ class BaseDeployer():
 
     def deploy(self):
         config_handler = ConfigHandler(self._config_path)
+        file_ipc = config_handler.get_chain_config('Ethereum', 'file_ipc')
+        self._w3 = Web3(Web3.IPCProvider(file_ipc))
 
         print('==== Compile smart contract ====')
         cmd = '(cd {0}; truffle compile)'.format(config_handler.get_chain_config('Deploy', 'truffle_path'))
