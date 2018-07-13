@@ -7,7 +7,7 @@ contract TestOracleExample is OracleBase {
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
 
-    constructor (address _oracleStorage) OracleBase( _oracleStorage)
+    constructor (address _owner, address _oracleStorage) OracleBase(_owner, _oracleStorage)
         public
     {}
 
@@ -16,14 +16,15 @@ contract TestOracleExample is OracleBase {
     {
         // all people can call this
         // maybe I need to design pause
-        string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"]["0"]';
-        querySentNode(request);
+        string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]';
+        //[TODO] Need to change this or maybe change permission setting...
+        this.querySentNode(request);
     }
 
     function querySentNode(string _data)
+        onlyOwnerAndMyself
         public
     {
-        // only myself can call this and owner
         bytes32 queryId = __querySentNode(_data);
         OracleStorage(myStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
         emit SentCallback(queryId, _data);
@@ -40,11 +41,10 @@ contract TestOracleExample is OracleBase {
         return OracleStorage(myStorageAddr).getBytes32ArrayEntry('TestOracleExampleQueryIds', queryIdsLength - 1);
     }
 
-    // [TODO] We should have permission restriction
     function __callback(bytes32 _queryId, string _response, bytes32 _hash)
+        onlyOwnerAndOracleCore
         public
     {
-        // only oraclecore and owner can call this
         emit ShowCallback(_queryId, _response, _hash);
     }
 }

@@ -1,3 +1,5 @@
+/* global assert */
+
 function WaitContractEventGet(myevent) {
     return new Promise((resolve, reject) => {
         myevent.get((error, resp) => {
@@ -29,8 +31,27 @@ function CheckObjectEqual(ol, or) {
     return true;
 }
 
+async function AssertRevert(promise) {
+    try {
+        await promise;
+        assert.fail('Expected revert not received');
+    } catch (error) {
+        const revertFound = error.message.search('revert') >= 0;
+        assert(revertFound, `Expected "revert", got ${error} instead`);
+    }
+}
+
+async function AssertPass(promise) {
+    try {
+        await promise;
+    } catch (error) {
+        assert.fail(`Expected error received, got ${error}`);
+    }
+}
 
 module.exports = {
     WaitContractEventGet,
     CheckObjectEqual,
+    AssertRevert,
+    AssertPass,
 };

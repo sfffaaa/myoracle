@@ -7,16 +7,33 @@ import {OracleCore} from "./OracleCore.sol";
 contract OracleBase {
    
     address myStorageAddr;
+    address owner;
 
-    constructor (address _oracleStorageAddr)
+    //[TODO] Need use register instead of real storage address
+    constructor (address _owner, address _oracleStorageAddr)
         public
     {
+        require(_owner != 0);
         require(_oracleStorageAddr != 0);
+        owner = _owner;
         myStorageAddr = _oracleStorageAddr;
+    }
+
+    modifier onlyOwnerAndMyself {
+        require(msg.sender == address(this) || msg.sender == owner);
+        _;
+    }
+
+    modifier onlyOwnerAndOracleCore {
+        address oracleCoreAddress = OracleStorage(myStorageAddr).getBytes32ToAddress('OracleAddress', 'OracleCore');
+        require(oracleCoreAddress != 0);
+        require(msg.sender == owner || msg.sender == oracleCoreAddress);
+        _;
     }
 
     function __querySentNode(string _requests)
         public
+        onlyOwnerAndMyself
         returns (bytes32)
     {
         // only self and owner can call this

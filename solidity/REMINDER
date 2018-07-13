@@ -10,5 +10,9 @@ Because I want to test the backend script, so ...
 4. Implemetn the testcase in python
 5. After finished it, the oraclecore function should be change and it will influence the testcase, too.
 
+Permission Implement.
+I don't want to use this.functioncall, because it will cost more gas here, but that means I need to allow some user to call or change the public function to private...
+
+
 Pending:
 Report of address called.
