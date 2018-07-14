@@ -21,6 +21,7 @@ contract TestOracleExample is OracleBase {
         this.querySentNode(request);
     }
 
+    //[TODO] This function can be intergreted into trigger...
     function querySentNode(string _data)
         onlyOwnerAndMyself
         public
