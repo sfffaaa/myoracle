@@ -71,7 +71,7 @@ class TestTestOracleExample(unittest.TestCase):
         test_example = TestOracleExample(_TEST_CONFIG)
         # self.assertEqual(0, test_example.get_lastest_query_id(), 'There is no query id')
 
-        test_example.query_sent_node(TEST_REQUEST_STR)
+        test_example.trigger()
         test_example_queryid = test_example.get_lastest_query_id()
         gevent.sleep(5)
 
@@ -90,10 +90,10 @@ class TestTestOracleExample(unittest.TestCase):
                          'two request should be the same')
 
         # check response
-        self.assertEqual(self.show_event_data[0]['response'], TEST_RESPONSE_STR)
+        self.assertRegex(self.show_event_data[0]['response'], '^(\d+\.?\d+)$')
 
         self.assertEqual(convert_to_hex(self.show_event_data[0]['hash']),
-                         convert_to_hex(Web3.sha3(text=TEST_RESPONSE_STR)))
+                         convert_to_hex(Web3.sha3(text=self.show_event_data[0]['response'])))
 
         # check the result is correct
         example_daemon.kill()

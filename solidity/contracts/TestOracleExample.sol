@@ -17,19 +17,12 @@ contract TestOracleExample is OracleBase {
         // all people can call this
         // maybe I need to design pause
         string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]';
-        //[TODO] Need to change this or maybe change permission setting...
-        this.querySentNode(request);
+
+        bytes32 queryId = this.__querySentNode(request);
+        OracleStorage(myStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
+        emit SentCallback(queryId, request);
     }
 
-    //[TODO] This function can be intergreted into trigger...
-    function querySentNode(string _data)
-        onlyOwnerAndMyself
-        public
-    {
-        bytes32 queryId = __querySentNode(_data);
-        OracleStorage(myStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
-        emit SentCallback(queryId, _data);
-    }
 
     function getLastestQueryId()
         view

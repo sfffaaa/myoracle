@@ -16,10 +16,10 @@ class TestOracleExampleOnChainHandler(BaseContractOnChainHandler):
         return 'TestOracleExample'
 
     # --- connect to contract function ---
-    def query_sent_node(self, request):
+    def trigger(self):
         w3 = self.get_w3_inst()
         print('==== query_sent_node start ====')
-        tx_hash = self.get_contract_inst().functions.querySentNode(request) \
+        tx_hash = self.get_contract_inst().functions.trigger() \
                                                     .transact({'from': w3.eth.accounts[0],
                                                                'gas': my_config.GAS_SPENT})
 

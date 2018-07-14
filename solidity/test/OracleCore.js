@@ -6,7 +6,10 @@ const truffleAssert = require('truffle-assertions');
 const TestUtils = require('./TestUtils.js');
 
 
-contract('OracleCoreBasic', () => {
+contract('OracleCoreBasic', (accounts) => {
+    const FAKE_REQUEST = "Whatever doesn't kill you";
+    const FAKE_RESPONSE = 'simply makes you stranger';
+
     it('Basic test', async () => {
         console.log(`OracleCore: ${OracleCore.address}`);
         console.log(`TestOracleExample: ${TestOracleExample.address}`);
@@ -15,14 +18,18 @@ contract('OracleCoreBasic', () => {
         const testOracleExampleInst = await TestOracleExample.deployed();
 
         let queryId = 0;
-        let tx = await oracleCoreInst.querySentNode(testOracleExampleInst.address, 'fake request');
+        let tx = await oracleCoreInst.querySentNode(testOracleExampleInst.address, FAKE_REQUEST);
         truffleAssert.eventEmitted(tx, 'ToOracleNode', (ev) => {
             const { queryId: queryIdTmp } = ev;
             queryId = queryIdTmp;
             return true;
         });
 
-        tx = await oracleCoreInst.resultSentBack(queryId, 'fake response', web3.sha3('fake response'));
+        tx = await oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+        );
         truffleAssert.eventEmitted(tx, 'ToOracleCallee', (ev) => {
             return ev.queryId === queryId && ev.callee === TestOracleExample.address;
         });
@@ -40,5 +47,25 @@ contract('OracleCoreBasic', () => {
         if (TestUtils.CheckObjectEqual(oracleData, calleeData) === false) {
             assert.equal(oracleData, calleeData, 'Two object should be the same');
         }
+    });
+
+    it('oracleCoreInst permission test', async () => {
+        const oracleCoreInst = await OracleCore.deployed();
+        const testOracleExampleInst = await TestOracleExample.deployed();
+
+        await testOracleExampleInst.trigger({ from: accounts[0] });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+
+        TestUtils.AssertPass(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+        ));
+        TestUtils.AssertRevert(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+            { from: accounts[1] },
+        ));
     });
 });

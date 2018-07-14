@@ -16,9 +16,8 @@ class TestOracleExample(BaseContract):
         return TestOracleExampleOnChainHandler(config)
 
     # --- Customize function for their onw function ---
-    # This function should use in node, but I still implement it...
-    def query_sent_node(self, data):
-        self._onchain_handler.query_sent_node(data)
+    def trigger(self):
+        self._onchain_handler.trigger()
 
     def get_lastest_query_id(self):
         b_queryid = self._onchain_handler.get_lastest_query_id()
