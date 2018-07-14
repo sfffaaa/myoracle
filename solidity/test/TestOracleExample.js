@@ -106,4 +106,23 @@ contract('TestOracleExample', (accounts) => {
             { from: accounts[1] },
         ));
     });
+    it('oracleCoreInst permission test', async () => {
+        const oracleCoreInst = await OracleCore.deployed();
+        const testOracleExampleInst = await TestOracleExample.deployed();
+
+        await testOracleExampleInst.querySentNode(FAKE_REQUEST, { from: accounts[0] });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+
+        TestUtils.AssertPass(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+        ));
+        TestUtils.AssertRevert(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+            { from: accounts[1] },
+        ));
+    });
 });

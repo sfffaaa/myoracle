@@ -7,7 +7,7 @@ const TestOracleExample = artifacts.require('./TestOracleExample');
 module.exports = (deployer, network, accounts) => {
     deployer.deploy(OracleStorage).then((inst) => {
         console.log(`OracleStorage address: ${inst.address}`);
-        return deployer.deploy(OracleCore, inst.address);
+        return deployer.deploy(OracleCore, accounts[0], inst.address);
     }).then((inst) => {
         console.log(`OracleCore address: ${inst.address}`);
         return deployer.deploy(TestOracleExample, accounts[0], OracleStorage.address);

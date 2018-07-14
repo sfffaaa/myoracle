@@ -22,7 +22,7 @@ class MyDeployer(BaseDeployer):
 
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
-            return [my_args['OracleStorage']['contractAddress']]
+            return [self._w3.eth.accounts[0], my_args['OracleStorage']['contractAddress']]
         elif contract_name == 'OracleStorage':
             return []
         elif contract_name == 'TestOracleExample':

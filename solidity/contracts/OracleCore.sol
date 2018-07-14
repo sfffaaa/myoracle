@@ -6,13 +6,20 @@ import {OracleStorage} from "./OracleStorage.sol";
 
 contract OracleCore {
     OracleStorage private myStorage = OracleStorage(0);
+    address owner;
 
     event ToOracleNode(bytes32 queryId, string request);
     event ToOracleCallee(bytes32 queryId, address callee, string response, bytes32 hash);
 
-    constructor (address _storage) public {
+    constructor (address _owner, address _storage) public {
+        owner = _owner;
         myStorage = OracleStorage(_storage);
         myStorage.setBytes32ToAddress('OracleAddress', 'OracleCore', this);
+    }
+
+    modifier OnlyOwner {
+        require(msg.sender == owner);
+        _;
     }
 
     function querySentNode(address _callee, string _requests)
@@ -27,6 +34,7 @@ contract OracleCore {
     }
 
     function resultSentBack(bytes32 _queryId, string _response, bytes32 _hash)
+        OnlyOwner
         external
     {
         // only some register node and owner can call this
