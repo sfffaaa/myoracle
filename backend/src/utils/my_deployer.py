@@ -2,6 +2,8 @@
 # encoding: utf-8
 
 from base_object.base_deployer import BaseDeployer
+from oracle_core.oracle_core import OracleCore
+from oracle_storage.oracle_storage import OracleStorage
 
 
 class MyDeployer(BaseDeployer):
@@ -18,17 +20,21 @@ class MyDeployer(BaseDeployer):
             'OracleStorage': step_one_info['OracleStorage'],
             'TestStorage': step_one_info['TestStorage']
         }
-        self.deploy_multiple_smart_contract(config_handler, {
+        info = self.deploy_multiple_smart_contract(config_handler, {
             'OracleCore': {'OracleStorage': storage_info['OracleStorage']},
             'TestOracleExample': {'OracleStorage': storage_info['OracleStorage'],
                                   'TestStorage': storage_info['TestStorage']}
         })
 
+        OracleStorage(self._config_path).set_oracle_core_addr(info['OracleCore']['contractAddress'])
+        OracleCore(self._config_path).set_oracle_core_addr()
+
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
-            return [self._w3.eth.accounts[0], my_args['OracleStorage']['contractAddress']]
+            return [self._w3.eth.accounts[0],
+                    my_args['OracleStorage']['contractAddress']]
         elif contract_name == 'OracleStorage':
-            return []
+            return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestOracleExample':
             return [self._w3.eth.accounts[0],
                     my_args['OracleStorage']['contractAddress'],

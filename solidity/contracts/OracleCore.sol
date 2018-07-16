@@ -14,6 +14,12 @@ contract OracleCore {
     constructor (address _owner, address _storage) public {
         owner = _owner;
         myStorage = OracleStorage(_storage);
+    }
+
+    function setOracleCoreAddr()
+        OnlyOwner
+        public
+    {
         myStorage.setBytes32ToAddress('OracleAddress', 'OracleCore', this);
     }
 

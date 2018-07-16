@@ -16,6 +16,18 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         return 'OracleCore'
 
     # --- connect to contract function ---
+    def set_oracle_core_addr(self):
+        w3 = self.get_w3_inst()
+        print('==== set_oracle_core_addr start ====')
+        tx_hash = self.get_contract_inst().functions.setOracleCoreAddr() \
+                                                    .transact({'from': w3.eth.accounts[0],
+                                                               'gas': my_config.GAS_SPENT})
+
+        wait_miner(w3, tx_hash)
+        if check_transaction_meet_assert(w3, tx_hash):
+            raise IOError('assert encounter..')
+        print('==== set_oracle_core_addr finish ====')
+
     def query_sent_node(self, address, requests):
         w3 = self.get_w3_inst()
         print('==== query_sent_node start ====')

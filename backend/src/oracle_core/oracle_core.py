@@ -16,6 +16,10 @@ class OracleCore(BaseContract):
 
     # --- Customize function for their onw function ---
     # This function should use in node, but I still implement it...
+
+    def set_oracle_core_addr(self):
+        self._onchain_handler.set_oracle_core_addr()
+
     def query_sent_node(self, address, requests):
         self._onchain_handler.query_sent_node(address, requests)
 
