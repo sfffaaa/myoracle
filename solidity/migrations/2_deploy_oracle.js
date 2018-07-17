@@ -41,7 +41,7 @@ module.exports = (deployer, network, accounts) => {
             return deployer.deploy(
                 TestOracleExample,
                 accounts[0],
-                OracleStorage.address,
+                oracleRegisterInst.address,
                 TestStorage.address,
             );
         })

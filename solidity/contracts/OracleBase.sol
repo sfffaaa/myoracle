@@ -1,22 +1,22 @@
 pragma solidity 0.4.24;
 
-import {OracleStorage} from "./OracleStorage.sol";
+import {OracleRegister} from "./OracleRegister.sol";
 import {OracleCore} from "./OracleCore.sol";
 
 // OracleBase and its childs need deploy after oracleCore and OracleStorage.
 contract OracleBase {
    
-    address myStorageAddr;
+    address myRegisterAddr;
     address owner;
 
     //[TODO] Need use register instead of real storage address
-    constructor (address _owner, address _oracleStorageAddr)
+    constructor (address _owner, address _oracleRegisterAddr)
         public
     {
         require(_owner != 0);
-        require(_oracleStorageAddr != 0);
+        require(_oracleRegisterAddr != 0);
         owner = _owner;
-        myStorageAddr = _oracleStorageAddr;
+        myRegisterAddr = _oracleRegisterAddr;
     }
 
     modifier onlyOwnerAndMyself {
@@ -25,7 +25,7 @@ contract OracleBase {
     }
 
     modifier onlyOwnerAndOracleCore {
-        address oracleCoreAddress = OracleStorage(myStorageAddr).getOracleAddress('OracleCore');
+        address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress('OracleCore');
         require(oracleCoreAddress != 0);
         require(msg.sender == owner || msg.sender == oracleCoreAddress);
         _;
@@ -37,7 +37,7 @@ contract OracleBase {
         returns (bytes32)
     {
         // only self and owner can call this
-        address oracleCoreAddress = OracleStorage(myStorageAddr).getOracleAddress('OracleCore');
+        address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress('OracleCore');
         require(oracleCoreAddress != 0);
 
         return OracleCore(oracleCoreAddress).querySentNode(this, _requests);

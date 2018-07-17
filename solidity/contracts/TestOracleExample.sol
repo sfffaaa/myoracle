@@ -9,8 +9,8 @@ contract TestOracleExample is OracleBase {
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
 
-    constructor (address _owner, address _oracleStorageAddr, address _testStorageAddr)
-        OracleBase(_owner, _oracleStorageAddr)
+    constructor (address _owner, address _oracleRegisterAddr, address _testStorageAddr)
+        OracleBase(_owner, _oracleRegisterAddr)
         public
     {
         testStorage = TestStorage(_testStorageAddr);
