@@ -3,23 +3,25 @@
 
 from utils import my_config
 from base_object.base_contract import BaseContract
-from oracle_storage.oracle_storage_onchain_handler import OracleStorageOnChainHandler
+from oracle_register.oracle_register_onchain_handler import OracleRegisterOnChainHandler
 
 
-class OracleStorage(BaseContract):
+class OracleRegister(BaseContract):
 
     def __init__(self, config=my_config.CONFIG_PATH):
         super().__init__(config)
 
     def create_onchain_handler(self, config):
-        return OracleStorageOnChainHandler(config)
+        return OracleRegisterOnChainHandler(config)
 
     # --- Customize function for their onw function ---
     # This function should use in node, but I still implement it...
+    def regist_address(self, name, address):
+        self._onchain_handler.regist_address(name, address)
 
-    def set_oracle_register_addr(self, address):
-        self._onchain_handler.set_oracle_register_addr(address)
+    def get_address(self, name):
+        return self._onchain_handler.get_address(name)
 
 
 if __name__ == '__main__':
-    OracleStorage()
+    OracleRegister()

@@ -26,7 +26,6 @@ contract OracleRegister {
     }
 
     function getAddress(string _key)
-        onlyOwner
         view
         public
         returns (address)
