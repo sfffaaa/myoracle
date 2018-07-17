@@ -16,13 +16,6 @@ contract OracleCore {
         myStorage = OracleStorage(_storage);
     }
 
-    function setOracleCoreAddr()
-        OnlyOwner
-        public
-    {
-        myStorage.setBytes32ToAddress('OracleAddress', 'OracleCore', this);
-    }
-
     modifier OnlyOwner {
         require(msg.sender == owner);
         _;

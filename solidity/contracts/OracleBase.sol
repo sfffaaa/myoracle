@@ -25,7 +25,7 @@ contract OracleBase {
     }
 
     modifier onlyOwnerAndOracleCore {
-        address oracleCoreAddress = OracleStorage(myStorageAddr).getBytes32ToAddress('OracleAddress', 'OracleCore');
+        address oracleCoreAddress = OracleStorage(myStorageAddr).getOracleAddress('OracleCore');
         require(oracleCoreAddress != 0);
         require(msg.sender == owner || msg.sender == oracleCoreAddress);
         _;
@@ -37,7 +37,7 @@ contract OracleBase {
         returns (bytes32)
     {
         // only self and owner can call this
-        address oracleCoreAddress = OracleStorage(myStorageAddr).getBytes32ToAddress('OracleAddress', 'OracleCore');
+        address oracleCoreAddress = OracleStorage(myStorageAddr).getOracleAddress('OracleCore');
         require(oracleCoreAddress != 0);
 
         return OracleCore(oracleCoreAddress).querySentNode(this, _requests);

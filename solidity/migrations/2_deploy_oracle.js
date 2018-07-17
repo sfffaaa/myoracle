@@ -1,5 +1,6 @@
 /* global artifacts */
 
+const OracleRegister = artifacts.require('./OracleRegister');
 const OracleStorage = artifacts.require('./OracleStorage');
 const TestStorage = artifacts.require('./TestStorage');
 const OracleCore = artifacts.require('./OracleCore');
@@ -8,6 +9,7 @@ const TestOracleExample = artifacts.require('./TestOracleExample');
 module.exports = (deployer, network, accounts) => {
     let oracleStorageInst = null;
     let oracleCoreInst = null;
+    let oracleRegisterInst = null;
     deployer.deploy(TestStorage).then((inst) => {
         console.log(`TestStorage address: ${inst.address}`);
         return deployer.deploy(
@@ -18,7 +20,20 @@ module.exports = (deployer, network, accounts) => {
         .then((inst) => {
             console.log(`OracleStorage address: ${inst.address}`);
             oracleStorageInst = inst;
-            return deployer.deploy(OracleCore, accounts[0], inst.address);
+            return deployer.deploy(
+                OracleRegister,
+                accounts[0],
+                oracleStorageInst.address,
+            );
+        })
+        .then((inst) => {
+            oracleRegisterInst = inst;
+            console.log(`OracleRegsiter address: ${inst.address}`);
+            return deployer.deploy(
+                OracleCore,
+                accounts[0],
+                oracleStorageInst.address,
+            );
         })
         .then((inst) => {
             console.log(`OracleCore address: ${inst.address}`);
@@ -32,14 +47,19 @@ module.exports = (deployer, network, accounts) => {
         })
         .then((inst) => {
             console.log(`TestOracleExample address: ${inst.address}`);
-            return oracleStorageInst.setOracleCoreAddr(
+            return oracleStorageInst.setOracleRegisterAddr(
+                oracleRegisterInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'OracleCore',
                 oracleCoreInst.address,
                 { from: accounts[0] },
             );
         })
         .then(() => {
-            return oracleCoreInst.setOracleCoreAddr(
-                { from: accounts[0] },
-            );
+            console.log('Finish deploy');
         });
 };
