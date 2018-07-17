@@ -32,7 +32,7 @@ module.exports = (deployer, network, accounts) => {
             return deployer.deploy(
                 OracleCore,
                 accounts[0],
-                oracleStorageInst.address,
+                oracleRegisterInst.address,
             );
         })
         .then((inst) => {
@@ -56,6 +56,13 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'OracleCore',
                 oracleCoreInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'OracleStorage',
+                oracleStorageInst.address,
                 { from: accounts[0] },
             );
         })
