@@ -40,6 +40,9 @@ class MyDeployer(BaseDeployer):
         OracleRegister(self._config_path) \
             .regist_address('OracleStorage',
                             contract_info['OracleStorage']['contractAddress'])
+        OracleRegister(self._config_path) \
+            .regist_address('TestStorage',
+                            contract_info['TestStorage']['contractAddress'])
 
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
@@ -52,8 +55,7 @@ class MyDeployer(BaseDeployer):
                     my_args['OracleStorage']['contractAddress']]
         elif contract_name == 'TestOracleExample':
             return [self._w3.eth.accounts[0],
-                    my_args['OracleRegister']['contractAddress'],
-                    my_args['TestStorage']['contractAddress']]
+                    my_args['OracleRegister']['contractAddress']]
         elif contract_name == 'TestStorage':
             return []
         else:

@@ -1,20 +1,17 @@
 pragma solidity 0.4.24;
 
 import {OracleBase} from "./OracleBase.sol";
-import {OracleStorage} from "./OracleStorage.sol";
+import {OracleRegister} from "./OracleRegister.sol";
 import {TestStorage} from "./TestStorage.sol";
 
 contract TestOracleExample is OracleBase {
-    TestStorage testStorage;
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
 
-    constructor (address _owner, address _oracleRegisterAddr, address _testStorageAddr)
+    constructor (address _owner, address _oracleRegisterAddr)
         OracleBase(_owner, _oracleRegisterAddr)
         public
-    {
-        testStorage = TestStorage(_testStorageAddr);
-    }
+    {}
 
     function trigger()
         public
@@ -24,7 +21,10 @@ contract TestOracleExample is OracleBase {
         string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]';
 
         bytes32 queryId = this.__querySentNode(request);
-        testStorage.pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
+
+        address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress('TestStorage');
+        require(myTestStorageAddr != 0);
+        TestStorage(myTestStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
         emit SentCallback(queryId, request);
     }
 
@@ -35,9 +35,13 @@ contract TestOracleExample is OracleBase {
         returns (bytes32)
     {
         // all people can call this
-        uint queryIdsLength = testStorage.getBytes32ArrayLength('TestOracleExampleQueryIds');
+        address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress('TestStorage');
+        require(myTestStorageAddr != 0);
+
+        uint queryIdsLength = TestStorage(myTestStorageAddr).getBytes32ArrayLength('TestOracleExampleQueryIds');
         require(queryIdsLength > 0);
-        return testStorage.getBytes32ArrayEntry('TestOracleExampleQueryIds', queryIdsLength - 1);
+        return TestStorage(myTestStorageAddr).getBytes32ArrayEntry('TestOracleExampleQueryIds',
+                                                                   queryIdsLength - 1);
     }
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash)

@@ -10,8 +10,11 @@ module.exports = (deployer, network, accounts) => {
     let oracleStorageInst = null;
     let oracleCoreInst = null;
     let oracleRegisterInst = null;
+    let testStorageInst = null;
+
     deployer.deploy(TestStorage).then((inst) => {
         console.log(`TestStorage address: ${inst.address}`);
+        testStorageInst = inst;
         return deployer.deploy(
             OracleStorage,
             accounts[0],
@@ -42,7 +45,6 @@ module.exports = (deployer, network, accounts) => {
                 TestOracleExample,
                 accounts[0],
                 oracleRegisterInst.address,
-                TestStorage.address,
             );
         })
         .then((inst) => {
@@ -63,6 +65,13 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'OracleStorage',
                 oracleStorageInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'TestStorage',
+                testStorageInst.address,
                 { from: accounts[0] },
             );
         })
