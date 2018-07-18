@@ -1,19 +1,22 @@
 permission
 
-Because I want to test the backend script, so ...
-1. Add test smart contract with sent requests to oraclecore
-	1.1. When I implement the base class and try to test how example oracle communicate to oraclecore, I found I need
-		 to add an array for verifying queryId is correct or not.
-2. After calling that, the callback should be called, so the smart contract needs have related function to verify.
-	2.1. callback cannot be called due to node daemon doesn't run... but we can do it manually by myself..
-3. Implement the testcase in javascirpt
-4. Implemetn the testcase in python
-5. After finished it, the oraclecore function should be change and it will influence the testcase, too.
+Q: Because I want to test the backend script, so ... (FINISHED!!)
+	1. Add test smart contract with sent requests to oraclecore
+		1.1. When I implement the base class and try to test how example oracle communicate to oraclecore, I found I need
+			 to add an array for verifying queryId is correct or not.
+	2. After calling that, the callback should be called, so the smart contract needs have related function to verify.
+		2.1. callback cannot be called due to node daemon doesn't run... but we can do it manually by myself..
+	3. Implement the testcase in javascirpt
+	4. Implemetn the testcase in python
+	5. After finished it, the oraclecore function should be change and it will influence the testcase, too.
+A: Backend script is added.
 
-Permission Implement.
-I don't want to use this.functioncall, because it will cost more gas here, but that means I need to allow some user to call or change the public function to private...
+Q: Permission Implement. (FINISHED!!)
+   I don't want to use this.functioncall, because it will cost more gas here, but that means I need to allow some user to call or change the public function to private...
+A: Still need use this!! because I don't want other people call the smart contract directly. I want to write an payment mechanism...
 
-if there is nothing, getLastestId will fail...
+Q: if there is nothing, getLastestId will fail... (FINISHED!!)
+A: It will encounter required fail.
 
 Pending:
 Report of address called.
