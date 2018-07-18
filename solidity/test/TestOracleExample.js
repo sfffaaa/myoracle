@@ -30,11 +30,13 @@ contract('TestOracleExample', (accounts) => {
     it('permission check', async () => {
         const testOracleExampleInst = await TestOracleExample.deployed();
 
-        TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[0] }));
-        TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[1] }));
 
         TestUtils.AssertPass(testOracleExampleInst.trigger({ from: accounts[0] }));
-        TestUtils.AssertPass(testOracleExampleInst.trigger({ from: accounts[1] }));
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: accounts[1] }));
+
+        TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[0] }));
+        TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: accounts[1] }));
+
         TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
             FAKE_REQUEST,
             { from: accounts[0] },

@@ -45,6 +45,7 @@ async function AssertPass(promise) {
     try {
         await promise;
     } catch (error) {
+        console.log(`Expected error received, got ${error}`);
         assert.fail(`Expected error received, got ${error}`);
     }
 }

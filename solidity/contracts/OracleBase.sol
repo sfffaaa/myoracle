@@ -18,6 +18,11 @@ contract OracleBase {
         myRegisterAddr = _oracleRegisterAddr;
     }
 
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
     modifier onlyOwnerAndMyself {
         require(msg.sender == address(this) || msg.sender == owner);
         _;
@@ -31,15 +36,15 @@ contract OracleBase {
     }
 
     function __querySentNode(string _requests)
-        public
         onlyOwnerAndMyself
+        public
         returns (bytes32)
     {
         // only self and owner can call this
         address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress('OracleCore');
         require(oracleCoreAddress != 0);
 
-        return OracleCore(oracleCoreAddress).querySentNode(this, _requests);
+        return OracleCore(oracleCoreAddress).querySentNode(address(this), _requests);
     }
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;

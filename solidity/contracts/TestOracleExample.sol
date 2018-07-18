@@ -14,6 +14,7 @@ contract TestOracleExample is OracleBase {
     {}
 
     function trigger()
+        onlyOwner
         public
     {
         // all people can call this
@@ -30,6 +31,7 @@ contract TestOracleExample is OracleBase {
 
 
     function getLastestQueryId()
+        onlyOwner
         view
         public
         returns (bytes32)
