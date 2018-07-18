@@ -106,4 +106,27 @@ contract('TestOracleExample', (accounts) => {
             { from: accounts[1] },
         ));
     });
+
+    it('test oracle example payment test', async () => {
+        const testOracleExampleInst = await TestOracleExample.deployed();
+
+        TestUtils.AssertPass(testOracleExampleInst.trigger(
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertRevert(testOracleExampleInst.trigger(
+            {
+                value: 1000000,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertRevert(testOracleExampleInst.trigger(
+            {
+                value: 1,
+                from: accounts[0],
+            },
+        ));
+    });
 });

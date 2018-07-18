@@ -80,4 +80,59 @@ contract('OracleCoreBasic', (accounts) => {
             { from: accounts[1] },
         ));
     });
+
+    it('oracleCoreInst payment test', async () => {
+        const oracleCoreInst = await OracleCore.deployed();
+        const testOracleExampleInst = await TestOracleExample.deployed();
+
+        await testOracleExampleInst.trigger(
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        );
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+
+        TestUtils.AssertPass(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+        ));
+        TestUtils.AssertRevert(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+            { from: accounts[1] },
+        ));
+    });
+
+    it('Payment test', async () => {
+        const oracleCoreInst = await OracleCore.deployed();
+        const testOracleExampleInst = await TestOracleExample.deployed();
+
+        TestUtils.AssertRevert(oracleCoreInst.querySentNode(
+            testOracleExampleInst.address,
+            FAKE_REQUEST,
+            {
+                value: 1000000,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertRevert(oracleCoreInst.querySentNode(
+            testOracleExampleInst.address,
+            FAKE_REQUEST,
+            {
+                value: 1,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertPass(oracleCoreInst.querySentNode(
+            testOracleExampleInst.address,
+            'Why you are so serious???',
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        ));
+    });
 });

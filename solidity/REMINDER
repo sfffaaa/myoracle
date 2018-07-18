@@ -18,5 +18,8 @@ A: Still need use this!! because I don't want other people call the smart contra
 Q: if there is nothing, getLastestId will fail... (FINISHED!!)
 A: It will encounter required fail.
 
+Q: Add payment test
+A: Add TestOracleExample + OracleCore test case
+
 Pending:
 Report of address called.
