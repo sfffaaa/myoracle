@@ -22,8 +22,8 @@ contract('OracleCoreBasic', (accounts) => {
             testOracleExampleInst.address,
             FAKE_REQUEST,
             {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[0],
-                value: 1000,
             },
         );
         truffleAssert.eventEmitted(tx, 'ToOracleNode', (ev) => {
@@ -62,7 +62,7 @@ contract('OracleCoreBasic', (accounts) => {
 
         await testOracleExampleInst.trigger(
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[0],
             },
         );

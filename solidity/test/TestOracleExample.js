@@ -16,7 +16,7 @@ contract('TestOracleExample', (accounts) => {
 
         await testOracleExampleInst.trigger(
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[0],
             },
         );
@@ -38,13 +38,13 @@ contract('TestOracleExample', (accounts) => {
 
         TestUtils.AssertPass(testOracleExampleInst.trigger(
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[0],
             },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.trigger(
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[1],
             },
         ));
@@ -55,14 +55,14 @@ contract('TestOracleExample', (accounts) => {
         TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
             FAKE_REQUEST,
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[0],
             },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.__querySentNode(
             FAKE_REQUEST,
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[1],
             },
         ));
@@ -88,7 +88,7 @@ contract('TestOracleExample', (accounts) => {
 
         await testOracleExampleInst.trigger(
             {
-                value: 1000,
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
                 from: accounts[0],
             },
         );

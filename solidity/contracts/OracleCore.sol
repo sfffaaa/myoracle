@@ -25,7 +25,7 @@ contract OracleCore is OracleConstant{
     }
 
     modifier CheckPaymentValue {
-        require(msg.value >= 1000 wei);
+        require(msg.value <= MAX_PAYMENT_AMOUNT && msg.value >= MIN_PAYMENT_AMOUNT);
         _;
     }
 

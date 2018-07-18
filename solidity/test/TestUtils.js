@@ -1,5 +1,7 @@
 /* global assert */
 
+const ALLOW_PAYMENT_VALUE = 1000;
+
 function WaitContractEventGet(myevent) {
     return new Promise((resolve, reject) => {
         myevent.get((error, resp) => {
@@ -55,4 +57,5 @@ module.exports = {
     CheckObjectEqual,
     AssertRevert,
     AssertPass,
+    ALLOW_PAYMENT_VALUE,
 };
