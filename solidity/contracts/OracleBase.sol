@@ -2,9 +2,10 @@ pragma solidity 0.4.24;
 
 import {OracleRegister} from "./OracleRegister.sol";
 import {OracleCore} from "./OracleCore.sol";
+import {OracleConstant} from "./OracleConstant.sol";
 
 // OracleBase and its childs need deploy after oracleCore and OracleStorage.
-contract OracleBase {
+contract OracleBase is OracleConstant {
    
     address myRegisterAddr;
     address owner;
@@ -29,7 +30,7 @@ contract OracleBase {
     }
 
     modifier onlyOwnerAndOracleCore {
-        address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress('OracleCore');
+        address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY);
         require(oracleCoreAddress != 0);
         require(msg.sender == owner || msg.sender == oracleCoreAddress);
         _;
@@ -41,7 +42,7 @@ contract OracleBase {
         returns (bytes32)
     {
         // only self and owner can call this
-        address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress('OracleCore');
+        address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY);
         require(oracleCoreAddress != 0);
 
         return OracleCore(oracleCoreAddress).querySentNode(address(this), _requests);

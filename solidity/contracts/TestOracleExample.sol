@@ -5,6 +5,8 @@ import {OracleRegister} from "./OracleRegister.sol";
 import {TestStorage} from "./TestStorage.sol";
 
 contract TestOracleExample is OracleBase {
+    string TEST_STORAGE_ADDR_KEY = 'TestStorage';
+    string TEST_STORAGE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
 
@@ -23,9 +25,9 @@ contract TestOracleExample is OracleBase {
 
         bytes32 queryId = this.__querySentNode(request);
 
-        address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress('TestStorage');
+        address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
         require(myTestStorageAddr != 0);
-        TestStorage(myTestStorageAddr).pushBytes32ArrayEntry('TestOracleExampleQueryIds', queryId);
+        TestStorage(myTestStorageAddr).pushBytes32ArrayEntry(TEST_STORAGE_QUERY_IDS_KEY, queryId);
         emit SentCallback(queryId, request);
     }
 
@@ -37,12 +39,12 @@ contract TestOracleExample is OracleBase {
         returns (bytes32)
     {
         // all people can call this
-        address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress('TestStorage');
+        address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
         require(myTestStorageAddr != 0);
 
-        uint queryIdsLength = TestStorage(myTestStorageAddr).getBytes32ArrayLength('TestOracleExampleQueryIds');
+        uint queryIdsLength = TestStorage(myTestStorageAddr).getBytes32ArrayLength(TEST_STORAGE_QUERY_IDS_KEY);
         require(queryIdsLength > 0);
-        return TestStorage(myTestStorageAddr).getBytes32ArrayEntry('TestOracleExampleQueryIds',
+        return TestStorage(myTestStorageAddr).getBytes32ArrayEntry(TEST_STORAGE_QUERY_IDS_KEY,
                                                                    queryIdsLength - 1);
     }
 
