@@ -18,7 +18,14 @@ contract('OracleCoreBasic', (accounts) => {
         const testOracleExampleInst = await TestOracleExample.deployed();
 
         let queryId = 0;
-        let tx = await oracleCoreInst.querySentNode(testOracleExampleInst.address, FAKE_REQUEST);
+        let tx = await oracleCoreInst.querySentNode(
+            testOracleExampleInst.address,
+            FAKE_REQUEST,
+            {
+                from: accounts[0],
+                value: 1000,
+            },
+        );
         truffleAssert.eventEmitted(tx, 'ToOracleNode', (ev) => {
             const { queryId: queryIdTmp } = ev;
             queryId = queryIdTmp;
@@ -53,7 +60,12 @@ contract('OracleCoreBasic', (accounts) => {
         const oracleCoreInst = await OracleCore.deployed();
         const testOracleExampleInst = await TestOracleExample.deployed();
 
-        await testOracleExampleInst.trigger({ from: accounts[0] });
+        await testOracleExampleInst.trigger(
+            {
+                value: 1000,
+                from: accounts[0],
+            },
+        );
         const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
 
         TestUtils.AssertPass(oracleCoreInst.resultSentBack(

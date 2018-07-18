@@ -6,6 +6,7 @@ import {OracleStorage} from "./OracleStorage.sol";
 import {OracleRegister} from "./OracleRegister.sol";
 import {OracleConstant} from "./OracleConstant.sol";
 
+
 contract OracleCore is OracleConstant{
     address owner;
     address oracleRegisterAddr;
@@ -23,7 +24,14 @@ contract OracleCore is OracleConstant{
         _;
     }
 
+    modifier CheckPaymentValue {
+        require(msg.value >= 1000 wei);
+        _;
+    }
+
     function querySentNode(address _callee, string _requests)
+        CheckPaymentValue
+        payable
         public
         returns (bytes32)
     {

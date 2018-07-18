@@ -14,7 +14,12 @@ contract('TestOracleExample', (accounts) => {
         const oracleCoreInst = await OracleCore.deployed();
         const testOracleExampleInst = await TestOracleExample.deployed();
 
-        await testOracleExampleInst.trigger({ from: accounts[0] });
+        await testOracleExampleInst.trigger(
+            {
+                value: 1000,
+                from: accounts[0],
+            },
+        );
         let oracleData = {};
         const toOracleNodeEvent = oracleCoreInst.ToOracleNode({}, { fromBlock: 0, toBlock: 'latest' });
         const oracleLogs = await TestUtils.WaitContractEventGet(toOracleNodeEvent);
@@ -31,19 +36,35 @@ contract('TestOracleExample', (accounts) => {
         const testOracleExampleInst = await TestOracleExample.deployed();
 
 
-        TestUtils.AssertPass(testOracleExampleInst.trigger({ from: accounts[0] }));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: accounts[1] }));
+        TestUtils.AssertPass(testOracleExampleInst.trigger(
+            {
+                value: 1000,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertRevert(testOracleExampleInst.trigger(
+            {
+                value: 1000,
+                from: accounts[1],
+            },
+        ));
 
         TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[0] }));
         TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: accounts[1] }));
 
         TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
             FAKE_REQUEST,
-            { from: accounts[0] },
+            {
+                value: 1000,
+                from: accounts[0],
+            },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.__querySentNode(
             FAKE_REQUEST,
-            { from: accounts[1] },
+            {
+                value: 1000,
+                from: accounts[1],
+            },
         ));
 
         const fakeQueryId = web3.sha3(FAKE_RESPONSE);
@@ -65,7 +86,12 @@ contract('TestOracleExample', (accounts) => {
         const oracleCoreInst = await OracleCore.deployed();
         const testOracleExampleInst = await TestOracleExample.deployed();
 
-        await testOracleExampleInst.trigger({ from: accounts[0] });
+        await testOracleExampleInst.trigger(
+            {
+                value: 1000,
+                from: accounts[0],
+            },
+        );
         const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
 
         TestUtils.AssertPass(oracleCoreInst.resultSentBack(
