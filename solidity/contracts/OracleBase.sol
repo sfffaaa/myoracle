@@ -9,7 +9,6 @@ contract OracleBase {
     address myRegisterAddr;
     address owner;
 
-    //[TODO] Need use register instead of real storage address
     constructor (address _owner, address _oracleRegisterAddr)
         public
     {
