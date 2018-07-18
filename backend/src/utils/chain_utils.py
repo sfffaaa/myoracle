@@ -6,6 +6,10 @@ from utils import my_config
 import time
 
 
+def convert_to_wei(val, unit):
+    return Web3.toWei(val, unit)
+
+
 def convert_to_bytes(val):
     if bytes == type(val):
         return val

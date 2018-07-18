@@ -16,11 +16,11 @@ class TestOracleExample(BaseContract):
         return TestOracleExampleOnChainHandler(config)
 
     # --- Customize function for their onw function ---
-    def trigger(self):
-        self._onchain_handler.trigger()
+    def trigger(self, **kargs):
+        self._onchain_handler.trigger(**kargs)
 
-    def get_lastest_query_id(self):
-        b_queryid = self._onchain_handler.get_lastest_query_id()
+    def get_lastest_query_id(self, **kargs):
+        b_queryid = self._onchain_handler.get_lastest_query_id(**kargs)
         return convert_to_hex(b_queryid)
 
 

@@ -11,7 +11,7 @@ from clients.oracle_node_client import OracleNodeClient
 from clients.test_oracle_example_client import TestOracleExampleClient
 from test_utils import _TEST_CONFIG
 from test_oracle_example.test_oracle_example import TestOracleExample
-from utils.chain_utils import convert_to_hex
+from utils.chain_utils import convert_to_hex, convert_to_wei
 from web3 import Web3
 
 TEST_REQUEST_STR = 'json(https://api.kraken.com/0/public/Ticker)["error"][0]'
@@ -71,7 +71,7 @@ class TestTestOracleExample(unittest.TestCase):
         test_example = TestOracleExample(_TEST_CONFIG)
         # self.assertEqual(0, test_example.get_lastest_query_id(), 'There is no query id')
 
-        test_example.trigger()
+        test_example.trigger(value=convert_to_wei(1000, 'wei'))
         test_example_queryid = test_example.get_lastest_query_id()
         gevent.sleep(5)
 

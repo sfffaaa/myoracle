@@ -3,7 +3,6 @@
 
 from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
-from utils.chain_utils import wait_miner, check_transaction_meet_assert
 
 
 class TestOracleExampleOnChainHandler(BaseContractOnChainHandler):
@@ -16,22 +15,20 @@ class TestOracleExampleOnChainHandler(BaseContractOnChainHandler):
         return 'TestOracleExample'
 
     # --- connect to contract function ---
-    def trigger(self):
-        w3 = self.get_w3_inst()
+    def trigger(self, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
         print('==== trigger start ====')
         tx_hash = self.get_contract_inst().functions.trigger() \
-                                                    .transact({'from': w3.eth.accounts[0],
-                                                               'gas': my_config.GAS_SPENT})
+                                                    .transact(transaction_data)
 
-        wait_miner(w3, tx_hash)
-        if check_transaction_meet_assert(w3, tx_hash):
-            raise IOError('assert encounter..')
+        self.wait_miner_finish(tx_hash)
         print('==== trigger finish ====')
 
-    def get_lastest_query_id(self):
+    def get_lastest_query_id(self, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
         print('==== get_lastest_query_id start ====')
 
-        query_id = self.get_contract_inst().functions.getLastestQueryId().call()
+        query_id = self.get_contract_inst().functions.getLastestQueryId().call(transaction_data)
         print('==== get_lastest_query_id end ====')
         return query_id
 

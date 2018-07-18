@@ -3,7 +3,6 @@
 
 from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
-from utils.chain_utils import wait_miner, check_transaction_meet_assert
 
 
 class OracleStorageOnChainHandler(BaseContractOnChainHandler):
@@ -16,16 +15,13 @@ class OracleStorageOnChainHandler(BaseContractOnChainHandler):
         return 'OracleStorage'
 
     # --- connect to contract function ---
-    def set_oracle_register_addr(self, address):
-        w3 = self.get_w3_inst()
+    def set_oracle_register_addr(self, address, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
         print('==== set_oracle_register_addr start ====')
         tx_hash = self.get_contract_inst().functions.setOracleRegisterAddr(address) \
-                                                    .transact({'from': w3.eth.accounts[0],
-                                                               'gas': my_config.GAS_SPENT})
+                                                    .transact(transaction_data)
 
-        wait_miner(w3, tx_hash)
-        if check_transaction_meet_assert(w3, tx_hash):
-            raise IOError('assert encounter..')
+        self.wait_miner_finish(tx_hash)
         print('==== set_oracle_register_addr finish ====')
 
 

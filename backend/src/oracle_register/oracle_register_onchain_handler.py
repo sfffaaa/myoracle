@@ -3,7 +3,7 @@
 
 from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
-from utils.chain_utils import wait_miner, check_transaction_meet_assert, convert_to_hex
+from utils.chain_utils import convert_to_hex
 
 
 class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
@@ -16,22 +16,19 @@ class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
         return 'OracleRegister'
 
     # --- connect to contract function ---
-    def regist_address(self, name, address):
-        w3 = self.get_w3_inst()
+    def regist_address(self, name, address, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
         print('==== regist_address start ====')
         tx_hash = self.get_contract_inst().functions.registAddress(name, address) \
-                                                    .transact({'from': w3.eth.accounts[0],
-                                                               'gas': my_config.GAS_SPENT})
+                                                    .transact(transaction_data)
 
-        wait_miner(w3, tx_hash)
-        if check_transaction_meet_assert(w3, tx_hash):
-            raise IOError('assert encounter..')
+        self.wait_miner_finish(tx_hash)
         print('==== regist_address finish ====')
 
-    def get_address(self, name):
-        w3 = self.get_w3_inst()
+    def get_address(self, name, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
         print('==== get_address start ====')
-        address = self.get_contract_inst().functions.getAddress(name).call({'from': w3.eth.accounts[0]})
+        address = self.get_contract_inst().functions.getAddress(name).call(transaction_data)
         print('==== get_address finish ====')
         return convert_to_hex(address)
 
