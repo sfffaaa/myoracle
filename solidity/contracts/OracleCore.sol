@@ -5,9 +5,10 @@ import {OracleBase} from "./OracleBase.sol";
 import {OracleStorage} from "./OracleStorage.sol";
 import {OracleRegister} from "./OracleRegister.sol";
 import {OracleConstant} from "./OracleConstant.sol";
+import {OracleWallet} from "./OracleWallet.sol";
 
 
-contract OracleCore is OracleConstant{
+contract OracleCore is OracleConstant {
     address owner;
     address oracleRegisterAddr;
 
@@ -24,13 +25,7 @@ contract OracleCore is OracleConstant{
         _;
     }
 
-    modifier CheckPaymentValue {
-        require(msg.value <= MAX_PAYMENT_AMOUNT && msg.value >= MIN_PAYMENT_AMOUNT);
-        _;
-    }
-
     function querySentNode(address _callee, string _requests)
-        CheckPaymentValue
         payable
         public
         returns (bytes32)
@@ -43,6 +38,11 @@ contract OracleCore is OracleConstant{
         bytes32 myQueryId = keccak256(abi.encodePacked(now, _callee, _requests));
         OracleStorage(myStorageAddr).setBytes32ToAddress(ORACLE_NODE_ADDR_KEY, myQueryId, _callee);
         emit ToOracleNode(myQueryId, _requests);
+
+        address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
+        require(myWalletAddr != 0);
+        OracleWallet(myWalletAddr).deposit.value(msg.value)(_callee);
+
         return myQueryId;
     }
 

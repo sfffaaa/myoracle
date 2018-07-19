@@ -5,11 +5,13 @@ const OracleStorage = artifacts.require('./OracleStorage');
 const TestStorage = artifacts.require('./TestStorage');
 const OracleCore = artifacts.require('./OracleCore');
 const TestOracleExample = artifacts.require('./TestOracleExample');
+const OracleWallet = artifacts.require('./OracleWallet');
 
 module.exports = (deployer, network, accounts) => {
     let oracleStorageInst = null;
     let oracleCoreInst = null;
     let oracleRegisterInst = null;
+    let oracleWalletInst = null;
     let testStorageInst = null;
 
     deployer.deploy(TestStorage).then((inst) => {
@@ -42,6 +44,14 @@ module.exports = (deployer, network, accounts) => {
             console.log(`OracleCore address: ${inst.address}`);
             oracleCoreInst = inst;
             return deployer.deploy(
+                OracleWallet,
+                accounts[0],
+            );
+        })
+        .then((inst) => {
+            console.log(`OracleWallet address: ${inst.address}`);
+            oracleWalletInst = inst;
+            return deployer.deploy(
                 TestOracleExample,
                 accounts[0],
                 oracleRegisterInst.address,
@@ -65,6 +75,13 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'OracleStorage',
                 oracleStorageInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'OracleWallet',
+                oracleWalletInst.address,
                 { from: accounts[0] },
             );
         })

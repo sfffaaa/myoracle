@@ -14,6 +14,7 @@ class MyDeployer(BaseDeployer):
         info = self.deploy_multiple_smart_contract(config_handler, {
             'TestStorage': {},
             'OracleStorage': {},
+            'OracleWallet': {},
         })
         contract_info = {}
         contract_info.update(info)
@@ -41,6 +42,9 @@ class MyDeployer(BaseDeployer):
             .regist_address('OracleStorage',
                             contract_info['OracleStorage']['contractAddress'])
         OracleRegister(self._config_path) \
+            .regist_address('OracleWallet',
+                            contract_info['OracleWallet']['contractAddress'])
+        OracleRegister(self._config_path) \
             .regist_address('TestStorage',
                             contract_info['TestStorage']['contractAddress'])
 
@@ -56,6 +60,8 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'TestOracleExample':
             return [self._w3.eth.accounts[0],
                     my_args['OracleRegister']['contractAddress']]
+        elif contract_name == 'OracleWallet':
+            return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestStorage':
             return []
         else:
