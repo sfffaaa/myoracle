@@ -3,6 +3,7 @@
 
 from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
+from utils.chain_utils import convert_to_hex
 
 
 class OracleStorageOnChainHandler(BaseContractOnChainHandler):
@@ -23,6 +24,7 @@ class OracleStorageOnChainHandler(BaseContractOnChainHandler):
 
         self.wait_miner_finish(tx_hash)
         print('==== set_oracle_register_addr finish ====')
+        return convert_to_hex(tx_hash)
 
 
 if __name__ == '__main__':

@@ -17,8 +17,8 @@ class ContractHandler():
 
         contract_info = self._get_contract_info(contract_name)
         contract_abi = contract_info['abi']
-        contract_address = contract_info['address']
-        self._contract_inst = self._w3.eth.contract(contract_address,
+        self._contract_address = contract_info['address']
+        self._contract_inst = self._w3.eth.contract(self._contract_address,
                                                     abi=contract_abi)
 
     def _check_contract_name(self, check_name):
@@ -26,8 +26,14 @@ class ContractHandler():
         if check_name not in contract_names.split(','):
             raise IOError('Cannot find {0} in config {1}'.format(check_name, contract_names))
 
+    def get_address(self):
+        return self._contract_address
+
     def get_w3(self):
         return self._w3
+
+    def get_balance(self):
+        return self._w3.eth.getBalance(self._contract_address)
 
     def get_contract(self):
         return self._contract_inst

@@ -22,6 +22,12 @@ class BaseContractOnChainHandler():
         default_data.update(kargs)
         return default_data
 
+    def get_address(self):
+        return self._contract_handler.get_address()
+
+    def get_balance(self):
+        return self._contract_handler.get_balance()
+
     def get_w3_inst(self):
         return self._w3
 

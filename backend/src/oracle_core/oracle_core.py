@@ -18,13 +18,13 @@ class OracleCore(BaseContract):
     # This function should use in node, but I still implement it...
 
     def set_oracle_core_addr(self, **kargs):
-        self._onchain_handler.set_oracle_core_addr(**kargs)
+        return self._onchain_handler.set_oracle_core_addr(**kargs)
 
     def query_sent_node(self, address, requests, **kargs):
-        self._onchain_handler.query_sent_node(address, requests, **kargs)
+        return self._onchain_handler.query_sent_node(address, requests, **kargs)
 
     def result_sent_back(self, query_id, response, hash_val, **kargs):
-        self._onchain_handler.result_sent_back(query_id, response, hash_val, **kargs)
+        return self._onchain_handler.result_sent_back(query_id, response, hash_val, **kargs)
 
 
 if __name__ == '__main__':

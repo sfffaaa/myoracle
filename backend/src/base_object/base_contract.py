@@ -12,5 +12,11 @@ class BaseContract():
     def create_onchain_handler(self, config):
         raise IOError('Child should implement this function')
 
+    def get_address(self):
+        return self._onchain_handler.get_address()
+
+    def get_balance(self):
+        return self._onchain_handler.get_balance()
+
     def get_all_events(self):
         return self._onchain_handler.get_all_events()

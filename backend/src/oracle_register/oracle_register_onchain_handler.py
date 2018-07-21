@@ -24,6 +24,7 @@ class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
 
         self.wait_miner_finish(tx_hash)
         print('==== regist_address finish ====')
+        return convert_to_hex(tx_hash)
 
     def get_address(self, name, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)

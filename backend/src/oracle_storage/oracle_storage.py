@@ -18,7 +18,7 @@ class OracleStorage(BaseContract):
     # This function should use in node, but I still implement it...
 
     def set_oracle_register_addr(self, address, **kargs):
-        self._onchain_handler.set_oracle_register_addr(address, **kargs)
+        return self._onchain_handler.set_oracle_register_addr(address, **kargs)
 
 
 if __name__ == '__main__':

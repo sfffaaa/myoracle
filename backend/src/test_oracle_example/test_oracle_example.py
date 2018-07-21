@@ -17,7 +17,7 @@ class TestOracleExample(BaseContract):
 
     # --- Customize function for their onw function ---
     def trigger(self, **kargs):
-        self._onchain_handler.trigger(**kargs)
+        return self._onchain_handler.trigger(**kargs)
 
     def get_lastest_query_id(self, **kargs):
         b_queryid = self._onchain_handler.get_lastest_query_id(**kargs)

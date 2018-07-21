@@ -15,9 +15,8 @@ class OracleRegister(BaseContract):
         return OracleRegisterOnChainHandler(config)
 
     # --- Customize function for their onw function ---
-    # This function should use in node, but I still implement it...
     def regist_address(self, name, address, **kargs):
-        self._onchain_handler.regist_address(name, address, **kargs)
+        return self._onchain_handler.regist_address(name, address, **kargs)
 
     def get_address(self, name, **kargs):
         return self._onchain_handler.get_address(name, **kargs)

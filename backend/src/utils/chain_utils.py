@@ -4,6 +4,7 @@
 from web3 import Web3
 from utils import my_config
 import time
+from handler.contract_handler import ConfigHandler
 
 
 def convert_to_wei(val, unit):
@@ -58,3 +59,25 @@ def check_transaction_meet_assert(w3, tx_hashs):
             return True
 
     return False
+
+
+class MyWeb3():
+    def __init__(self, config_path):
+        self._w3 = self._get_web3_instance(config_path)
+
+    def _get_web3_instance(self, config_path):
+        config_handler = ConfigHandler(config_path)
+        file_ipc = config_handler.get_chain_config('Ethereum', 'file_ipc')
+        return Web3(Web3.IPCProvider(file_ipc))
+
+    def get_address_balance(self, address):
+        return self._w3.eth.getBalance(address)
+
+    def get_accounts(self):
+        return self._w3.eth.accounts
+
+    def get_tx_detail(self, tx):
+        return self._w3.eth.getTransaction(tx)
+
+    def get_tx_receipt(self, tx):
+        return self._w3.eth.getTransactionReceipt(tx)

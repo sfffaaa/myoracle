@@ -3,7 +3,7 @@
 
 from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
-from utils.chain_utils import convert_to_bytes
+from utils.chain_utils import convert_to_bytes, convert_to_hex
 
 
 class OracleCoreOnChainHandler(BaseContractOnChainHandler):
@@ -24,6 +24,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
 
         self.wait_miner_finish(tx_hash)
         print('==== set_oracle_core_addr finish ====')
+        return convert_to_hex(tx_hash)
 
     def query_sent_node(self, address, requests, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
@@ -33,6 +34,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
 
         self.wait_miner_finish(tx_hash)
         print('==== query_sent_node finish ====')
+        return convert_to_hex(tx_hash)
 
     def result_sent_back(self, query_id, response, hash_val, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
@@ -44,6 +46,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
         self.wait_miner_finish(tx_hash)
         print('==== result_sent_back end ====')
+        return convert_to_hex(tx_hash)
 
 
 if __name__ == '__main__':
