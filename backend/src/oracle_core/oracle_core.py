@@ -20,8 +20,8 @@ class OracleCore(BaseContract):
     def set_oracle_core_addr(self, **kargs):
         return self._onchain_handler.set_oracle_core_addr(**kargs)
 
-    def query_sent_node(self, address, requests, **kargs):
-        return self._onchain_handler.query_sent_node(address, requests, **kargs)
+    def query_sent_node(self, timeout, address, requests, **kargs):
+        return self._onchain_handler.query_sent_node(timeout, address, requests, **kargs)
 
     def result_sent_back(self, query_id, response, hash_val, **kargs):
         return self._onchain_handler.result_sent_back(query_id, response, hash_val, **kargs)

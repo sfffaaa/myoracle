@@ -46,7 +46,7 @@ contract OracleBase is OracleConstant {
         address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY);
         require(oracleCoreAddress != 0);
 
-        return OracleCore(oracleCoreAddress).querySentNode.value(msg.value)(address(this), _requests);
+        return OracleCore(oracleCoreAddress).querySentNode.value(msg.value)(0, address(this), _requests);
     }
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;

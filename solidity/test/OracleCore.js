@@ -19,6 +19,7 @@ contract('OracleCoreBasic', (accounts) => {
 
         let queryId = 0;
         let tx = await oracleCoreInst.querySentNode(
+            0,
             testOracleExampleInst.address,
             FAKE_REQUEST,
             {
@@ -111,6 +112,7 @@ contract('OracleCoreBasic', (accounts) => {
         const testOracleExampleInst = await TestOracleExample.deployed();
 
         TestUtils.AssertRevert(oracleCoreInst.querySentNode(
+            0,
             testOracleExampleInst.address,
             FAKE_REQUEST,
             {
@@ -119,6 +121,7 @@ contract('OracleCoreBasic', (accounts) => {
             },
         ));
         TestUtils.AssertRevert(oracleCoreInst.querySentNode(
+            0,
             testOracleExampleInst.address,
             FAKE_REQUEST,
             {
@@ -127,6 +130,7 @@ contract('OracleCoreBasic', (accounts) => {
             },
         ));
         TestUtils.AssertPass(oracleCoreInst.querySentNode(
+            0,
             testOracleExampleInst.address,
             'Why you are so serious???',
             {

@@ -12,7 +12,7 @@ contract OracleCore is OracleConstant {
     address owner;
     address oracleRegisterAddr;
 
-    event ToOracleNode(bytes32 queryId, string request);
+    event ToOracleNode(uint timeout, bytes32 queryId, string request);
     event ToOracleCallee(bytes32 queryId, address callee, string response, bytes32 hash);
 
     constructor (address _owner, address _oracleRegisterAddr) public {
@@ -25,7 +25,7 @@ contract OracleCore is OracleConstant {
         _;
     }
 
-    function querySentNode(address _callee, string _requests)
+    function querySentNode(uint timeout, address _callee, string _requests)
         payable
         public
         returns (bytes32)
@@ -37,7 +37,7 @@ contract OracleCore is OracleConstant {
         // all user can call this
         bytes32 myQueryId = keccak256(abi.encodePacked(now, _callee, _requests));
         OracleStorage(myStorageAddr).setBytes32ToAddress(ORACLE_NODE_ADDR_KEY, myQueryId, _callee);
-        emit ToOracleNode(myQueryId, _requests);
+        emit ToOracleNode(timeout, myQueryId, _requests);
 
         address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
         require(myWalletAddr != 0);

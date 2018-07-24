@@ -26,10 +26,10 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         print('==== set_oracle_core_addr finish ====')
         return convert_to_hex(tx_hash)
 
-    def query_sent_node(self, address, requests, **kargs):
+    def query_sent_node(self, timeout, address, requests, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== query_sent_node start ====')
-        tx_hash = self.get_contract_inst().functions.querySentNode(address, requests) \
+        tx_hash = self.get_contract_inst().functions.querySentNode(timeout, address, requests) \
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
