@@ -24,7 +24,7 @@ contract TestOracleExample is OracleBase {
         // maybe I need to design pause
         string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]';
 
-        bytes32 queryId = this.__querySentNode.value(msg.value)(request);
+        bytes32 queryId = this.__querySentNode.value(msg.value)(0, request);
 
         address myTestStorageAddr = OracleRegister(myRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
         require(myTestStorageAddr != 0);

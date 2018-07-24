@@ -53,6 +53,7 @@ contract('TestOracleExample', (accounts) => {
         TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: accounts[1] }));
 
         TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
+            0,
             FAKE_REQUEST,
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -60,6 +61,7 @@ contract('TestOracleExample', (accounts) => {
             },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.__querySentNode(
+            0,
             FAKE_REQUEST,
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,

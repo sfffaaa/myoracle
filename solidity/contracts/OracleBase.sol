@@ -36,7 +36,7 @@ contract OracleBase is OracleConstant {
         _;
     }
 
-    function __querySentNode(string _requests)
+    function __querySentNode(uint timeout, string _requests)
         onlyOwnerAndMyself
         payable
         public
@@ -46,7 +46,7 @@ contract OracleBase is OracleConstant {
         address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY);
         require(oracleCoreAddress != 0);
 
-        return OracleCore(oracleCoreAddress).querySentNode.value(msg.value)(0, address(this), _requests);
+        return OracleCore(oracleCoreAddress).querySentNode.value(msg.value)(timeout, address(this), _requests);
     }
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;
