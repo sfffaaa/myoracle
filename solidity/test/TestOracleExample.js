@@ -131,4 +131,24 @@ contract('TestOracleExample', (accounts) => {
             },
         ));
     });
+
+    it('convert check', async () => {
+        const testOracleExampleInst = await TestOracleExample.deployed();
+        const result = [
+            ['123', true, 123],
+            ['123.123', true, 123],
+            ['a123', false, 0],
+            ['aas', false, 0],
+            ['123a', false, 0],
+        ];
+        const reqs = [];
+        for (let i = 0; i < result.length; i += 1) {
+            reqs.push(testOracleExampleInst.convertResponseToPrice.call(result[i][0]));
+        }
+        const resps = await Promise.all(reqs);
+        for (let i = 0; i < result.length; i += 1) {
+            assert.equal(resps[i][0], result[i][1], 'convert success');
+            assert.equal(resps[i][1], result[i][2], 'price checking');
+        }
+    });
 });

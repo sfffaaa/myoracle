@@ -6,7 +6,10 @@ const TestStorage = artifacts.require('./TestStorage');
 const OracleCore = artifacts.require('./OracleCore');
 const TestOracleExample = artifacts.require('./TestOracleExample');
 const OracleWallet = artifacts.require('./OracleWallet');
+// [TODO] I dont use TestWallet right now....
 const TestWallet = artifacts.require('./TestWallet');
+const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
+
 
 module.exports = (deployer, network, accounts) => {
     let oracleStorageInst = null;
@@ -52,6 +55,13 @@ module.exports = (deployer, network, accounts) => {
         .then((inst) => {
             console.log(`OracleWallet address: ${inst.address}`);
             oracleWalletInst = inst;
+            return deployer.deploy(
+                TestWalletDistributor,
+                accounts[0],
+            );
+        })
+        .then((inst) => {
+            console.log(`TestWalletDistributor address: ${inst.address}`);
             return deployer.deploy(
                 TestWallet,
                 accounts[0],

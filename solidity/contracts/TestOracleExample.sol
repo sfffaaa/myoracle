@@ -3,12 +3,15 @@ pragma solidity 0.4.24;
 import {OracleBase} from "./OracleBase.sol";
 import {OracleRegister} from "./OracleRegister.sol";
 import {TestStorage} from "./TestStorage.sol";
+import './SafeMath.sol';
 
 contract TestOracleExample is OracleBase {
+    using SafeMath for uint256;
     string TEST_STORAGE_ADDR_KEY = 'TestStorage';
     string TEST_STORAGE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
+    event TriggerMyCallback(bool trigger, uint price);
 
     constructor (address _owner, address _oracleRegisterAddr)
         OracleBase(_owner, _oracleRegisterAddr)
@@ -46,7 +49,7 @@ contract TestOracleExample is OracleBase {
         uint queryIdsLength = TestStorage(myTestStorageAddr).getBytes32ArrayLength(TEST_STORAGE_QUERY_IDS_KEY);
         require(queryIdsLength > 0);
         return TestStorage(myTestStorageAddr).getBytes32ArrayEntry(TEST_STORAGE_QUERY_IDS_KEY,
-                                                                   queryIdsLength - 1);
+                                                                   queryIdsLength.sub(1));
     }
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash)
@@ -54,5 +57,36 @@ contract TestOracleExample is OracleBase {
         public
     {
         emit ShowCallback(_queryId, _response, _hash);
+        bool success = false;
+        uint price = 0;
+        (success, price) = convertResponseToPrice(_response);
+        emit TriggerMyCallback(success, price);
+        if (true == success) {
+            //[TODO] just trigger interested thing
+        }
+        //[TODO] call oracle again
+    }
+
+    // Rounddown
+    function convertResponseToPrice(string _str)
+        public
+        pure
+        returns (bool, uint)
+    {
+        bytes memory data = (bytes) (_str);
+        uint256 price = 0;
+        for (uint i = 0; i < data.length; i++) {
+            // 46 => '.'
+            if (data[i] == 46) {
+                break;
+            }
+            // 48 => '0', 57 => '9'
+            if (data[i] < 48 || data[i] > 57) {
+                return (false, 0);
+            }
+            price = price.mul(10).add(uint(data[i]).sub(48));
+        }
+
+        return (true, price);
     }
 }
