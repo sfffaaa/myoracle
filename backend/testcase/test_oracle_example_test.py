@@ -75,14 +75,18 @@ class TestTestOracleExample(unittest.TestCase):
         test_example_queryid = test_example.get_lastest_query_id()
         gevent.sleep(5)
 
-        for test_list in [self.to_oracle_node_data, self.sent_event_data, self.show_event_data]:
-            self.assertEqual(len(test_list), 1, '{0} has more than one entry'.format(test_list))
+        for idx, test_list in enumerate([self.to_oracle_node_data, self.sent_event_data, self.show_event_data]):
+            self.assertEqual(len(test_list),
+                             1,
+                             '{0} has more than one entry {1}'.format(test_list, idx))
 
         # check queryid
-        for test_list in [self.to_oracle_node_data, self.sent_event_data, self.show_event_data]:
+        for idx, test_list in enumerate([self.to_oracle_node_data, self.sent_event_data, self.show_event_data]):
             self.assertEqual(test_list[0]['queryId'],
                              test_example_queryid,
-                             'query id {0} != {1}'.format(test_list[0]['queryId'], test_example_queryid))
+                             'query id {0} != {1}, {2}'.format(test_list[0]['queryId'],
+                                                               test_example_queryid,
+                                                               idx))
 
         # check resquest
         self.assertEqual(self.to_oracle_node_data[0]['request'],

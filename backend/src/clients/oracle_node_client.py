@@ -30,9 +30,10 @@ class OracleNodeClient(BaseChainNode):
         print('in OracleNodeClient - event: query id {0}, request {1}'.format(query_id, request))
         request_handler = RequestHandler(event['args']['request'])
         response = request_handler.execute_request()
-        OracleCore(self._config_path).result_sent_back(query_id,
-                                                       response,
-                                                       convert_to_hex(Web3.sha3(text=response)))
+        tx = OracleCore(self._config_path).result_sent_back(query_id,
+                                                            response,
+                                                            convert_to_hex(Web3.sha3(text=response)))
+        print('Show tx after result back {0}'.format(tx))
 
     def setup_contract(self, config_path):
         all_events = OracleCore(config_path).get_all_events()
