@@ -22,6 +22,9 @@ Q: Add payment test
 A: Add TestOracleExample + OracleCore test case
 
 Q: Right now, oracle can be called repeated, but how can user pay the oracle fee when calling oracle repeatly...
+Q: The contract (TestWalletDistributor) should allow mulitple user to deposit their ether.
+Q: The permission should be checked again, because I found TestStorage didn't have permission check.
+Q: How about the gas spent??
 
 Pending:
 Report of address called.

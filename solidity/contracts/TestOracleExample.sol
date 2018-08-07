@@ -3,10 +3,12 @@ pragma solidity 0.4.24;
 import {OracleBase} from "./OracleBase.sol";
 import {OracleRegister} from "./OracleRegister.sol";
 import {TestStorage} from "./TestStorage.sol";
+import {TestWalletDistributor} from "./TestWalletDistributor.sol";
 import './SafeMath.sol';
 
 contract TestOracleExample is OracleBase {
     using SafeMath for uint256;
+    string TEST_WALLET_DISTRIBUTOR_ADDR_KEY = 'TestWalletDistributor';
     string TEST_STORAGE_ADDR_KEY = 'TestStorage';
     string TEST_STORAGE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
     event SentCallback(bytes32 queryId, string request);
@@ -62,7 +64,9 @@ contract TestOracleExample is OracleBase {
         (success, price) = convertResponseToPrice(_response);
         emit TriggerMyCallback(success, price);
         if (true == success) {
-            //[TODO] just trigger interested thing
+            address myTestDistributorAddr = OracleRegister(myRegisterAddr).getAddress(TEST_WALLET_DISTRIBUTOR_ADDR_KEY);
+            require(myTestDistributorAddr != 0);
+            TestWalletDistributor(myTestDistributorAddr).withdrawBalance(price);
         }
         //[TODO] call oracle again
     }

@@ -2,13 +2,15 @@
 
 const OracleRegister = artifacts.require('./OracleRegister');
 const OracleStorage = artifacts.require('./OracleStorage');
-const TestStorage = artifacts.require('./TestStorage');
 const OracleCore = artifacts.require('./OracleCore');
-const TestOracleExample = artifacts.require('./TestOracleExample');
 const OracleWallet = artifacts.require('./OracleWallet');
+
 // [TODO] I dont use TestWallet right now....
+const TestStorage = artifacts.require('./TestStorage');
 const TestWallet = artifacts.require('./TestWallet');
 const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
+const TestRegister = artifacts.require('./TestRegister');
+const TestOracleExample = artifacts.require('./TestOracleExample');
 
 
 module.exports = (deployer, network, accounts) => {
@@ -17,6 +19,7 @@ module.exports = (deployer, network, accounts) => {
     let oracleRegisterInst = null;
     let oracleWalletInst = null;
     let testStorageInst = null;
+    let testWalletDistributorInst = null;
 
     deployer.deploy(TestStorage).then((inst) => {
         console.log(`TestStorage address: ${inst.address}`);
@@ -62,6 +65,7 @@ module.exports = (deployer, network, accounts) => {
         })
         .then((inst) => {
             console.log(`TestWalletDistributor address: ${inst.address}`);
+            testWalletDistributorInst = inst;
             return deployer.deploy(
                 TestWallet,
                 accounts[0],
@@ -69,6 +73,15 @@ module.exports = (deployer, network, accounts) => {
         })
         .then((inst) => {
             console.log(`TestWallet address: ${inst.address}`);
+            // [TODO] Not use right now, USE OracleRegister right now
+            return deployer.deploy(
+                TestRegister,
+                accounts[0],
+                testStorageInst.address,
+            );
+        })
+        .then((inst) => {
+            console.log(`TestRegister address: ${inst.address}`);
             return deployer.deploy(
                 TestOracleExample,
                 accounts[0],
@@ -107,6 +120,13 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'TestStorage',
                 testStorageInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'TestWalletDistributor',
+                testWalletDistributorInst.address,
                 { from: accounts[0] },
             );
         })

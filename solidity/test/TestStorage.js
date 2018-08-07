@@ -61,4 +61,25 @@ contract('TestStorageBasic', () => {
         assert.equal(await testStorageInst.getBytes32ArrayLength(ARRAY_TEST_KEYS), 0,
             'Length should be the same');
     });
+    // bytes32AddressMap related test
+    it('Action on bytes32AddressMap checking', async () => {
+        const ADDRESS_MAP_KEY = 'show me the money';
+        assert.equal(
+            await testStorageInst.getAddress(ADDRESS_MAP_KEY),
+            0,
+            'There no address here',
+        );
+        await testStorageInst.setAddress(ADDRESS_MAP_KEY, testStorageInst.address);
+        assert.equal(
+            await testStorageInst.getAddress(ADDRESS_MAP_KEY),
+            testStorageInst.address,
+            'Address should be the same',
+        );
+        await testStorageInst.setAddress(ADDRESS_MAP_KEY, 1);
+        assert.equal(
+            await testStorageInst.getAddress(ADDRESS_MAP_KEY),
+            1,
+            'Address should be the same',
+        );
+    });
 });
