@@ -1,3 +1,7 @@
 add more test case
 
 Maybe I can use event base to kill the callback function which runs too long
+
+
+1. test case for callback to call callback. It will need web server for myself
+2. contract object can connect to contract on chain object instead of write function for passing data again in order to avoiding carelessness.

@@ -12,9 +12,13 @@ class MyDeployer(BaseDeployer):
 
         # step 1
         info = self.deploy_multiple_smart_contract(config_handler, {
-            'TestStorage': {},
             'OracleStorage': {},
             'OracleWallet': {},
+
+            'TestStorage': {},
+            'TestWalletDistributor': {},
+            # [TODO] Test Wallet doesn't use right now.
+            'TestWallet': {},
         })
         contract_info = {}
         contract_info.update(info)
@@ -47,6 +51,9 @@ class MyDeployer(BaseDeployer):
         OracleRegister(self._config_path) \
             .regist_address('TestStorage',
                             contract_info['TestStorage']['contractAddress'])
+        OracleRegister(self._config_path) \
+            .regist_address('TestWalletDistributor',
+                            contract_info['TestWalletDistributor']['contractAddress'])
 
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
@@ -62,8 +69,13 @@ class MyDeployer(BaseDeployer):
                     my_args['OracleRegister']['contractAddress']]
         elif contract_name == 'OracleWallet':
             return [self._w3.eth.accounts[0]]
+
         elif contract_name == 'TestStorage':
             return []
+        elif contract_name == 'TestWallet':
+            return [self._w3.eth.accounts[0]]
+        elif contract_name == 'TestWalletDistributor':
+            return [self._w3.eth.accounts[0]]
         else:
             raise IOError('Wrong contract name {0}'.format(contract_name))
 
