@@ -16,7 +16,7 @@ class TestWalletDistributorOnChainHandler(BaseContractOnChainHandler):
         return 'TestWalletDistributor'
 
     # --- connect to contract function ---
-    def deposit_balance(self, address, **kargs):
+    def c_deposit_balance(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== deposit_balance start ====')
         tx_hash = self.get_contract_inst().functions.depositBalance(address) \
@@ -26,7 +26,7 @@ class TestWalletDistributorOnChainHandler(BaseContractOnChainHandler):
         print('==== deposit_balance finish ====')
         return convert_to_hex(tx_hash)
 
-    def withdraw_balance(self, address, **kargs):
+    def c_withdraw_balance(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== withdraw_balance start ====')
         tx_hash = self.get_contract_inst().functions.withdraw_balance(address) \

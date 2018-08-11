@@ -14,12 +14,6 @@ class OracleStorage(BaseContract):
     def create_onchain_handler(self, config):
         return OracleStorageOnChainHandler(config)
 
-    # --- Customize function for their onw function ---
-    # This function should use in node, but I still implement it...
-
-    def set_oracle_register_addr(self, address, **kargs):
-        return self._onchain_handler.set_oracle_register_addr(address, **kargs)
-
 
 if __name__ == '__main__':
     OracleStorage()

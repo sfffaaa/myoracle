@@ -14,18 +14,6 @@ class OracleCore(BaseContract):
     def create_onchain_handler(self, config):
         return OracleCoreOnChainHandler(config)
 
-    # --- Customize function for their onw function ---
-    # This function should use in node, but I still implement it...
-
-    def set_oracle_core_addr(self, **kargs):
-        return self._onchain_handler.set_oracle_core_addr(**kargs)
-
-    def query_sent_node(self, timeout, address, requests, **kargs):
-        return self._onchain_handler.query_sent_node(timeout, address, requests, **kargs)
-
-    def result_sent_back(self, query_id, response, hash_val, **kargs):
-        return self._onchain_handler.result_sent_back(query_id, response, hash_val, **kargs)
-
 
 if __name__ == '__main__':
     OracleCore()

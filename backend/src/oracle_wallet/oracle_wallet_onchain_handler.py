@@ -16,7 +16,7 @@ class OracleWalletOnChainHandler(BaseContractOnChainHandler):
         return 'OracleWallet'
 
     # --- connect to contract function ---
-    def deposit(self, address, **kargs):
+    def c_deposit(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== deposit start ====')
         tx_hash = self.get_contract_inst().functions.deposit(address) \
@@ -26,7 +26,7 @@ class OracleWalletOnChainHandler(BaseContractOnChainHandler):
         print('==== deposit finish ====')
         return convert_to_hex(tx_hash)
 
-    def withdraw(self, address, **kargs):
+    def c_withdraw(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== withdraw start ====')
         tx_hash = self.get_contract_inst().functions.withdraw(address) \

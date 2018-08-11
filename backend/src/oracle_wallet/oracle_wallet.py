@@ -14,13 +14,6 @@ class OracleWallet(BaseContract):
     def create_onchain_handler(self, config):
         return OracleWalletOnChainHandler(config)
 
-    # --- Customize function for their onw function ---
-    def deposit(self, address, **kargs):
-        return self._onchain_handler.deposit(address, **kargs)
-
-    def withdraw(self, address, **kargs):
-        return self._onchain_handler.withdraw(address, **kargs)
-
 
 if __name__ == '__main__':
     OracleWallet()

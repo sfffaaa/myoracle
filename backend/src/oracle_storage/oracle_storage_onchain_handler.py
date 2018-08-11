@@ -16,7 +16,7 @@ class OracleStorageOnChainHandler(BaseContractOnChainHandler):
         return 'OracleStorage'
 
     # --- connect to contract function ---
-    def set_oracle_register_addr(self, address, **kargs):
+    def c_set_oracle_register_addr(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== set_oracle_register_addr start ====')
         tx_hash = self.get_contract_inst().functions.setOracleRegisterAddr(address) \

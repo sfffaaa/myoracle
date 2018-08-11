@@ -16,7 +16,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         return 'OracleCore'
 
     # --- connect to contract function ---
-    def set_oracle_core_addr(self, **kargs):
+    def c_set_oracle_core_addr(self, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== set_oracle_core_addr start ====')
         tx_hash = self.get_contract_inst().functions.setOracleCoreAddr() \
@@ -26,7 +26,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         print('==== set_oracle_core_addr finish ====')
         return convert_to_hex(tx_hash)
 
-    def query_sent_node(self, timeout, address, requests, **kargs):
+    def c_query_sent_node(self, timeout, address, requests, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== query_sent_node start ====')
         tx_hash = self.get_contract_inst().functions.querySentNode(timeout, address, requests) \
@@ -36,7 +36,7 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
         print('==== query_sent_node finish ====')
         return convert_to_hex(tx_hash)
 
-    def result_sent_back(self, query_id, response, hash_val, **kargs):
+    def c_result_sent_back(self, query_id, response, hash_val, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== result_sent_back start ====')
 

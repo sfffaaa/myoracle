@@ -16,7 +16,7 @@ class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
         return 'OracleRegister'
 
     # --- connect to contract function ---
-    def regist_address(self, name, address, **kargs):
+    def c_regist_address(self, name, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== regist_address start ====')
         tx_hash = self.get_contract_inst().functions.registAddress(name, address) \
@@ -26,7 +26,7 @@ class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
         print('==== regist_address finish ====')
         return convert_to_hex(tx_hash)
 
-    def get_address(self, name, **kargs):
+    def c_get_address(self, name, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== get_address start ====')
         address = self.get_contract_inst().functions.getAddress(name).call(transaction_data)

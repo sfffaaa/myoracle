@@ -16,7 +16,7 @@ class TestOracleExampleOnChainHandler(BaseContractOnChainHandler):
         return 'TestOracleExample'
 
     # --- connect to contract function ---
-    def trigger(self, **kargs):
+    def c_trigger(self, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== trigger start ====')
         tx_hash = self.get_contract_inst().functions.trigger() \
@@ -26,13 +26,13 @@ class TestOracleExampleOnChainHandler(BaseContractOnChainHandler):
         print('==== trigger finish ====')
         return convert_to_hex(tx_hash)
 
-    def get_lastest_query_id(self, **kargs):
+    def c_get_lastest_query_id(self, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== get_lastest_query_id start ====')
 
         query_id = self.get_contract_inst().functions.getLastestQueryId().call(transaction_data)
         print('==== get_lastest_query_id end ====')
-        return query_id
+        return convert_to_hex(query_id)
 
 
 if __name__ == '__main__':

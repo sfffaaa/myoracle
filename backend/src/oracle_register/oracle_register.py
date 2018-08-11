@@ -14,13 +14,6 @@ class OracleRegister(BaseContract):
     def create_onchain_handler(self, config):
         return OracleRegisterOnChainHandler(config)
 
-    # --- Customize function for their onw function ---
-    def regist_address(self, name, address, **kargs):
-        return self._onchain_handler.regist_address(name, address, **kargs)
-
-    def get_address(self, name, **kargs):
-        return self._onchain_handler.get_address(name, **kargs)
-
 
 if __name__ == '__main__':
     OracleRegister()
