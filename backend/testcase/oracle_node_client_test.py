@@ -15,6 +15,7 @@ import time
 
 OVERHEAD_TIME = 5
 
+
 def force_pass(arg):
     print("important_greelet pass")
 
@@ -94,7 +95,6 @@ class TestOracleNodeClient(unittest.TestCase):
 
         private_daemon.kill()
         self.assertEqual(self._tested, True, 'Should be tested')
-
 
 
 if __name__ == '__main__':

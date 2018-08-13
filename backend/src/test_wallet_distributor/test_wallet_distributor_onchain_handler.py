@@ -29,7 +29,7 @@ class TestWalletDistributorOnChainHandler(BaseContractOnChainHandler):
     def c_withdraw_balance(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== withdraw_balance start ====')
-        tx_hash = self.get_contract_inst().functions.withdraw_balance(address) \
+        tx_hash = self.get_contract_inst().functions.withdrawBalance(address) \
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
