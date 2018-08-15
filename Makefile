@@ -37,14 +37,13 @@ truffle: stop_geth
 	@[ -n "$(TRUFFLE_PID)" ] || (cd $(TRUFFLE_PATH); truffle develop)
 
 install:
-	pip3 install -r requirements.txt
+	pip3 install -r "$(BACKEND_PATH)/requirements.txt"
 
 uninstall:
 	echo "do nothing"
 
 clean:
 	find . -name '*.swp' -delete
-
 
 help:
 	@echo "Have several config for useage:"
