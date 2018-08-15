@@ -13,7 +13,7 @@ from utils.chain_utils import convert_to_wei
 import time
 
 
-OVERHEAD_TIME = 5
+OVERHEAD_TIME = 6
 
 
 def force_pass(arg):
@@ -68,6 +68,8 @@ class TestOracleNodeClient(unittest.TestCase):
 
         for _ in range(TEST_TIME * 2):
             gevent.sleep(1)
+            if self._finish_time != 0:
+                break
         self.assertTrue((self._finish_time - self._start_time) > TEST_TIME, 'callback should wait')
 
         private_daemon.kill()
@@ -89,9 +91,14 @@ class TestOracleNodeClient(unittest.TestCase):
                              value=convert_to_wei(1000, 'wei'))
         self._start_time = time.time()
 
-        for _ in range(2):
+        for _ in range(10):
             gevent.sleep(1)
-        self.assertTrue((self._finish_time - self._start_time) < OVERHEAD_TIME, 'callback should wait')
+            if self._finish_time != 0:
+                break
+        check_time = self._finish_time - self._start_time
+        # Overtime will be influenced by cpu usage or other reason.
+        self.assertTrue(check_time < OVERHEAD_TIME,
+                        'callback should wait {0} < {1} (overhead_time)'.format(check_time, OVERHEAD_TIME))
 
         private_daemon.kill()
         self.assertEqual(self._tested, True, 'Should be tested')
