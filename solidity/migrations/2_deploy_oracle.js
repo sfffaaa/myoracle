@@ -60,7 +60,6 @@ module.exports = (deployer, network, accounts) => {
             oracleWalletInst = inst;
             return deployer.deploy(
                 TestWalletDistributor,
-                accounts[0],
             );
         })
         .then((inst) => {
