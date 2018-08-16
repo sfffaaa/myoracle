@@ -5,3 +5,4 @@ __pycache__
 etc/
 solidity/tmp/
 .gdf_*
+cscope.*
