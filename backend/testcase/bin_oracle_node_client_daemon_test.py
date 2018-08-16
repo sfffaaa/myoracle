@@ -7,18 +7,24 @@ import sys
 sys.path.append('src')
 
 from utils.my_deployer import MyDeployer
-from clients.oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG, get_eth_price
 from utils.chain_utils import convert_to_wei, MyWeb3
 from test_wallet_distributor.test_wallet_distributor import TestWalletDistributor
 from test_oracle_example.test_oracle_example import TestOracleExample
+import time
+import os
 
 
-class TestBehavior(unittest.TestCase):
+class TestOracleNodeClientDaemon(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        MyDeployer(_TEST_CONFIG).deploy()
+        try:
+            MyDeployer(_TEST_CONFIG).undeploy()
+        except IOError:
+            pass
+        else:
+            raise
 
     @classmethod
     def tearDownClass(cls):
@@ -30,7 +36,13 @@ class TestBehavior(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_behavior(self):
+    def run_node_client_daemon(self):
+        os.system('python3 bin/oracle_node_client_daemon.py -c {0} -d &'.format(_TEST_CONFIG))
+        time.sleep(120)
+
+    def test_daemon_brandnew(self):
+        self.run_node_client_daemon()
+
         myWeb3 = MyWeb3(_TEST_CONFIG)
         accounts = myWeb3.get_accounts()
         payment_value = convert_to_wei(1000, 'wei')
@@ -46,10 +58,6 @@ class TestBehavior(unittest.TestCase):
         new_balance = test_distributor.get_balance()
         self.assertEqual(new_balance, now_balance + payment_value, 'Should be the same')
         now_balance = new_balance
-
-        node_daemon = OracleNodeClient(config_path=_TEST_CONFIG,
-                                       wait_time=1)
-        node_daemon.start()
 
         test_example = TestOracleExample(_TEST_CONFIG)
         test_example.trigger(value=convert_to_wei(1000, 'wei'))
@@ -76,8 +84,6 @@ class TestBehavior(unittest.TestCase):
 
         new_balance = test_distributor.get_balance()
         self.assertEqual(new_balance, 0, 'Should be the same')
-
-        node_daemon.kill()
 
 
 if __name__ == '__main__':
