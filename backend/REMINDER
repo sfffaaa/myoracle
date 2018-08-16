@@ -2,8 +2,10 @@ add more test case
 
 TODO:
 1. Pack python package
+	Partial finish, I've implemented daemon.
 2. test case for callback to call callback. It will need web server for myself
 3. Maybe I can use event base to kill the callback function which runs too long
+4. testcase, 'bin_oracle_node_client_daemon_test', seems doesn't terminate the fork function (?, I need to check it.
 
 Note:
 1. If someone want to add new smart contract, user needs add smart contract object and smart contract onchain handler object as a gateway in order let user can interact with ethereum network. For simplification's sake, the contract function should be named start from "c_" in smart contract onchain object, and the framework will automatically connect it to smart contract object. You can see the detail implementation in function "_expose_contract_function" in "BaseContract".
