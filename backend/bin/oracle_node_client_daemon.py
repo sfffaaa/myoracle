@@ -36,7 +36,12 @@ if __name__ == '__main__':
     deploy = args.deploy
 
     if deploy:
-        MyDeployer(config_path).undeploy()
+        try:
+            MyDeployer(config_path).undeploy()
+        except IOError:
+            pass
+        else:
+            raise
         MyDeployer(config_path).deploy()
 
     print('Start oracle node client')
