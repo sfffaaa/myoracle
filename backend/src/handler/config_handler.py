@@ -4,6 +4,7 @@
 
 import configparser
 from utils.my_config import CONFIG_PATH
+from web3 import Web3
 
 
 class ConfigHandler():
@@ -14,3 +15,7 @@ class ConfigHandler():
         config = configparser.ConfigParser()
         config.read(self._config_path)
         return config.get(section, key)
+
+    def get_web3(self):
+        file_ipc = self.get_chain_config('Ethereum', 'file_ipc')
+        return Web3(Web3.IPCProvider(file_ipc))

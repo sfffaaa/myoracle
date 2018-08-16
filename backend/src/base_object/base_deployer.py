@@ -120,8 +120,7 @@ class BaseDeployer():
 
     def deploy(self):
         config_handler = ConfigHandler(self._config_path)
-        file_ipc = config_handler.get_chain_config('Ethereum', 'file_ipc')
-        self._w3 = Web3(Web3.IPCProvider(file_ipc))
+        self._w3 = config_handler.get_web3()
 
         print('==== Compile smart contract ====')
         cmd = '(cd {0}; truffle compile)'.format(config_handler.get_chain_config('Deploy', 'truffle_path'))

@@ -67,8 +67,7 @@ class MyWeb3():
 
     def _get_web3_instance(self, config_path):
         config_handler = ConfigHandler(config_path)
-        file_ipc = config_handler.get_chain_config('Ethereum', 'file_ipc')
-        return Web3(Web3.IPCProvider(file_ipc))
+        return config_handler.get_web3()
 
     def get_address_balance(self, address):
         return self._w3.eth.getBalance(address)

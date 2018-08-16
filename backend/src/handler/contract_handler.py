@@ -1,5 +1,4 @@
 from utils import my_config
-from web3 import Web3
 from handler.config_handler import ConfigHandler
 import os
 import json
@@ -11,9 +10,7 @@ class ContractHandler():
         self._config_handler = ConfigHandler(config_path)
 
         self._check_contract_name(contract_name)
-
-        file_ipc = self._config_handler.get_chain_config('Ethereum', 'file_ipc')
-        self._w3 = Web3(Web3.IPCProvider(file_ipc))
+        self._w3 = self._config_handler.get_web3()
 
         contract_info = self._get_contract_info(contract_name)
         contract_abi = contract_info['abi']
