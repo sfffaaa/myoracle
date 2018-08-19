@@ -1,25 +1,21 @@
 pragma solidity 0.4.24;
 
 import './SafeMath.sol';
+import {TestStorage} from "./TestStorage.sol";
 
 
 contract TestWalletDistributor {
     using SafeMath for uint256;
-
-    struct Entry {
-        uint indexA1;
-        uint threshold;
-        uint value;
-    }
-    address[] myAddresses;
-    mapping(address => Entry) myAddressMapping;
+    TestStorage myStorage;
 
     event DepositBalance(address myAddress, uint threshold, uint nowValue, uint accuValue);
     event WithdrawBalance(address myAddress, uint threshold, uint value, uint price, bool transfered);
     
-    constructor()
+    constructor(address _testStorage)
         public
-    {}
+    {
+        myStorage = TestStorage(_testStorage);
+    }
 
     function depositBalance(uint _threshold)
         payable
@@ -27,37 +23,47 @@ contract TestWalletDistributor {
     {
         address sender = msg.sender;
         require(0 != _threshold);
-        Entry memory entry = myAddressMapping[sender];
-        if (entry.indexA1 == 0) {
-            entry.indexA1 = myAddresses.length + 1;
-            entry.threshold = _threshold;
-            entry.value = msg.value;
-            myAddresses.push(sender);
-        } else {
-            entry.threshold = _threshold;
-            entry.value = entry.value.add(msg.value);
-        }
-        myAddressMapping[sender] = entry;
+        uint indexA1 = myStorage.getBytes32AddressToUint('TestWalletDistributorIndexA1', sender);
+        uint threshold = myStorage.getBytes32AddressToUint('TestWalletDistributorThreshold', sender);
+        uint value = myStorage.getBytes32AddressToUint('TestWalletDistributorValue', sender);
 
-        emit DepositBalance(sender, _threshold, msg.value, entry.value);
+        if (indexA1 == 0) {
+            indexA1 = myStorage.getBytes32AddressArrayLength('TestWalletDistributorMyAddresses').add(1);
+            threshold = _threshold;
+            value = msg.value;
+            myStorage.pushBytes32AddressArrayEntry('TestWalletDistributorMyAddresses', sender);
+        } else {
+            threshold = _threshold;
+            value = value.add(msg.value);
+        }
+        myStorage.setBytes32AddressToUint('TestWalletDistributorIndexA1', sender, indexA1);
+        myStorage.setBytes32AddressToUint('TestWalletDistributorThreshold', sender, threshold);
+        myStorage.setBytes32AddressToUint('TestWalletDistributorValue', sender, value);
+
+        emit DepositBalance(sender, _threshold, msg.value, value);
     }
 
     function withdrawBalance(uint _price)
         public
     {
-        for (uint i = 0; i < myAddresses.length; i++) {
-            address testAddress = myAddresses[i];
-            Entry memory entry = myAddressMapping[testAddress];
-            if (0 == entry.value || _price < entry.threshold) {
-                emit WithdrawBalance(testAddress, entry.threshold, entry.value, _price, false);
+        uint myAddressesLength = myStorage.getBytes32AddressArrayLength('TestWalletDistributorMyAddresses');
+        for (uint i = 0; i < myAddressesLength; i++) {
+            address testAddress = myStorage.getBytes32AddressArrayEntry('TestWalletDistributorMyAddresses', i);
+            uint indexA1 = myStorage.getBytes32AddressToUint('TestWalletDistributorIndexA1', testAddress);
+            uint threshold = myStorage.getBytes32AddressToUint('TestWalletDistributorThreshold', testAddress);
+            uint value = myStorage.getBytes32AddressToUint('TestWalletDistributorValue', testAddress);
+            if (0 == value || _price < threshold) {
+                emit WithdrawBalance(testAddress, threshold, value, _price, false);
                 continue;
             }
 
-            testAddress.transfer(entry.value);
-            emit WithdrawBalance(testAddress, entry.threshold, entry.value, _price, true);
+            testAddress.transfer(value);
+            emit WithdrawBalance(testAddress, threshold, value, _price, true);
+
             // Remove that data
-            entry.value = 0;
-            myAddressMapping[testAddress] = entry;
+            myStorage.setBytes32AddressToUint('TestWalletDistributorIndexA1', testAddress, indexA1);
+            myStorage.setBytes32AddressToUint('TestWalletDistributorThreshold', testAddress, threshold);
+            myStorage.setBytes32AddressToUint('TestWalletDistributorValue', testAddress, 0);
         }
     }
 }
