@@ -20,8 +20,9 @@ module.exports = (deployer, network, accounts) => {
     let oracleWalletInst = null;
     let testStorageInst = null;
     let testWalletDistributorInst = null;
+    let testOracleExampleInst = null;
 
-    deployer.deploy(TestStorage).then((inst) => {
+    deployer.deploy(TestStorage, accounts[0]).then((inst) => {
         console.log(`TestStorage address: ${inst.address}`);
         testStorageInst = inst;
         return deployer.deploy(
@@ -90,6 +91,7 @@ module.exports = (deployer, network, accounts) => {
         })
         .then((inst) => {
             console.log(`TestOracleExample address: ${inst.address}`);
+            testOracleExampleInst = inst;
             return oracleStorageInst.setOracleRegisterAddr(
                 oracleRegisterInst.address,
                 { from: accounts[0] },
@@ -127,6 +129,18 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'TestWalletDistributor',
                 testWalletDistributorInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return testStorageInst.setAllower(
+                testWalletDistributorInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return testStorageInst.setAllower(
+                testOracleExampleInst.address,
                 { from: accounts[0] },
             );
         })
