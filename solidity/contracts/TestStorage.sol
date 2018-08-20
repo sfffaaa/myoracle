@@ -16,7 +16,6 @@ contract TestStorage {
     }
 
     function setBytes32AddressToUint(string _name, address _addr, uint _value)
-        view
         public
     {
         bytes32 name = keccak256(abi.encodePacked(_name));

@@ -16,7 +16,6 @@ class MyDeployer(BaseDeployer):
             'OracleWallet': {},
 
             'TestStorage': {},
-            'TestWalletDistributor': {},
             # [TODO] Test Wallet doesn't use right now.
             'TestWallet': {},
         })
@@ -26,6 +25,7 @@ class MyDeployer(BaseDeployer):
         # step 2
         info = self.deploy_multiple_smart_contract(config_handler, {
             'OracleRegister': contract_info,
+            'TestWalletDistributor': contract_info,
         })
         contract_info.update(info)
 
@@ -75,7 +75,7 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'TestWallet':
             return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestWalletDistributor':
-            return [self._w3.eth.accounts[0]]
+            return [my_args['TestStorage']['contractAddress']]
         else:
             raise IOError('Wrong contract name {0}'.format(contract_name))
 
