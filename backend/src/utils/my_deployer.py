@@ -3,6 +3,7 @@
 
 from base_object.base_deployer import BaseDeployer
 from oracle_storage.oracle_storage import OracleStorage
+from test_storage.test_storage import TestStorage
 from oracle_register.oracle_register import OracleRegister
 
 
@@ -55,6 +56,11 @@ class MyDeployer(BaseDeployer):
             .regist_address('TestWalletDistributor',
                             contract_info['TestWalletDistributor']['contractAddress'])
 
+        TestStorage(self._config_path) \
+            .set_allower(contract_info['TestWalletDistributor']['contractAddress'])
+        TestStorage(self._config_path) \
+            .set_allower(contract_info['TestOracleExample']['contractAddress'])
+
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
             return [self._w3.eth.accounts[0],
@@ -71,7 +77,7 @@ class MyDeployer(BaseDeployer):
             return [self._w3.eth.accounts[0]]
 
         elif contract_name == 'TestStorage':
-            return []
+            return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestWallet':
             return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestWalletDistributor':

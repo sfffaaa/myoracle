@@ -30,7 +30,7 @@ contract OracleStorage is OracleConstant {
         _;
     }
 
-    function setOracleRegisterAddr (address _oracleRegisterAddr)
+    function setOracleRegisterAddr(address _oracleRegisterAddr)
         onlyOwner
         public
     {
