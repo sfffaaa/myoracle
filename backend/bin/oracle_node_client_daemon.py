@@ -46,6 +46,7 @@ if __name__ == '__main__':
 
     print('Start oracle node client')
     oracle_node_client = OracleNodeClient(config_path=config_path,
-                                          wait_time=wait_time)
+                                          wait_time=wait_time,
+                                          deployed=False)
     oracle_node_client.start()
     oracle_node_client.join()

@@ -59,7 +59,7 @@ class BaseDeployer():
             retry_time += 1
             print("wait...")
 
-        self._w3.miner.stop()
+        # self._w3.miner.stop()
         if None in tx_receipts.values():
             raise IOError('still cannot get contract result')
 

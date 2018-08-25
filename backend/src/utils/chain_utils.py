@@ -36,12 +36,15 @@ def wait_miner(w3, tx_hashs):
     w3.miner.start(1)
     retry_time = 0
     while None in tx_receipts and retry_time < 15:
-        print('    wait for miner!')
+        print('    wait for miner {0} !'.format(retry_time))
         time.sleep(my_config.MINER_WAIT_TIME)
         tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
         retry_time += 1
 
-    w3.miner.stop()
+    if None in tx_receipts:
+        raise IOError('miner not finished...'.format(tx_receipts))
+
+    # w3.miner.stop()
     return tx_receipts
 
 
@@ -54,7 +57,7 @@ def check_transaction_meet_assert(w3, tx_hashs):
     for tx_hash in test_tx_hashs:
         tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
         if not tx_receipt:
-            raise IOError('{0} receipt does not exist'.format(tx_receipt))
+            raise IOError('{0} receipt does not exist'.format(tx_hash))
         if tx_receipt.gasUsed == my_config.GAS_SPENT:
             return True
 
