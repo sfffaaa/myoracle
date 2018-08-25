@@ -47,7 +47,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         p = multiprocessing.Process(target=run_node_client_daemon)
         p.start()
 
-        for i in range(15):
+        for i in range(30):
             time.sleep(15)
             print('wait {0} seconds'.format(15 * i))
 
