@@ -5,6 +5,7 @@ from base_object.base_deployer import BaseDeployer
 from oracle_storage.oracle_storage import OracleStorage
 from test_storage.test_storage import TestStorage
 from oracle_register.oracle_register import OracleRegister
+import multiprocessing
 
 
 class MyDeployer(BaseDeployer):
@@ -38,9 +39,22 @@ class MyDeployer(BaseDeployer):
         contract_info.update(info)
 
         # final
+        func_args_pairs = [
+            (self._oracle_storage_register, contract_info),
+            (self._oracle_register_register, contract_info),
+            (self._test_stroage_allower, contract_info)
+        ]
+        procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
+        for p in procs:
+            p.start()
+        for p in procs:
+            p.join()
+
+    def _oracle_storage_register(self, contract_info):
         OracleStorage(self._config_path) \
             .set_oracle_register_addr(contract_info['OracleRegister']['contractAddress'])
 
+    def _oracle_register_register(self, contract_info):
         register_args = [('OracleCore', contract_info['OracleCore']['contractAddress']),
                          ('OracleStorage', contract_info['OracleStorage']['contractAddress']),
                          ('OracleWallet', contract_info['OracleWallet']['contractAddress']),
@@ -48,6 +62,7 @@ class MyDeployer(BaseDeployer):
                          ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress'])]
         OracleRegister(self._config_path).regist_multiple_address(register_args)
 
+    def _test_stroage_allower(self, contract_info):
         allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
                         contract_info['TestOracleExample']['contractAddress']]
         TestStorage(self._config_path).set_multiple_allower(allower_args)
