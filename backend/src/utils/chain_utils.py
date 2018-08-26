@@ -35,7 +35,7 @@ def wait_miner(w3, tx_hashs):
     tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
     w3.miner.start(1)
     retry_time = 0
-    while None in tx_receipts and retry_time < 15:
+    while None in tx_receipts and retry_time < my_config.RETRY_TIMES:
         print('    wait for miner {0} !'.format(retry_time))
         time.sleep(my_config.MINER_WAIT_TIME)
         tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
