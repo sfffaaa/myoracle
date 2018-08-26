@@ -26,6 +26,17 @@ class TestStorageOnChainHandler(BaseContractOnChainHandler):
         print('==== set_allower finish ====')
         return convert_to_hex(tx_hash)
 
+    def c_set_multiple_allower(self, addresses, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
+        print('==== set_multiple_allower start ====')
+        tx_hashes = [self.get_contract_inst().functions.setAllower(address)
+                         .transact(transaction_data)
+                     for address in addresses]
+
+        self.wait_miner_finish(tx_hashes)
+        print('==== set_multiple_allower finish ====')
+        return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
+
 
 if __name__ == '__main__':
     pass

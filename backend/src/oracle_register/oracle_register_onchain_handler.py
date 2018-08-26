@@ -26,6 +26,17 @@ class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
         print('==== regist_address finish ====')
         return convert_to_hex(tx_hash)
 
+    def c_regist_multiple_address(self, address_pairs, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
+        print('==== regist_multiple_address start ====')
+        tx_hashes = [self.get_contract_inst().functions.registAddress(name, address)
+                         .transact(transaction_data)
+                     for name, address in address_pairs]
+
+        self.wait_miner_finish(tx_hashes)
+        print('==== regist_multiple_address finish ====')
+        return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
+
     def c_get_address(self, name, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         print('==== get_address start ====')

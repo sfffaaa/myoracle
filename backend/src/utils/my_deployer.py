@@ -40,26 +40,17 @@ class MyDeployer(BaseDeployer):
         # final
         OracleStorage(self._config_path) \
             .set_oracle_register_addr(contract_info['OracleRegister']['contractAddress'])
-        OracleRegister(self._config_path) \
-            .regist_address('OracleCore',
-                            contract_info['OracleCore']['contractAddress'])
-        OracleRegister(self._config_path) \
-            .regist_address('OracleStorage',
-                            contract_info['OracleStorage']['contractAddress'])
-        OracleRegister(self._config_path) \
-            .regist_address('OracleWallet',
-                            contract_info['OracleWallet']['contractAddress'])
-        OracleRegister(self._config_path) \
-            .regist_address('TestStorage',
-                            contract_info['TestStorage']['contractAddress'])
-        OracleRegister(self._config_path) \
-            .regist_address('TestWalletDistributor',
-                            contract_info['TestWalletDistributor']['contractAddress'])
 
-        TestStorage(self._config_path) \
-            .set_allower(contract_info['TestWalletDistributor']['contractAddress'])
-        TestStorage(self._config_path) \
-            .set_allower(contract_info['TestOracleExample']['contractAddress'])
+        register_args = [('OracleCore', contract_info['OracleCore']['contractAddress']),
+                         ('OracleStorage', contract_info['OracleStorage']['contractAddress']),
+                         ('OracleWallet', contract_info['OracleWallet']['contractAddress']),
+                         ('TestStorage', contract_info['TestStorage']['contractAddress']),
+                         ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress'])]
+        OracleRegister(self._config_path).regist_multiple_address(register_args)
+
+        allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
+                        contract_info['TestOracleExample']['contractAddress']]
+        TestStorage(self._config_path).set_multiple_allower(allower_args)
 
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
