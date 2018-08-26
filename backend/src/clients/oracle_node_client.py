@@ -17,7 +17,8 @@ class OracleNodeClient(BaseChainNode):
                  config_path=my_config.CONFIG_PATH,
                  to_oracle_node_callback_objs=[],
                  wait_time=3,
-                 deployed=False):
+                 deployed=False,
+                 deployed_event=None):
         if deployed:
             try:
                 MyDeployer(config_path).undeploy()
@@ -26,6 +27,9 @@ class OracleNodeClient(BaseChainNode):
             else:
                 raise
             MyDeployer(config_path).deploy()
+
+        if deployed_event:
+            deployed_event.set()
 
         self._config_path = config_path
         self.to_oracle_node_callback_objs = [self] + to_oracle_node_callback_objs

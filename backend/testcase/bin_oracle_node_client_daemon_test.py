@@ -12,15 +12,6 @@ from utils.chain_utils import convert_to_wei, MyWeb3
 from test_wallet_distributor.test_wallet_distributor import TestWalletDistributor
 from test_oracle_example.test_oracle_example import TestOracleExample
 from clients.oracle_node_client import OracleNodeClient
-import time
-
-
-def run_node_client_daemon():
-    oracle_node_client = OracleNodeClient(config_path=_TEST_CONFIG,
-                                          wait_time=1,
-                                          deployed=True)
-    oracle_node_client.start()
-    oracle_node_client.join()
 
 
 class TestOracleNodeClientDaemon(unittest.TestCase):
@@ -43,13 +34,28 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def reset_callback_event(self):
+        self._callback_event.clear()
+
+    def to_oracle_node_event_callback(self, node, event):
+        self._callback_event.set()
+
+    def run_node_client_daemon(self):
+        oracle_node_client = OracleNodeClient(config_path=_TEST_CONFIG,
+                                              to_oracle_node_callback_objs=[self],
+                                              wait_time=1,
+                                              deployed=True,
+                                              deployed_event=self._deployed_event)
+        oracle_node_client.start()
+        oracle_node_client.join()
+
     def test_daemon_brandnew(self):
-        p = multiprocessing.Process(target=run_node_client_daemon)
+        self._callback_event = multiprocessing.Event()
+        self._deployed_event = multiprocessing.Event()
+        p = multiprocessing.Process(target=self.run_node_client_daemon)
         p.start()
 
-        for i in range(8):
-            time.sleep(15)
-            print('wait {0} seconds'.format(15 * i))
+        self._deployed_event.wait()
 
         myWeb3 = MyWeb3(_TEST_CONFIG)
         accounts = myWeb3.get_accounts()
@@ -70,9 +76,8 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         test_example = TestOracleExample(_TEST_CONFIG)
         test_example.trigger(value=convert_to_wei(1000, 'wei'))
 
-        for i in range(20):
-            time.sleep(2)
-            print('wait {0} seconds'.format(2 * i))
+        self._callback_event.wait()
+        self.reset_callback_event()
 
         new_balance = test_distributor.get_balance()
         self.assertEqual(new_balance, now_balance, 'Should be the same')
@@ -88,19 +93,11 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         now_balance = new_balance
         test_example.trigger(value=convert_to_wei(1000, 'wei'))
 
-        for i in range(30):
-            time.sleep(2)
-            print('wait {0} seconds'.format(2 * i))
-            new_balance = test_distributor.get_balance()
-            if new_balance != now_balance:
-                break
+        self._callback_event.wait()
+        self.reset_callback_event()
 
         new_balance = test_distributor.get_balance()
         self.assertEqual(new_balance, 0, 'Should be the same')
-        # wait for callback finish
-        for i in range(10):
-            time.sleep(2)
-            print('wait {0} seconds'.format(2 * i))
 
         p.terminate()
         p.join()
