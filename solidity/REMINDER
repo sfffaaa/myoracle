@@ -4,6 +4,8 @@ Q: The permission should be checked again, because I found TestStorage didn't ha
 Q: How about the gas spent in multiple users
 Q: TestWallet not use right now, maybe the code should be removed.
 Q: Move storage in TestWalletDistributor to TestStorage
+Q: Use TestRegister instead of OracleRegister
+Q: Use TestRegister in TestStorage for avoid setting address here
 Q: Change permission for TestWalletDistributor
 
 Pending:
