@@ -5,7 +5,7 @@ from base_object.base_deployer import BaseDeployer
 from oracle_storage.oracle_storage import OracleStorage
 from test_storage.test_storage import TestStorage
 from oracle_register.oracle_register import OracleRegister
-# import multiprocessing
+import multiprocessing
 
 
 class MyDeployer(BaseDeployer):
@@ -38,19 +38,19 @@ class MyDeployer(BaseDeployer):
         })
         contract_info.update(info)
 
-        # final
+        # step 4
+        self._oracle_storage_register(contract_info)
+
+        # step 5 (because it has dependency)
         func_args_pairs = [
-            (self._oracle_storage_register, contract_info),
             (self._oracle_register_register, contract_info),
             (self._test_stroage_allower, contract_info)
         ]
-        for fun, arg in func_args_pairs:
-            fun(arg)
-#          procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
-        #  for p in procs:
-            #  p.start()
-        #  for p in procs:
-            #  p.join()
+        procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
+        for p in procs:
+            p.start()
+        for p in procs:
+            p.join()
 
     def _oracle_storage_register(self, contract_info):
         OracleStorage(self._config_path) \
