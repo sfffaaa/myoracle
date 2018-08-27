@@ -5,7 +5,7 @@ from base_object.base_deployer import BaseDeployer
 from oracle_storage.oracle_storage import OracleStorage
 from test_storage.test_storage import TestStorage
 from oracle_register.oracle_register import OracleRegister
-import multiprocessing
+# import multiprocessing
 
 
 class MyDeployer(BaseDeployer):
@@ -44,11 +44,13 @@ class MyDeployer(BaseDeployer):
             (self._oracle_register_register, contract_info),
             (self._test_stroage_allower, contract_info)
         ]
-        procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
-        for p in procs:
-            p.start()
-        for p in procs:
-            p.join()
+        for fun, arg in func_args_pairs:
+            fun(arg)
+#          procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
+        #  for p in procs:
+            #  p.start()
+        #  for p in procs:
+            #  p.join()
 
     def _oracle_storage_register(self, contract_info):
         OracleStorage(self._config_path) \
