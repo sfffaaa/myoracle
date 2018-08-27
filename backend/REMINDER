@@ -6,6 +6,8 @@ TODO:
 2. test case for callback to call callback. It will need web server for myself
 3. Maybe I can use event base to kill the callback function which runs too long
 4. decorator of log
+5. Deal with miner start and end time
+6. One test case, test_single_immediately_success_event, should be check again
 
 Note:
 1. If someone want to add new smart contract, user needs add smart contract object and smart contract onchain handler object as a gateway in order let user can interact with ethereum network. For simplification's sake, the contract function should be named start from "c_" in smart contract onchain object, and the framework will automatically connect it to smart contract object. You can see the detail implementation in function "_expose_contract_function" in "BaseContract".
