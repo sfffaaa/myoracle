@@ -1,4 +1,5 @@
 #!/bin/bash
+START_TIME=`date`
 file_list=$(ls testcase/*_test.py)
 for f in $file_list; do
 	echo "\033[33m"
@@ -23,3 +24,5 @@ done
 
 number=`echo "$file_list" | wc -l`
 echo "Finish total \033[32m$number\033[0m test file"
+END_TIME=`date`
+echo "Run from \033[32m${START_TIME}\033[0m to \033[32m${END_TIME}\033[0m"
