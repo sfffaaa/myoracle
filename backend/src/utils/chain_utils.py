@@ -3,7 +3,6 @@
 
 from web3 import Web3
 from utils import my_config
-import time
 from handler.contract_handler import ConfigHandler
 
 
@@ -34,12 +33,7 @@ def wait_miner(w3, tx_hashs):
 
     tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
     w3.miner.start(1)
-    retry_time = 0
-    while None in tx_receipts and retry_time < my_config.RETRY_TIMES:
-        print('    wait for miner {0} !'.format(retry_time))
-        time.sleep(my_config.MINER_WAIT_TIME)
-        tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
-        retry_time += 1
+    tx_receipts = [w3.eth.waitForTransactionReceipt(_) for _ in test_tx_hashs]
 
     if None in tx_receipts:
         raise IOError('miner not finished...'.format(tx_receipts))

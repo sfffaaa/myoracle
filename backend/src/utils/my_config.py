@@ -1,5 +1,4 @@
 CONFIG_PATH = 'etc/config.conf'
 
 MINER_WAIT_TIME = 3
-RETRY_TIMES = 40
 GAS_SPENT = 1000000

@@ -6,9 +6,8 @@ import os
 import json
 from web3 import Web3
 import hexbytes
-import time
 from handler.config_handler import ConfigHandler
-from utils.my_config import RETRY_TIMES, CONFIG_PATH
+from utils.my_config import CONFIG_PATH
 
 
 # User should implement compose_smart_contract_args + deploy_implement
@@ -50,14 +49,10 @@ class BaseDeployer():
         tx_receipts = {contract_name: self._w3.eth.getTransactionReceipt(tx_hash)
                        for contract_name, tx_hash in contract_tx_hash.items()}
         self._w3.miner.start(1)
-        retry_time = 0
-        while None in tx_receipts.values() and retry_time < RETRY_TIMES:
-            print('    wait for miner!')
-            time.sleep(2)
-            tx_receipts = {contract_name: self._w3.eth.getTransactionReceipt(tx_hash)
-                           for contract_name, tx_hash in contract_tx_hash.items()}
-            retry_time += 1
-            print("wait...")
+        tx_receipts = {
+            contract_name: self._w3.eth.waitForTransactionReceipt(tx_hash)
+            for contract_name, tx_hash in contract_tx_hash.items()
+        }
 
         # self._w3.miner.stop()
         if None in tx_receipts.values():
