@@ -50,7 +50,8 @@ class BaseDeployer():
                        for contract_name, tx_hash in contract_tx_hash.items()}
         self._w3.miner.start(1)
         tx_receipts = {
-            contract_name: self._w3.eth.waitForTransactionReceipt(tx_hash)
+            contract_name: self._w3.eth.waitForTransactionReceipt(tx_hash,
+                                                                  timeout=240)
             for contract_name, tx_hash in contract_tx_hash.items()
         }
 

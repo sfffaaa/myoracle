@@ -46,7 +46,7 @@ def wait_miner(w3, tx_hashs):
 
     tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
     w3.miner.start(1)
-    tx_receipts = [w3.eth.waitForTransactionReceipt(_) for _ in test_tx_hashs]
+    tx_receipts = [w3.eth.waitForTransactionReceipt(_, timeout=240) for _ in test_tx_hashs]
 
     if None in tx_receipts:
         raise IOError('miner not finished... {0}'.format(tx_receipts))
