@@ -26,7 +26,9 @@ matrix:
       - sudo apt-get install geth -y
 
 install:
+  - bash ./solidity/bin/travis-install.sh
   - bash ./backend/travisCI/travis-install.sh
 
 script:
+  - bash ./solidity/bin/test.sh
   - bash ./backend/travisCI/test.sh
