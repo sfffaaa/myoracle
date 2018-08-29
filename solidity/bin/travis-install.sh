@@ -1,3 +1,3 @@
 #!/bin/bash
-npm install
+(cd solidity; npm install)
 npm install -g ganache-cli truffle
