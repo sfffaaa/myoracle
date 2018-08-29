@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 from utils import my_config
+from utils.chain_utils import contract_function_log
 
 
 class BaseContract():
@@ -16,7 +17,9 @@ class BaseContract():
                           callable(getattr(self._onchain_handler, function_name))]
 
         for function_name in function_names:
-            setattr(self, function_name[2:], getattr(self._onchain_handler, function_name))
+            setattr(self,
+                    function_name[2:],
+                    contract_function_log(getattr(self._onchain_handler, function_name)))
 
     def create_onchain_handler(self, config):
         raise IOError('Child should implement this function')

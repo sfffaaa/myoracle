@@ -9,10 +9,17 @@ from utils.chain_utils import wait_miner, check_transaction_meet_assert
 class BaseContractOnChainHandler():
 
     def __init__(self, config_path=my_config.CONFIG_PATH):
-        contract_name = self.get_contract_handler_name()
+        contract_name = self._get_contract_handler_name()
         self._contract_handler = ContractHandler(contract_name, config_path)
         self._w3 = self._contract_handler.get_w3()
         self._contract_inst = self._contract_handler.get_contract()
+
+    def _get_contract_handler_name(self):
+        suffix = 'OnChainHandler'
+        class_name = self.__class__.__name__
+        if not class_name.endswith(suffix):
+            raise IOError('Naming rule is not suitable {0}, lack of {1}'.format(class_name, suffix))
+        return class_name[:len(class_name) - len(suffix)]
 
     def compose_transaction_dict(self, kargs):
         default_data = {

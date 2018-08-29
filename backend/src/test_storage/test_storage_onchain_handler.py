@@ -11,30 +11,22 @@ class TestStorageOnChainHandler(BaseContractOnChainHandler):
     def __init__(self, config_path=my_config.CONFIG_PATH):
         super().__init__(config_path)
 
-    # --- implement base class ---
-    def get_contract_handler_name(self):
-        return 'TestStorage'
-
     # --- connect to contract function ---
     def c_set_allower(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== set_allower start ====')
         tx_hash = self.get_contract_inst().functions.setAllower(address) \
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        print('==== set_allower finish ====')
         return convert_to_hex(tx_hash)
 
     def c_set_multiple_allower(self, addresses, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== set_multiple_allower start ====')
         tx_hashes = [self.get_contract_inst().functions.setAllower(address)
                          .transact(transaction_data)
                      for address in addresses]
 
         self.wait_miner_finish(tx_hashes)
-        print('==== set_multiple_allower finish ====')
         return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
 
 

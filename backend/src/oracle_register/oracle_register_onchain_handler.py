@@ -11,37 +11,27 @@ class OracleRegisterOnChainHandler(BaseContractOnChainHandler):
     def __init__(self, config_path=my_config.CONFIG_PATH):
         super().__init__(config_path)
 
-    # --- implement base class ---
-    def get_contract_handler_name(self):
-        return 'OracleRegister'
-
     # --- connect to contract function ---
     def c_regist_address(self, name, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== regist_address start ====')
         tx_hash = self.get_contract_inst().functions.registAddress(name, address) \
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        print('==== regist_address finish ====')
         return convert_to_hex(tx_hash)
 
     def c_regist_multiple_address(self, address_pairs, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== regist_multiple_address start ====')
         tx_hashes = [self.get_contract_inst().functions.registAddress(name, address)
                          .transact(transaction_data)
                      for name, address in address_pairs]
 
         self.wait_miner_finish(tx_hashes)
-        print('==== regist_multiple_address finish ====')
         return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
 
     def c_get_address(self, name, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== get_address start ====')
         address = self.get_contract_inst().functions.getAddress(name).call(transaction_data)
-        print('==== get_address finish ====')
         return convert_to_hex(address)
 
 

@@ -6,6 +6,18 @@ from utils import my_config
 from handler.contract_handler import ConfigHandler
 
 
+def contract_function_log(func):
+    def func_wrapper(*args, **kargs):
+        func_name = func.__name__[:]
+        if func_name.startswith('c_'):
+            func_name = func_name[2:]
+        print('==== {0} start ===='.format(func_name))
+        ret = func(*args, **kargs)
+        print('==== {0} end ===='.format(func_name))
+        return ret
+    return func_wrapper
+
+
 def convert_to_wei(val, unit):
     return Web3.toWei(val, unit)
 
@@ -13,10 +25,11 @@ def convert_to_wei(val, unit):
 def convert_to_bytes(val):
     if bytes == type(val):
         return val
-    elif val.startswith('0x'):
+
+    if val.startswith('0x'):
         return Web3.toBytes(hexstr=val)
-    else:
-        return Web3.toBytes(text=val)
+
+    return Web3.toBytes(text=val)
 
 
 def convert_to_hex(val):
@@ -26,7 +39,7 @@ def convert_to_hex(val):
 
 
 def wait_miner(w3, tx_hashs):
-    if type(tx_hashs) == list:
+    if isinstance(tx_hashs, list):
         test_tx_hashs = tx_hashs
     else:
         test_tx_hashs = [tx_hashs]
@@ -36,14 +49,14 @@ def wait_miner(w3, tx_hashs):
     tx_receipts = [w3.eth.waitForTransactionReceipt(_) for _ in test_tx_hashs]
 
     if None in tx_receipts:
-        raise IOError('miner not finished...'.format(tx_receipts))
+        raise IOError('miner not finished... {0}'.format(tx_receipts))
 
     # w3.miner.stop()
     return tx_receipts
 
 
 def check_transaction_meet_assert(w3, tx_hashs):
-    if type(tx_hashs) == list:
+    if isinstance(tx_hashs, list):
         test_tx_hashs = tx_hashs
     else:
         test_tx_hashs = [tx_hashs]

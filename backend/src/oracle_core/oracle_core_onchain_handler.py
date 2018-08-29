@@ -11,41 +11,31 @@ class OracleCoreOnChainHandler(BaseContractOnChainHandler):
     def __init__(self, config_path=my_config.CONFIG_PATH):
         super().__init__(config_path)
 
-    # --- implement base class ---
-    def get_contract_handler_name(self):
-        return 'OracleCore'
-
     # --- connect to contract function ---
     def c_set_oracle_core_addr(self, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== set_oracle_core_addr start ====')
         tx_hash = self.get_contract_inst().functions.setOracleCoreAddr() \
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        print('==== set_oracle_core_addr finish ====')
         return convert_to_hex(tx_hash)
 
     def c_query_sent_node(self, timeout, address, requests, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== query_sent_node start ====')
         tx_hash = self.get_contract_inst().functions.querySentNode(timeout, address, requests) \
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        print('==== query_sent_node finish ====')
         return convert_to_hex(tx_hash)
 
     def c_result_sent_back(self, query_id, response, hash_val, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
-        print('==== result_sent_back start ====')
 
         tx_hash = self.get_contract_inst().functions.resultSentBack(convert_to_bytes(query_id),
                                                                     response,
                                                                     convert_to_bytes(hash_val)) \
                                                     .transact(transaction_data)
         self.wait_miner_finish(tx_hash)
-        print('==== result_sent_back end ====')
         return convert_to_hex(tx_hash)
 
 
