@@ -19,11 +19,11 @@ matrix:
       - curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
       - sudo apt-get install -y nodejs
       - rm -rf node_modules
-	  - echo "finish node_modules"
-	  - sudo apt-get install software-properties-common -y -qq
-	  - sudo add-apt-repository ppa:ethereum/ethereum-dev -y
+      - echo "finish node_modules"
+      - sudo apt-get install software-properties-common -y -qq
+      - sudo add-apt-repository ppa:ethereum/ethereum-dev -y
       - sudo apt-get update
-	  - sudo apt-get install geth -y
+      - sudo apt-get install geth -y
 
 install:
   - bash ./solidity/bin/travis-install.sh
