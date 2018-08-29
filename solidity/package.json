@@ -1,0 +1,17 @@
+{
+  "name": "myoracle_solidity",
+  "version": "1.0.0",
+  "description": "Oracle and Wallet trasnfered value when threshould hitted are implemented here",
+  "main": "None",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "JayPan",
+  "license": "ISC",
+  "dependencies": {
+    "truffle-assertions": "^0.4.0"
+  }
+}
