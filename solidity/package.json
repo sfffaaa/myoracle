@@ -12,6 +12,7 @@
   "author": "JayPan",
   "license": "ISC",
   "dependencies": {
+    "bignumber.js": "^7.2.1",
     "truffle-assertions": "^0.4.0"
   }
 }
