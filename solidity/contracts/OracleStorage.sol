@@ -1,6 +1,7 @@
 pragma solidity 0.4.24;
 
 import {OracleConstant} from "./OracleConstant.sol";
+import {OracleRegister} from "./OracleRegister.sol";
 
 contract OracleStorage is OracleConstant {
     mapping(bytes32 => mapping(bytes32 => address)) private bytes32ToAddress;
@@ -21,7 +22,8 @@ contract OracleStorage is OracleConstant {
     }
 
     modifier onlyOwnerAndOracleCore {
-        require(msg.sender == owner || msg.sender == getOracleAddress(ORACLE_CORE_ADDR_KEY));
+        require(msg.sender == owner ||
+                msg.sender == OracleRegister(oracleRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY));
         _;
     }
 
@@ -66,24 +68,6 @@ contract OracleStorage is OracleConstant {
         // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         return bytes32ToAddress[name][_key];
-    }
-
-    function setOracleAddress(string _key, address _addr)
-        onlyOwnerAndOracleRegister
-        public
-        returns(address)
-    {
-        bytes32 key = keccak256(abi.encodePacked(_key));
-        bytes32ToAddress[keccak256(abi.encodePacked(ORACLE_ADDR_KEY))][key] = _addr;
-    }
-
-    function getOracleAddress(string _key)
-        view
-        public
-        returns(address)
-    {
-        bytes32 key = keccak256(abi.encodePacked(_key));
-        return bytes32ToAddress[keccak256(abi.encodePacked(ORACLE_ADDR_KEY))][key];
     }
 
     // addressToUint related function

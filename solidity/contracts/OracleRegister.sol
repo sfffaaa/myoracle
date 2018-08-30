@@ -1,16 +1,13 @@
 pragma solidity 0.4.24;
 
-import {OracleStorage} from "./OracleStorage.sol";
-
 
 contract OracleRegister {
     address owner;
-    OracleStorage myStorage; 
+    mapping (string => address) stringAddressMap;
     
 
-    constructor (address _owner, address _storage) public {
+    constructor (address _owner) public {
         owner = _owner;
-        myStorage = OracleStorage(_storage);
     }
 
     modifier onlyOwner {
@@ -22,7 +19,7 @@ contract OracleRegister {
         onlyOwner
         public
     {
-       myStorage.setOracleAddress(_key, _address);
+        stringAddressMap[_key] = _address;
     }
 
     function getAddress(string _key)
@@ -30,6 +27,6 @@ contract OracleRegister {
         public
         returns (address)
     {
-       return myStorage.getOracleAddress(_key);
+       return stringAddressMap[_key];
     }
 }

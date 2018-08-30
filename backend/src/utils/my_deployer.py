@@ -76,8 +76,7 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'OracleStorage':
             return [self._w3.eth.accounts[0]]
         elif contract_name == 'OracleRegister':
-            return [self._w3.eth.accounts[0],
-                    my_args['OracleStorage']['contractAddress']]
+            return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestOracleExample':
             return [self._w3.eth.accounts[0],
                     my_args['OracleRegister']['contractAddress']]
