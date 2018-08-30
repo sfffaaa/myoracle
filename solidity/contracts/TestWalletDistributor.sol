@@ -2,25 +2,30 @@ pragma solidity 0.4.24;
 
 import './SafeMath.sol';
 import {TestStorage} from "./TestStorage.sol";
+import {OracleRegister} from "./OracleRegister.sol";
 
 
 contract TestWalletDistributor {
     using SafeMath for uint256;
-    TestStorage myStorage;
+    address oracleRegisterAddr;
 
     event DepositBalance(address myAddress, uint threshold, uint nowValue, uint accuValue);
     event WithdrawBalance(address myAddress, uint threshold, uint value, uint price, bool transfered);
     
-    constructor(address _testStorage)
+    constructor(address _oracleRegisterAddr)
         public
     {
-        myStorage = TestStorage(_testStorage);
+        oracleRegisterAddr = _oracleRegisterAddr;
     }
 
     function depositBalance(uint _threshold)
         payable
         public
     {
+        address myTestStorageAddr = OracleRegister(oracleRegisterAddr).getAddress('TestStorage');
+        assert(myTestStorageAddr != 0);
+        TestStorage myStorage = TestStorage(myTestStorageAddr);
+
         address sender = msg.sender;
         require(0 != _threshold);
         uint indexA1 = myStorage.getBytes32AddressToUint('TestWalletDistributorIndexA1', sender);
@@ -46,9 +51,14 @@ contract TestWalletDistributor {
     function withdrawBalance(uint _price)
         public
     {
+        address myTestStorageAddr = OracleRegister(oracleRegisterAddr).getAddress('TestStorage');
+        assert(myTestStorageAddr != 0);
+        TestStorage myStorage = TestStorage(myTestStorageAddr);
+
         uint myAddressesLength = myStorage.getBytes32AddressArrayLength('TestWalletDistributorMyAddresses');
         for (uint i = 0; i < myAddressesLength; i++) {
             address testAddress = myStorage.getBytes32AddressArrayEntry('TestWalletDistributorMyAddresses', i);
+
             uint indexA1 = myStorage.getBytes32AddressToUint('TestWalletDistributorIndexA1', testAddress);
             uint threshold = myStorage.getBytes32AddressToUint('TestWalletDistributorThreshold', testAddress);
             uint value = myStorage.getBytes32AddressToUint('TestWalletDistributorValue', testAddress);
