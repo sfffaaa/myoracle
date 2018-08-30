@@ -7,3 +7,4 @@ solidity/tmp/
 .gdf_*
 cscope.*
 solidity/node_modules/
+backend/travisCI/datadir
