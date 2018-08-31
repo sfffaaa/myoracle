@@ -3,8 +3,10 @@
 
 from base_object.base_deployer import BaseDeployer
 from oracle_storage.oracle_storage import OracleStorage
-from test_storage.test_storage import TestStorage
 from oracle_register.oracle_register import OracleRegister
+
+from test_storage.test_storage import TestStorage
+from test_register.test_register import TestRegister
 import multiprocessing
 
 
@@ -25,13 +27,14 @@ class MyDeployer(BaseDeployer):
         # step 2
         info = self.deploy_multiple_smart_contract(config_handler, {
             'OracleRegister': contract_info,
+            'TestRegister': contract_info,
         })
         contract_info.update(info)
 
         # step 3
         info = self.deploy_multiple_smart_contract(config_handler, {
-            'TestWalletDistributor': contract_info,
             'OracleCore': contract_info,
+            'TestWalletDistributor': contract_info,
             'TestOracleExample': contract_info,
         })
         contract_info.update(info)
@@ -42,6 +45,7 @@ class MyDeployer(BaseDeployer):
         # step 5 (because it has dependency)
         func_args_pairs = [
             (self._oracle_register_register, contract_info),
+            (self._test_register_register, contract_info),
             (self._test_stroage_allower, contract_info)
         ]
         procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
@@ -57,11 +61,14 @@ class MyDeployer(BaseDeployer):
     def _oracle_register_register(self, contract_info):
         register_args = [('OracleCore', contract_info['OracleCore']['contractAddress']),
                          ('OracleStorage', contract_info['OracleStorage']['contractAddress']),
-                         ('OracleWallet', contract_info['OracleWallet']['contractAddress']),
-                         ('TestStorage', contract_info['TestStorage']['contractAddress']),
+                         ('OracleWallet', contract_info['OracleWallet']['contractAddress'])]
+        OracleRegister(self._config_path).regist_multiple_address(register_args)
+
+    def _test_register_register(self, contract_info):
+        register_args = [('TestStorage', contract_info['TestStorage']['contractAddress']),
                          ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress']),
                          ('TestOracleExample', contract_info['TestOracleExample']['contractAddress'])]
-        OracleRegister(self._config_path).regist_multiple_address(register_args)
+        TestRegister(self._config_path).regist_multiple_address(register_args)
 
     def _test_stroage_allower(self, contract_info):
         allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
@@ -76,17 +83,22 @@ class MyDeployer(BaseDeployer):
             return [self._w3.eth.accounts[0]]
         elif contract_name == 'OracleRegister':
             return [self._w3.eth.accounts[0]]
-        elif contract_name == 'TestOracleExample':
-            return [self._w3.eth.accounts[0],
-                    my_args['OracleRegister']['contractAddress']]
         elif contract_name == 'OracleWallet':
             return [self._w3.eth.accounts[0]]
 
         elif contract_name == 'TestStorage':
             return [self._w3.eth.accounts[0]]
+        elif contract_name == 'TestRegister':
+            return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestWalletDistributor':
             return [self._w3.eth.accounts[0],
-                    my_args['OracleRegister']['contractAddress']]
+                    my_args['TestRegister']['contractAddress']]
+
+        elif contract_name == 'TestOracleExample':
+            return [self._w3.eth.accounts[0],
+                    my_args['OracleRegister']['contractAddress'],
+                    my_args['TestRegister']['contractAddress']]
+
         else:
             raise IOError('Wrong contract name {0}'.format(contract_name))
 

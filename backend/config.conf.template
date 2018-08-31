@@ -1,7 +1,7 @@
 [Deploy]
 truffle_path=
 truffle_build_path=
-target_contract_name=OracleCore,OracleStorage,TestOracleExample,TestStorage,OracleRegister,OracleWallet,TestWalletDistributor
+target_contract_name=OracleCore,OracleStorage,TestOracleExample,TestStorage,OracleRegister,OracleWallet,TestWalletDistributor,TestRegister
 
 [Ethereum]
 file_ipc=
