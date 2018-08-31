@@ -7,11 +7,6 @@ node_js:
 python:
   - "3.6"
 
-cache:
-  directories:
-  - $HOME/.ethash
-  - backend/travisCI/datadir/geth/ethash
-
 matrix:
   include:
     - os: linux
