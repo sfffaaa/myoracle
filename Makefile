@@ -1,7 +1,7 @@
 HOME_FOLDER=`echo $$HOME`
 
 GETH_PID:=$(shell ps aux | grep geth | grep -v grep | grep -v make | awk '{print $$2}')
-GETH_PATH="$(HOME_FOLDER)/private-eth/test3"
+GETH_PATH="$(HOME_FOLDER)/myoracle/backend/travisCI"
 
 TRUFFLE_PID:=$(shell ps aux | grep truffle | grep "truffle develop" | grep -v grep | grep -v make | awk '{print $$2}')
 TRUFFLE_PATH="$(HOME_FOLDER)/myoracle/solidity"
