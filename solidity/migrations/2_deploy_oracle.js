@@ -60,6 +60,7 @@ module.exports = (deployer, network, accounts) => {
             oracleWalletInst = inst;
             return deployer.deploy(
                 TestWalletDistributor,
+                accounts[0],
                 oracleRegisterInst.address,
             );
         })
@@ -128,6 +129,13 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'TestWalletDistributor',
                 testWalletDistributorInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'TestOracleExample',
+                testOracleExampleInst.address,
                 { from: accounts[0] },
             );
         })

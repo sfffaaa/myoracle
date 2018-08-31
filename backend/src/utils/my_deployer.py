@@ -61,7 +61,8 @@ class MyDeployer(BaseDeployer):
                          ('OracleStorage', contract_info['OracleStorage']['contractAddress']),
                          ('OracleWallet', contract_info['OracleWallet']['contractAddress']),
                          ('TestStorage', contract_info['TestStorage']['contractAddress']),
-                         ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress'])]
+                         ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress']),
+                         ('TestOracleExample', contract_info['TestOracleExample']['contractAddress'])]
         OracleRegister(self._config_path).regist_multiple_address(register_args)
 
     def _test_stroage_allower(self, contract_info):
@@ -88,7 +89,8 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'TestWallet':
             return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestWalletDistributor':
-            return [my_args['OracleRegister']['contractAddress']]
+            return [self._w3.eth.accounts[0],
+                    my_args['OracleRegister']['contractAddress']]
         else:
             raise IOError('Wrong contract name {0}'.format(contract_name))
 

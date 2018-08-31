@@ -4,6 +4,7 @@ const BigNumber = require('bignumber.js');
 const truffleAssert = require('truffle-assertions');
 
 const TestWalletDistributor = artifacts.require('TestWalletDistributor');
+const TestUtils = require('./TestUtils.js');
 
 
 contract('TestWalletDistributor Test', (accounts) => {
@@ -261,5 +262,11 @@ contract('TestWalletDistributor Test', (accounts) => {
             BigNumber(0).toNumber(),
             'Should be the same',
         );
+    });
+    it('Permission test', async () => {
+        const TestWalletDistributorInst = await TestWalletDistributor.deployed();
+        TestUtils.AssertRevert(TestWalletDistributorInst.withdrawBalance(0, {
+            from: accounts[1],
+        }));
     });
 });

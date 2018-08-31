@@ -8,14 +8,23 @@ import {OracleRegister} from "./OracleRegister.sol";
 contract TestWalletDistributor {
     using SafeMath for uint256;
     address oracleRegisterAddr;
+    address owner;
 
     event DepositBalance(address myAddress, uint threshold, uint nowValue, uint accuValue);
     event WithdrawBalance(address myAddress, uint threshold, uint value, uint price, bool transfered);
     
-    constructor(address _oracleRegisterAddr)
+    constructor(address _owner, address _oracleRegisterAddr)
         public
     {
+        owner = _owner;
         oracleRegisterAddr = _oracleRegisterAddr;
+    }
+
+    modifier OnlyAllowOwnerAndTestOracleExample {
+        address testOracleExampleAddr = OracleRegister(oracleRegisterAddr).getAddress('TestOracleExample');
+        require(0 != testOracleExampleAddr);
+        require(msg.sender == owner || msg.sender == testOracleExampleAddr); 
+        _;
     }
 
     function depositBalance(uint _threshold)
@@ -50,6 +59,7 @@ contract TestWalletDistributor {
 
     function withdrawBalance(uint _price)
         public
+        OnlyAllowOwnerAndTestOracleExample
     {
         address myTestStorageAddr = OracleRegister(oracleRegisterAddr).getAddress('TestStorage');
         assert(myTestStorageAddr != 0);
