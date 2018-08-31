@@ -58,15 +58,6 @@ module.exports = (deployer, network, accounts) => {
             console.log(`OracleWallet address: ${inst.address}`);
             oracleWalletInst = inst;
             return deployer.deploy(
-                TestWalletDistributor,
-                accounts[0],
-                oracleRegisterInst.address,
-            );
-        })
-        .then((inst) => {
-            console.log(`TestWalletDistributor address: ${inst.address}`);
-            testWalletDistributorInst = inst;
-            return deployer.deploy(
                 TestRegister,
                 accounts[0],
             );
@@ -74,6 +65,15 @@ module.exports = (deployer, network, accounts) => {
         .then((inst) => {
             console.log(`TestRegister address: ${inst.address}`);
             testRegisterInst = inst;
+            return deployer.deploy(
+                TestWalletDistributor,
+                accounts[0],
+                testRegisterInst.address,
+            );
+        })
+        .then((inst) => {
+            console.log(`TestWalletDistributor address: ${inst.address}`);
+            testWalletDistributorInst = inst;
             return deployer.deploy(
                 TestOracleExample,
                 accounts[0],
@@ -107,27 +107,6 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'OracleWallet',
                 oracleWalletInst.address,
-                { from: accounts[0] },
-            );
-        })
-        .then(() => {
-            return oracleRegisterInst.registAddress(
-                'TestStorage',
-                testStorageInst.address,
-                { from: accounts[0] },
-            );
-        })
-        .then(() => {
-            return oracleRegisterInst.registAddress(
-                'TestWalletDistributor',
-                testWalletDistributorInst.address,
-                { from: accounts[0] },
-            );
-        })
-        .then(() => {
-            return oracleRegisterInst.registAddress(
-                'TestOracleExample',
-                testOracleExampleInst.address,
                 { from: accounts[0] },
             );
         })
