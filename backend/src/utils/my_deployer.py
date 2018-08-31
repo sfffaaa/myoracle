@@ -18,8 +18,6 @@ class MyDeployer(BaseDeployer):
             'OracleWallet': {},
 
             'TestStorage': {},
-            # [TODO] Test Wallet doesn't use right now.
-            'TestWallet': {},
         })
         contract_info = {}
         contract_info.update(info)
@@ -85,8 +83,6 @@ class MyDeployer(BaseDeployer):
             return [self._w3.eth.accounts[0]]
 
         elif contract_name == 'TestStorage':
-            return [self._w3.eth.accounts[0]]
-        elif contract_name == 'TestWallet':
             return [self._w3.eth.accounts[0]]
         elif contract_name == 'TestWalletDistributor':
             return [self._w3.eth.accounts[0],

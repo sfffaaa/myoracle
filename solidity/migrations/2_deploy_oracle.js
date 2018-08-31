@@ -5,9 +5,7 @@ const OracleStorage = artifacts.require('./OracleStorage');
 const OracleCore = artifacts.require('./OracleCore');
 const OracleWallet = artifacts.require('./OracleWallet');
 
-// [TODO] I dont use TestWallet right now....
 const TestStorage = artifacts.require('./TestStorage');
-const TestWallet = artifacts.require('./TestWallet');
 const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
 const TestRegister = artifacts.require('./TestRegister');
 const TestOracleExample = artifacts.require('./TestOracleExample');
@@ -67,13 +65,6 @@ module.exports = (deployer, network, accounts) => {
         .then((inst) => {
             console.log(`TestWalletDistributor address: ${inst.address}`);
             testWalletDistributorInst = inst;
-            return deployer.deploy(
-                TestWallet,
-                accounts[0],
-            );
-        })
-        .then((inst) => {
-            console.log(`TestWallet address: ${inst.address}`);
             // [TODO] Not use right now, USE OracleRegister right now
             return deployer.deploy(
                 TestRegister,
