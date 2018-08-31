@@ -66,7 +66,6 @@ module.exports = (deployer, network, accounts) => {
         .then((inst) => {
             console.log(`TestWalletDistributor address: ${inst.address}`);
             testWalletDistributorInst = inst;
-            // [TODO] Not use right now, USE OracleRegister right now
             return deployer.deploy(
                 TestRegister,
                 accounts[0],
@@ -79,6 +78,7 @@ module.exports = (deployer, network, accounts) => {
                 TestOracleExample,
                 accounts[0],
                 oracleRegisterInst.address,
+                testRegisterInst.address,
             );
         })
         .then((inst) => {
@@ -128,6 +128,13 @@ module.exports = (deployer, network, accounts) => {
             return oracleRegisterInst.registAddress(
                 'TestOracleExample',
                 testOracleExampleInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
+            return testRegisterInst.registAddress(
+                'TestWalletDistributor',
+                testWalletDistributorInst.address,
                 { from: accounts[0] },
             );
         })
