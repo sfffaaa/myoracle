@@ -1,16 +1,13 @@
 pragma solidity 0.4.24;
 
-import {TestStorage} from "./TestStorage.sol";
 
-// [TODO] Not use right now, USE OracleRegister right now
 contract TestRegister {
     address owner;
-    TestStorage myStorage; 
+    mapping (string => address) stringAddressMap;
     
 
-    constructor (address _owner, address _storage) public {
+    constructor (address _owner) public {
         owner = _owner;
-        myStorage = TestStorage(_storage);
     }
 
     modifier onlyOwner {
@@ -22,7 +19,7 @@ contract TestRegister {
         onlyOwner
         public
     {
-       myStorage.setAddress(_key, _address);
+        stringAddressMap[_key] = _address;
     }
 
     function getAddress(string _key)
@@ -30,6 +27,6 @@ contract TestRegister {
         public
         returns (address)
     {
-       return myStorage.getAddress(_key);
+       return stringAddressMap[_key];
     }
 }

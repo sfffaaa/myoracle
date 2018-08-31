@@ -2,26 +2,26 @@ pragma solidity 0.4.24;
 
 import './SafeMath.sol';
 import {TestStorage} from "./TestStorage.sol";
-import {OracleRegister} from "./OracleRegister.sol";
+import {TestRegister} from "./TestRegister.sol";
 
 
 contract TestWalletDistributor {
     using SafeMath for uint256;
-    address oracleRegisterAddr;
+    address testRegisterAddr;
     address owner;
 
     event DepositBalance(address myAddress, uint threshold, uint nowValue, uint accuValue);
     event WithdrawBalance(address myAddress, uint threshold, uint value, uint price, bool transfered);
     
-    constructor(address _owner, address _oracleRegisterAddr)
+    constructor(address _owner, address _testRegisterAddr)
         public
     {
         owner = _owner;
-        oracleRegisterAddr = _oracleRegisterAddr;
+        testRegisterAddr = _testRegisterAddr;
     }
 
     modifier OnlyAllowOwnerAndTestOracleExample {
-        address testOracleExampleAddr = OracleRegister(oracleRegisterAddr).getAddress('TestOracleExample');
+        address testOracleExampleAddr = TestRegister(testRegisterAddr).getAddress('TestOracleExample');
         require(0 != testOracleExampleAddr);
         require(msg.sender == owner || msg.sender == testOracleExampleAddr); 
         _;
@@ -31,7 +31,7 @@ contract TestWalletDistributor {
         payable
         public
     {
-        address myTestStorageAddr = OracleRegister(oracleRegisterAddr).getAddress('TestStorage');
+        address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress('TestStorage');
         assert(myTestStorageAddr != 0);
         TestStorage myStorage = TestStorage(myTestStorageAddr);
 
@@ -61,7 +61,7 @@ contract TestWalletDistributor {
         public
         OnlyAllowOwnerAndTestOracleExample
     {
-        address myTestStorageAddr = OracleRegister(oracleRegisterAddr).getAddress('TestStorage');
+        address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress('TestStorage');
         assert(myTestStorageAddr != 0);
         TestStorage myStorage = TestStorage(myTestStorageAddr);
 
