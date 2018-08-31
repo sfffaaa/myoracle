@@ -9,6 +9,10 @@ if [ ! -d "${HOME}/.ethash" ]; then
 	ETHASH_PATH_EXIST=0
 fi
 
+if [ ! -d "travisCI/datadir/geth/ethash" ]; then
+	ETHASH_PATH_EXIST=0
+fi
+
 # start private chain
 (cd travisCI; sh startnode1.sh &)
 

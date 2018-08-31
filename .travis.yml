@@ -10,6 +10,7 @@ python:
 cache:
   directories:
   - $HOME/.ethash
+  - backend/travisCI/datadir/geth/ethash
 
 matrix:
   include:
