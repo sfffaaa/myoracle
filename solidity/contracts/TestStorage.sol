@@ -207,21 +207,4 @@ contract TestStorage {
         bytes32 name = keccak256(abi.encodePacked(_name));
         bytes32Array[name].length = _length;
     }
-
-    // [TODO] No use here, because we use OracleRegister right now.
-    function setAddress(string _key, address _addr)
-        public
-    {
-        bytes32 name = keccak256(abi.encodePacked(_key));
-        bytes32AddressMap[name] = _addr;
-    }
-
-    function getAddress(string _key)
-        view
-        public
-        returns (address)
-    {
-        bytes32 name = keccak256(abi.encodePacked(_key));
-        return bytes32AddressMap[name];
-    }
 }
