@@ -1,0 +1,10 @@
+[Deploy]
+truffle_path=
+truffle_build_path=
+target_contract_name=OracleCore,OracleStorage,TestOracleExample,TestStorage,OracleRegister,OracleWallet,TestWalletDistributor
+
+[Ethereum]
+file_ipc=
+
+[Output]
+file_path=
