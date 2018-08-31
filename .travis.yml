@@ -7,6 +7,10 @@ node_js:
 python:
   - "3.6"
 
+cache:
+  directories:
+  - $HOME/.ethash
+
 matrix:
   include:
     - os: linux
