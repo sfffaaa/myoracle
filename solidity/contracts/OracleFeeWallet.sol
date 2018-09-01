@@ -8,10 +8,14 @@ contract OracleFeeWallet is OracleConstant {
     using SafeMath for uint256;
 
     address owner;
-    mapping(address => uint) addressValueMap;
-    mapping(address => uint) paybackValueMap;
+    mapping(address => uint) private addressValueMap;
+    mapping(address => uint) private paybackValueMap;
 
-    event DepositAction(address sender, uint value, uint accumulateValue);
+    event DepositAction(address indexed sender, uint value, uint accumulateValue);
+    event UpdateUsedAction(address indexed helperAddr, address indexed balanceAddr,
+                           uint value, uint accumulateValue);
+    event UpdatePaybackAction(address indexed helperAddr, address indexed balanceAddr,
+                              uint value, uint accumulateValue);
     event WithdrawAction(address sender, uint value);
 
 
@@ -45,6 +49,22 @@ contract OracleFeeWallet is OracleConstant {
         emit WithdrawAction(_outAddr, address(this).balance);
     }
 
+    // [TODO] Only register node address can do this (or owner)
+    // [TODO] Should be internal function (?
+    function updateUsedBalance(address _addr, uint _value)
+        public
+    {
+        uint remainValue = addressValueMap[_addr];
+        require(remainValue >= _value);
+        addressValueMap[_addr] = remainValue.sub(_value);
+
+        paybackValueMap[msg.sender] = paybackValueMap[msg.sender].add(_value);
+
+        emit UpdatePaybackAction(msg.sender, _addr, _value, paybackValueMap[_addr]);
+        emit UpdateUsedAction(msg.sender, _addr, _value, addressValueMap[_addr]);
+    }
+
+    // [TODO] Only register node addrress can do this (or owner)
     function getBalance(address _addr)
         public
         view
