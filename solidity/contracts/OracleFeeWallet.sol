@@ -1,9 +1,12 @@
 pragma solidity 0.4.24;
 
 import {OracleConstant} from "./OracleConstant.sol";
+import './SafeMath.sol';
 
 
 contract OracleFeeWallet is OracleConstant {
+    using SafeMath for uint256;
+
     address owner;
     mapping(address => uint) addressValueMap;
     mapping(address => uint) paybackValueMap;
@@ -47,8 +50,7 @@ contract OracleFeeWallet is OracleConstant {
         public
     {
         address sender = msg.sender;
-        //[TODO] Use safemath to added it
-        addressValueMap[sender] = addressValueMap[sender] + msg.value;
+        addressValueMap[sender] = addressValueMap[sender].add(msg.value);
         emit DepositAction(sender, msg.value, addressValueMap[sender]);
     }
 }
