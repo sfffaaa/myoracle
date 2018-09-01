@@ -7,3 +7,18 @@ Implement an simple oracle which can communicate with the world
 ```bash
 npm install
 ```
+
+# Design Note
+
+## Payment system
+### Flow
+1. Users should deposit ETH into wallet for paying transaction fee and oracle fee.
+2. In functions, trigger and \_\_callback, should check whether the address has enough money in wallet.
+3. Before executing real logic in above function, substract the total trasaction fee in wallet and update it.</br>
+**Note**: It means I use estimate trasaction fee instead of real transaction fee.
+4. Smart contract should emit event for recording all information.
+
+### Wait to Check
+1. I want other people can also take responsibility for running node client. So maybe they need to stake some money inside the wallet in order to avoid some illegal activities. And before the money in wallet exceeds client's staking, I should pay back ETH in wallet to other clients where they help to call oracle. </br> It implies below things.
+    - The function which pay back to all clients is needed.
+    - All receipts need to be recorded for sent back money.
