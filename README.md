@@ -10,6 +10,17 @@ npm install
 
 # Design Note
 
+## Smart Contract
+### Add new smart contract
+#### Smart Contract
+1. Add new smart contract file
+2. Update migration script
+
+#### Backend
+1. Add two file under src/subfolder. For example, folder, oracle\_wallet, has two files, oracle\_wallet.py and oracle\_wallet\_onchain\_handler.py
+2. Update src/utils/my\_deployer.py to check how to update.
+3. Update contract name to target\_contract\_name in config.conf.template and travisCI/test\_config.conf.
+
 ## Payment system
 ### Flow
 1. Users should deposit ETH into wallet for paying transaction fee and oracle fee.
