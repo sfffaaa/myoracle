@@ -45,6 +45,14 @@ contract OracleFeeWallet is OracleConstant {
         emit WithdrawAction(_outAddr, address(this).balance);
     }
 
+    function getBalance(address _addr)
+        public
+        view
+        returns (uint)
+    {
+        return addressValueMap[_addr];
+    }
+
     function deposit()
         payable
         public
