@@ -1,4 +1,4 @@
-/* global artifacts, contract, it, assert, before */
+/* global artifacts, contract, it, assert, before, web3 */
 
 const OracleFeeWallet = artifacts.require('OracleFeeWallet');
 const BigNumber = require('bignumber.js');
@@ -30,22 +30,22 @@ async function CheckUpdateUsedBalanceEvent(
 ) {
     const tx = await oracleFeeWalletInst.updateUsedBalance(
         usedAccountInfo.addr,
-        sentValue, {
+        sentValue.toNumber(), {
             from: helpAccountInfo.addr,
         },
     );
 
     truffleAssert.eventEmitted(tx, 'UpdateUsedAction', (ev) => {
-        assert.equal(ev.helperInfo, helpAccountInfo.addr, 'Account should be the same');
+        assert.equal(ev.helperAddr, helpAccountInfo.addr, 'Account should be the same');
         assert.equal(ev.balanceAddr, usedAccountInfo.addr, 'Account should be the same');
         assert.equal(
             ev.value.toNumber(),
-            BigNumber(usedAccountInfo.sentValue).toNumber(),
+            sentValue.toNumber(),
             'Value should be the same',
         );
         assert.equal(
             ev.accumulateValue.toNumber(),
-            BigNumber(usedAccountInfo.accumulateValue).toNumber(),
+            usedAccountInfo.accumulateValue.toNumber(),
             'Accumulate Value should be the same',
         );
         return true;
@@ -56,28 +56,52 @@ async function CheckUpdateUsedBalanceEvent(
         assert.equal(ev.balanceAddr, usedAccountInfo.addr, 'Account should be the same');
         assert.equal(
             ev.value.toNumber(),
-            BigNumber(sentValue.sentValue).toNumber(),
+            sentValue.toNumber(),
             'Value should be the same',
         );
         assert.equal(
             ev.accumulateValue.toNumber(),
-            BigNumber(helpAccountInfo.accumulateValue).toNumber(),
+            helpAccountInfo.accumulateValue.toNumber(),
             'Accumulate Value should be the same',
         );
         return true;
     });
 }
 
+async function CheckPaybackEvent(
+    oracleFeeWalletInst,
+    paybackInfos,
+    account,
+) {
+    const tx = await oracleFeeWalletInst.payback({
+        from: account,
+    });
+    let myIdx = 0;
+    truffleAssert.eventEmitted(tx, 'PaybackAction', (ev) => {
+        const testEvent = ev;
+        const checkInfo = paybackInfos[myIdx];
+        assert.equal(testEvent.paybackAddr, checkInfo.addr, 'address should be the same');
+        assert.equal(
+            testEvent.paybackValue.toNumber(),
+            checkInfo.accumulateValue.toNumber(),
+            'payback value should be the same',
+        );
+        myIdx += 1;
+        return true;
+    });
+    assert.equal(myIdx, paybackInfos.length, 'length should be the same');
+}
+
 function UpdateUsedBalance(sentValue, usedAccountInfo, helpAccountInfo) {
     assert.isAtLeast(
-        usedAccountInfo.accumulateValue,
-        sentValue,
+        usedAccountInfo.accumulateValue.toNumber(),
+        sentValue.toNumber(),
         'value should larger than usedAccountInfo.accumulateValue',
     );
     const newUsedAccountInfo = usedAccountInfo;
     const newHelpAccountInfo = helpAccountInfo;
-    newUsedAccountInfo.accumulateValue -= sentValue;
-    newHelpAccountInfo.accumulateValue += sentValue;
+    newUsedAccountInfo.accumulateValue = newUsedAccountInfo.accumulateValue.minus(sentValue);
+    newHelpAccountInfo.accumulateValue = newHelpAccountInfo.accumulateValue.plus(sentValue);
     return {
         usedInfo: newUsedAccountInfo,
         helperInfo: newHelpAccountInfo,
@@ -94,9 +118,9 @@ contract('OracleFeeWallet Test', (accounts) => {
     it('Deposit test', async () => {
         console.log(`OracleFeeWallet: ${OracleFeeWallet.address}`);
 
-        CheckDepositEvent(oracleFeeWalletInst, accounts[1], 5000, 5000);
-        CheckDepositEvent(oracleFeeWalletInst, accounts[2], 10000, 10000);
-        CheckDepositEvent(oracleFeeWalletInst, accounts[1], 7000, 12000);
+        await CheckDepositEvent(oracleFeeWalletInst, accounts[1], 5000, 5000);
+        await CheckDepositEvent(oracleFeeWalletInst, accounts[2], 10000, 10000);
+        await CheckDepositEvent(oracleFeeWalletInst, accounts[1], 7000, 12000);
     });
 
     it('Check balance test', async () => {
@@ -113,34 +137,34 @@ contract('OracleFeeWallet Test', (accounts) => {
     it('Update check test', async () => {
         await oracleFeeWalletInst.deposit({
             from: accounts[1],
-            value: 1000,
+            value: BigNumber(web3.toWei(2)).toNumber(),
         });
         await oracleFeeWalletInst.deposit({
             from: accounts[2],
-            value: 2000,
+            value: BigNumber(web3.toWei(3)).toNumber(),
         });
         const helperInfos = [{
             addr: accounts[3],
-            accumulateValue: 0,
+            accumulateValue: BigNumber(0),
         }, {
             addr: accounts[4],
-            accumulateValue: 0,
+            accumulateValue: BigNumber(0),
         }];
 
         const usedInfos = [{
             addr: accounts[1],
-            accumulateValue: (await oracleFeeWalletInst.getBalance.call(accounts[1])).toNumber(),
+            accumulateValue: await oracleFeeWalletInst.getBalance.call(accounts[1]),
         }, {
             addr: accounts[2],
-            accumulateValue: (await oracleFeeWalletInst.getBalance.call(accounts[2])).toNumber(),
+            accumulateValue: await oracleFeeWalletInst.getBalance.call(accounts[2]),
         }];
 
         // use account1 and update in account3
-        let sentValue = 100;
+        let sentValue = BigNumber(web3.toWei(0.1));
         let afterInfoDict = UpdateUsedBalance(sentValue, usedInfos[0], helperInfos[0]);
         usedInfos[0] = afterInfoDict.usedInfo;
         helperInfos[0] = afterInfoDict.helperInfo;
-        CheckUpdateUsedBalanceEvent(
+        await CheckUpdateUsedBalanceEvent(
             oracleFeeWalletInst,
             sentValue,
             usedInfos[0],
@@ -148,11 +172,11 @@ contract('OracleFeeWallet Test', (accounts) => {
         );
 
         // use account1 and update in account3
-        sentValue = 200;
+        sentValue = BigNumber(web3.toWei(0.2));
         afterInfoDict = UpdateUsedBalance(sentValue, usedInfos[0], helperInfos[0]);
         usedInfos[0] = afterInfoDict.usedInfo;
         helperInfos[0] = afterInfoDict.helperInfo;
-        CheckUpdateUsedBalanceEvent(
+        await CheckUpdateUsedBalanceEvent(
             oracleFeeWalletInst,
             sentValue,
             usedInfos[0],
@@ -160,11 +184,11 @@ contract('OracleFeeWallet Test', (accounts) => {
         );
 
         // use account2 and update in account3
-        sentValue = 300;
+        sentValue = BigNumber(web3.toWei(0.3));
         afterInfoDict = UpdateUsedBalance(sentValue, usedInfos[1], helperInfos[0]);
         usedInfos[1] = afterInfoDict.usedInfo;
         helperInfos[0] = afterInfoDict.helperInfo;
-        CheckUpdateUsedBalanceEvent(
+        await CheckUpdateUsedBalanceEvent(
             oracleFeeWalletInst,
             sentValue,
             usedInfos[1],
@@ -172,21 +196,51 @@ contract('OracleFeeWallet Test', (accounts) => {
         );
 
         // use account2 and update in account4
-        sentValue = 400;
+        sentValue = BigNumber(web3.toWei(0.4));
         afterInfoDict = UpdateUsedBalance(sentValue, usedInfos[1], helperInfos[1]);
         usedInfos[1] = afterInfoDict.usedInfo;
         helperInfos[1] = afterInfoDict.helperInfo;
-        CheckUpdateUsedBalanceEvent(
+        await CheckUpdateUsedBalanceEvent(
             oracleFeeWalletInst,
             sentValue,
             usedInfos[1],
             helperInfos[1],
         );
+
         TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
             accounts[8],
-            1000000000, {
-                from: accounts[3],
+            web3.toWei(1000), {
+                from: accounts[0],
             },
         ));
+
+        const paybackInfos = [{
+            addr: helperInfos[0].addr,
+            accumulateValue: helperInfos[0].accumulateValue,
+            balance: await web3.eth.getBalance(helperInfos[0].addr),
+        }, {
+            addr: helperInfos[1].addr,
+            accumulateValue: helperInfos[1].accumulateValue,
+            balance: await web3.eth.getBalance(helperInfos[1].addr),
+        }];
+        // Because payback is from lastest to oldest
+        await CheckPaybackEvent(
+            oracleFeeWalletInst,
+            [paybackInfos[1], paybackInfos[0]],
+            accounts[0],
+        );
+
+        const balanceInfos = [{
+            balance: await web3.eth.getBalance(paybackInfos[0].addr),
+        }, {
+            balance: await web3.eth.getBalance(paybackInfos[1].addr),
+        }];
+        for (let i = 0; i < paybackInfos.length; i += 1) {
+            assert.equal(
+                balanceInfos[i].balance.toNumber(),
+                paybackInfos[i].accumulateValue.plus(paybackInfos[i].balance).toNumber(),
+                'balance should be the same',
+            );
+        }
     });
 });

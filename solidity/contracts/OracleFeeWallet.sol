@@ -14,12 +14,12 @@ contract OracleFeeWallet is OracleConstant {
     address[] private paybackAddrList;
     mapping(address => uint) private paybackAddrToIdxP1;
 
-    event DepositAction(address indexed sender, uint value, uint accumulateValue);
-    event UpdateUsedAction(address indexed helperAddr, address indexed balanceAddr,
+    event DepositAction(address  sender, uint value, uint accumulateValue);
+    event UpdateUsedAction(address  helperAddr, address  balanceAddr,
                            uint value, uint accumulateValue);
-    event UpdatePaybackAction(address indexed helperAddr, address indexed balanceAddr,
+    event UpdatePaybackAction(address  helperAddr, address  balanceAddr,
                               uint value, uint accumulateValue);
-    event WithdrawAction(address sender, uint value);
+    event PaybackAction(address paybackAddr, uint paybackValue);
 
 
     constructor (address _owner) public {
@@ -31,25 +31,22 @@ contract OracleFeeWallet is OracleConstant {
         _;
     }
 
-    // [TODO] Not implement
     function payback()
         onlyOwner
         public
-        view
     {
-        // [TODO] Force stop because I'm not finish yet
-        assert(0 == 1);
-    }
-
-    // [TODO] Not implement
-    function withdraw(address _outAddr)
-        onlyOwner
-        payable
-        public
-    {
-        assert(0 == 1);
-        _outAddr.transfer(address(this).balance);
-        emit WithdrawAction(_outAddr, address(this).balance);
+        for (uint idxP1 = paybackAddrList.length; idxP1 > 0; idxP1--) {
+            uint realIdx = idxP1 - 1;
+            address paybackAddr = paybackAddrList[realIdx];
+            uint paybackValue = paybackValueMap[paybackAddr];
+            if (paybackValue != 0) {
+                paybackAddr.transfer(paybackValue);
+                emit PaybackAction(paybackAddr, paybackValue);
+            }
+            paybackValueMap[paybackAddr] = 0;
+            paybackAddrToIdxP1[paybackAddr] = 0;
+            delete paybackAddrList[realIdx];
+        }
     }
 
     // [TODO] Only register node address can do this (or owner)
@@ -69,7 +66,7 @@ contract OracleFeeWallet is OracleConstant {
             paybackAddrToIdxP1[msg.sender] = paybackAddrList.length;
         }
 
-        emit UpdatePaybackAction(msg.sender, _addr, _value, paybackValueMap[_addr]);
+        emit UpdatePaybackAction(msg.sender, _addr, _value, paybackValueMap[msg.sender]);
         emit UpdateUsedAction(msg.sender, _addr, _value, addressValueMap[_addr]);
     }
 
