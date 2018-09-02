@@ -11,6 +11,9 @@ contract OracleFeeWallet is OracleConstant {
     mapping(address => uint) private addressValueMap;
     mapping(address => uint) private paybackValueMap;
 
+    address[] private paybackAddrList;
+    mapping(address => uint) private paybackAddrToIdxP1;
+
     event DepositAction(address indexed sender, uint value, uint accumulateValue);
     event UpdateUsedAction(address indexed helperAddr, address indexed balanceAddr,
                            uint value, uint accumulateValue);
@@ -59,6 +62,12 @@ contract OracleFeeWallet is OracleConstant {
         addressValueMap[_addr] = remainValue.sub(_value);
 
         paybackValueMap[msg.sender] = paybackValueMap[msg.sender].add(_value);
+        
+        uint idxP1 = paybackAddrToIdxP1[msg.sender];
+        if (0 == idxP1) {
+            paybackAddrList.push(msg.sender);
+            paybackAddrToIdxP1[msg.sender] = paybackAddrList.length;
+        }
 
         emit UpdatePaybackAction(msg.sender, _addr, _value, paybackValueMap[_addr]);
         emit UpdateUsedAction(msg.sender, _addr, _value, addressValueMap[_addr]);
