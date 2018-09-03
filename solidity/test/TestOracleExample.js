@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["__querySentNode", "__callback"] }] */
-/* global artifacts, contract, it, assert, web3 */
+/* global artifacts, contract, it, assert, web3, before */
 
 const TestUtils = require('./TestUtils.js');
 
@@ -9,11 +9,15 @@ const TestOracleExample = artifacts.require('TestOracleExample');
 contract('TestOracleExample', (accounts) => {
     const FAKE_REQUEST = "Whatever doesn't kill you";
     const FAKE_RESPONSE = 'simply makes you stranger';
+    let oracleCoreInst = null;
+    let testOracleExampleInst = null;
+
+    before(async () => {
+        oracleCoreInst = await OracleCore.deployed();
+        testOracleExampleInst = await TestOracleExample.deployed();
+    });
 
     it('trigger test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
         await testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -33,9 +37,6 @@ contract('TestOracleExample', (accounts) => {
     });
 
     it('permission check', async () => {
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
-
         TestUtils.AssertPass(testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -85,9 +86,6 @@ contract('TestOracleExample', (accounts) => {
         ));
     });
     it('oracleCoreInst permission test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
         await testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -110,8 +108,6 @@ contract('TestOracleExample', (accounts) => {
     });
 
     it('test oracle example payment test', async () => {
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
         TestUtils.AssertPass(testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -133,7 +129,6 @@ contract('TestOracleExample', (accounts) => {
     });
 
     it('convert check', async () => {
-        const testOracleExampleInst = await TestOracleExample.deployed();
         const result = [
             ['123', true, 123],
             ['123.123', true, 123],
