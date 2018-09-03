@@ -17,7 +17,34 @@ contract('TestOracleExample', (accounts) => {
         testOracleExampleInst = await TestOracleExample.deployed();
     });
 
+    it('wallet check', async () => {
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 20000,
+        }));
+        TestUtils.AssertPass(testOracleExampleInst.trigger(
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertPass(testOracleExampleInst.trigger(
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        ));
+        TestUtils.AssertRevert(testOracleExampleInst.trigger(
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        ));
+    });
+
     it('trigger test', async () => {
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
         await testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -37,6 +64,9 @@ contract('TestOracleExample', (accounts) => {
     });
 
     it('permission check', async () => {
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 20000,
+        }));
         TestUtils.AssertPass(testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -86,6 +116,9 @@ contract('TestOracleExample', (accounts) => {
         ));
     });
     it('oracleCoreInst permission test', async () => {
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
         await testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -108,6 +141,9 @@ contract('TestOracleExample', (accounts) => {
     });
 
     it('test oracle example payment test', async () => {
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
         TestUtils.AssertPass(testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,

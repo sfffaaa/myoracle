@@ -162,6 +162,12 @@ module.exports = (deployer, network, accounts) => {
             );
         })
         .then(() => {
+            return oracleFeeWalletInst.registerClientAddr(
+                oracleCoreInst.address,
+                { from: accounts[0] },
+            );
+        })
+        .then(() => {
             console.log('Finish deploy');
         });
 };

@@ -1,4 +1,4 @@
-/* global artifacts, contract, it, web3, assert */
+/* global artifacts, contract, it, web3, assert, before */
 
 const OracleCore = artifacts.require('OracleCore');
 const TestOracleExample = artifacts.require('TestOracleExample');
@@ -9,13 +9,21 @@ const TestUtils = require('./TestUtils.js');
 contract('OracleCoreBasic', (accounts) => {
     const FAKE_REQUEST = "Whatever doesn't kill you";
     const FAKE_RESPONSE = 'simply makes you stranger';
+    let oracleCoreInst = null;
+    let testOracleExampleInst = null;
+
+    before(async () => {
+        oracleCoreInst = await OracleCore.deployed();
+        testOracleExampleInst = await TestOracleExample.deployed();
+    });
 
     it('Basic test', async () => {
         console.log(`OracleCore: ${OracleCore.address}`);
         console.log(`TestOracleExample: ${TestOracleExample.address}`);
 
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
 
         let queryId = 0;
         let tx = await oracleCoreInst.querySentNode(
@@ -58,9 +66,9 @@ contract('OracleCoreBasic', (accounts) => {
     });
 
     it('oracleCoreInst permission test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
         await testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -83,9 +91,9 @@ contract('OracleCoreBasic', (accounts) => {
     });
 
     it('oracleCoreInst payment test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
         await testOracleExampleInst.trigger(
             {
                 value: TestUtils.ALLOW_PAYMENT_VALUE,
@@ -108,8 +116,9 @@ contract('OracleCoreBasic', (accounts) => {
     });
 
     it('Payment test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
 
         TestUtils.AssertRevert(oracleCoreInst.querySentNode(
             0,

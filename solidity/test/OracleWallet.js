@@ -1,4 +1,4 @@
-/* global artifacts, contract, it, web3, assert */
+/* global artifacts, contract, it, web3, assert, before */
 
 const TestOracleExample = artifacts.require('TestOracleExample');
 const OracleWallet = artifacts.require('OracleWallet');
@@ -7,12 +7,21 @@ const TestUtils = require('./TestUtils.js');
 
 
 contract('OracleWallet Test', (accounts) => {
+    let oracleWalletInst = null;
+    let testOracleExampleInst = null;
+
+    before(async () => {
+        oracleWalletInst = await OracleWallet.deployed();
+        testOracleExampleInst = await TestOracleExample.deployed();
+    });
+
     it('Basic test', async () => {
         console.log(`OracleWallet: ${OracleWallet.address}`);
         console.log(`TestOracleExample: ${TestOracleExample.address}`);
 
-        const oracleWalletInst = await OracleWallet.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+        }));
 
         const myBeforeWalletBalance = BigNumber(
             await web3.eth.getBalance(oracleWalletInst.address),

@@ -6,6 +6,7 @@ import {OracleStorage} from "./OracleStorage.sol";
 import {OracleRegister} from "./OracleRegister.sol";
 import {OracleConstant} from "./OracleConstant.sol";
 import {OracleWallet} from "./OracleWallet.sol";
+import {OracleFeeWallet} from "./OracleFeeWallet.sol";
 
 
 contract OracleCore is OracleConstant {
@@ -25,12 +26,17 @@ contract OracleCore is OracleConstant {
         _;
     }
 
+    //[TODO] Check the callee...
     function querySentNode(uint timeout, address _callee, string _requests)
         payable
         public
         returns (bytes32)
     {
+
         require(oracleRegisterAddr != 0);
+        address myFeeWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
+        OracleFeeWallet(myFeeWalletAddr).updateUsedBalance(_callee, 10000);
+
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
         require(myStorageAddr != 0);
 
@@ -39,9 +45,11 @@ contract OracleCore is OracleConstant {
         OracleStorage(myStorageAddr).setBytes32ToAddress(ORACLE_NODE_ADDR_KEY, myQueryId, _callee);
         emit ToOracleNode(timeout, myQueryId, _requests);
 
+        // [TODO] Need remove
         address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
         require(myWalletAddr != 0);
         OracleWallet(myWalletAddr).deposit.value(msg.value)(_callee);
+        // Above should remove
 
         return myQueryId;
     }

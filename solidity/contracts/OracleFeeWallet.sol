@@ -101,6 +101,15 @@ contract OracleFeeWallet is OracleConstant {
         }
     }
 
+    // [TODO] Not implement right now
+    function returnAllMoney()
+        onlyOwner
+        public
+        view
+    {
+        require(1 == 0);
+    }
+
     // [TODO] Should be internal function (?
     function updateUsedBalance(address _addr, uint _value)
         checkOwnerAndRegister
