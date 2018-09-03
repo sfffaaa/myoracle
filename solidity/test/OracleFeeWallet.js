@@ -143,6 +143,16 @@ contract('OracleFeeWallet Test', (accounts) => {
             from: accounts[2],
             value: BigNumber(web3.toWei(3)).toNumber(),
         });
+
+        await oracleFeeWalletInst.registerClientAddr(
+            accounts[3],
+            { from: accounts[0] },
+        );
+        await oracleFeeWalletInst.registerClientAddr(
+            accounts[4],
+            { from: accounts[0] },
+        );
+
         const helperInfos = [{
             addr: accounts[3],
             accumulateValue: BigNumber(0),
@@ -242,5 +252,67 @@ contract('OracleFeeWallet Test', (accounts) => {
                 'balance should be the same',
             );
         }
+    });
+
+    it('Permission check test', async () => {
+        const targetTestAddrs = [accounts[5], accounts[6]];
+        await oracleFeeWalletInst.deposit({
+            from: targetTestAddrs[0],
+            value: BigNumber(web3.toWei(2)).toNumber(),
+        });
+        await oracleFeeWalletInst.deposit({
+            from: targetTestAddrs[1],
+            value: BigNumber(web3.toWei(2)).toNumber(),
+        });
+
+        TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[0],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[0] },
+        ));
+
+        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[0]);
+        TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[0],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[0] },
+        ));
+        await oracleFeeWalletInst.deregisterClientAddr(targetTestAddrs[0]);
+        TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[0],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[0] },
+        ));
+
+        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[0]);
+        TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[0],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[0] },
+        ));
+        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[1]);
+        TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[1],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[1] },
+        ));
+        await oracleFeeWalletInst.deregisterClientAddr(targetTestAddrs[0]);
+        TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[0],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[0] },
+        ));
+        await oracleFeeWalletInst.deregisterClientAddr(targetTestAddrs[1]);
+        TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[1],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[1] },
+        ));
+        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[1]);
+        TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
+            targetTestAddrs[1],
+            BigNumber(web3.toWei(0.1)).toNumber(),
+            { from: targetTestAddrs[1] },
+        ));
     });
 });

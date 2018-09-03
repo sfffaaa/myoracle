@@ -14,6 +14,9 @@ contract OracleFeeWallet is OracleConstant {
     address[] private paybackAddrList;
     mapping(address => uint) private paybackAddrToIdxP1;
 
+    address[] private clientRegisterAddrList;
+    mapping(address => uint) private clientRegisterAddrToIdxP1;
+
     event DepositAction(address  sender, uint value, uint accumulateValue);
     event UpdateUsedAction(address  helperAddr, address  balanceAddr,
                            uint value, uint accumulateValue);
@@ -28,6 +31,55 @@ contract OracleFeeWallet is OracleConstant {
 
     modifier onlyOwner {
         require(msg.sender == owner);
+        _;
+    }
+
+    function registerClientAddr(address _addr)
+        onlyOwner
+        public
+    {
+        require(_addr != 0);
+        if (0 == clientRegisterAddrToIdxP1[_addr]) {
+            clientRegisterAddrList.push(_addr);
+            clientRegisterAddrToIdxP1[_addr] = clientRegisterAddrList.length;
+        }
+    }
+
+    function deregisterClientAddr(address _addr)
+        onlyOwner
+        public
+    {
+        require(_addr != 0);
+
+        uint idxP1 = clientRegisterAddrToIdxP1[_addr];
+        if (idxP1 == 0) {
+            return;
+        }
+
+        uint idx = idxP1 - 1;
+        uint lastIdx = clientRegisterAddrList.length - 1;
+        address lastAddr = clientRegisterAddrList[lastIdx];
+        clientRegisterAddrList[idx] = clientRegisterAddrList[lastIdx];
+        clientRegisterAddrToIdxP1[lastAddr] = idx + 1;
+
+        delete clientRegisterAddrList[lastIdx];
+        clientRegisterAddrToIdxP1[_addr] = 0;
+    }
+
+    modifier checkOwnerAndRegister() {
+        bool checked = false;
+        if (msg.sender == owner) {
+            checked = true;
+        } else {
+            for (uint i = 0; i < clientRegisterAddrList.length; i++) {
+                if (clientRegisterAddrList[i] == msg.sender) {
+                    checked = true;
+                    break;
+                }
+            }
+        }
+        require(checked == true);
+
         _;
     }
 
@@ -49,11 +101,13 @@ contract OracleFeeWallet is OracleConstant {
         }
     }
 
-    // [TODO] Only register node address can do this (or owner)
     // [TODO] Should be internal function (?
     function updateUsedBalance(address _addr, uint _value)
+        checkOwnerAndRegister
         public
     {
+        require(_addr != 0);
+
         uint remainValue = addressValueMap[_addr];
         require(remainValue >= _value);
         addressValueMap[_addr] = remainValue.sub(_value);
@@ -76,6 +130,7 @@ contract OracleFeeWallet is OracleConstant {
         view
         returns (uint)
     {
+        require(_addr != 0);
         return addressValueMap[_addr];
     }
 
