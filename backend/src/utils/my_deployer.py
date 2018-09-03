@@ -4,6 +4,7 @@
 from base_object.base_deployer import BaseDeployer
 from oracle_storage.oracle_storage import OracleStorage
 from oracle_register.oracle_register import OracleRegister
+from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 
 from test_storage.test_storage import TestStorage
 from test_register.test_register import TestRegister
@@ -47,7 +48,8 @@ class MyDeployer(BaseDeployer):
         func_args_pairs = [
             (self._oracle_register_register, contract_info),
             (self._test_register_register, contract_info),
-            (self._test_stroage_allower, contract_info)
+            (self._test_stroage_allower, contract_info),
+            (self._oracle_fee_wallet_register, contract_info),
         ]
         procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
         for p in procs:
@@ -76,6 +78,10 @@ class MyDeployer(BaseDeployer):
         allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
                         contract_info['TestOracleExample']['contractAddress']]
         TestStorage(self._config_path).set_multiple_allower(allower_args)
+
+    def _oracle_fee_wallet_register(self, contract_info):
+        addresses = [contract_info['OracleCore']['contractAddress']]
+        OracleFeeWallet(self._config_path).register_multiple_client_addr(addresses)
 
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':

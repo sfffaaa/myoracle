@@ -9,6 +9,7 @@ from utils.my_deployer import MyDeployer
 from clients.oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG
 from oracle_core.oracle_core import OracleCore
+from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_wei
 import time
 from gevent.event import Event
@@ -62,10 +63,13 @@ class TestOracleNodeClient(unittest.TestCase):
         private_daemon.link_exception(froce_die)
         private_daemon.start()
 
+        test_example = TestOracleExample(_TEST_CONFIG)
+        test_example.deposit(value=convert_to_wei(10000, 'wei'))
+
         # use oracle_node to trigger event
         node = OracleCore(_TEST_CONFIG)
         node.query_sent_node(TEST_TIME,
-                             '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b',
+                             test_example.get_address(),
                              'json(https://api.kraken.com/0/public/Ticker)["error"][0]',
                              value=convert_to_wei(1000, 'wei'))
         self._start_time = time.time()

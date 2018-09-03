@@ -20,6 +20,23 @@ class OracleFeeWalletOnChainHandler(BaseContractOnChainHandler):
         self.wait_miner_finish(tx_hash)
         return convert_to_hex(tx_hash)
 
+    def c_register_client_addr(self, address, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
+        tx_hash = self.get_contract_inst().functions.registerClientAddr(address) \
+                                                    .transact(transaction_data)
+
+        self.wait_miner_finish(tx_hash)
+        return convert_to_hex(tx_hash)
+
+    def c_register_multiple_client_addr(self, addresses, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
+        tx_hashes = [self.get_contract_inst().functions.registerClientAddr(address)
+                         .transact(transaction_data)
+                     for address in addresses]
+
+        self.wait_miner_finish(tx_hashes)
+        return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
+
 
 if __name__ == '__main__':
     pass
