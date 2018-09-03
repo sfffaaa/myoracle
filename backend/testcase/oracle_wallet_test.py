@@ -34,7 +34,7 @@ class TestOracleWallet(unittest.TestCase):
         PAYMENT_VALUE = 1000
         oracle_wallet = OracleWallet(_TEST_CONFIG)
         before_wallet_balance = oracle_wallet.get_balance()
-        test_example.deposit(value=convert_to_wei(10000, 'wei'))
+        test_example.deposit(value=convert_to_wei(20000, 'wei'))
         test_example.trigger(value=convert_to_wei(PAYMENT_VALUE, 'wei'))
         after_wallet_balance = oracle_wallet.get_balance()
 
