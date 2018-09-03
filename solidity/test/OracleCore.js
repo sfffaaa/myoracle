@@ -22,7 +22,7 @@ contract('OracleCoreBasic', (accounts) => {
         console.log(`TestOracleExample: ${TestOracleExample.address}`);
 
         TestUtils.AssertPass(testOracleExampleInst.deposit({
-            value: 10000,
+            value: 20000,
         }));
 
         let queryId = 0;
@@ -67,7 +67,7 @@ contract('OracleCoreBasic', (accounts) => {
 
     it('oracleCoreInst permission test', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
-            value: 10000,
+            value: 30000,
         }));
         await testOracleExampleInst.trigger(
             {
@@ -92,7 +92,7 @@ contract('OracleCoreBasic', (accounts) => {
 
     it('oracleCoreInst payment test', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
-            value: 10000,
+            value: 30000,
         }));
         await testOracleExampleInst.trigger(
             {

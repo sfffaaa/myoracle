@@ -58,6 +58,8 @@ contract OracleCore is OracleConstant {
         OnlyOwner
         external
     {
+        uint leftGas = gasleft();
+
         require(oracleRegisterAddr != 0);
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
         require(myStorageAddr != 0);
@@ -65,7 +67,12 @@ contract OracleCore is OracleConstant {
         // only some register node and owner can call this
         address callee = OracleStorage(myStorageAddr).getBytes32ToAddress(ORACLE_NODE_ADDR_KEY, _queryId);
         require(callee != 0);
+
+        address myFeeWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
+        OracleFeeWallet(myFeeWalletAddr).updateUsedBalance(callee, 10000);
+
         emit ToOracleCallee(_queryId, callee, _response, _hash);
         OracleBase(callee).__callback(_queryId, _response, _hash);
+
     }
 }

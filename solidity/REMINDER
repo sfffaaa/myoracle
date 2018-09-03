@@ -6,6 +6,7 @@ Q: Move storage in TestWalletDistributor to TestStorage
 Q: Use TestRegister instead of OracleRegister
 Q: Use TestRegister in TestStorage for avoid setting address here
 Q: Change permission for TestWalletDistributor
+Q: If sent Request back function error, the fee wallet won't update...
 
 Pending:
 Report of address called.

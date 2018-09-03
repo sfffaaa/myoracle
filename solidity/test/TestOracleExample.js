@@ -117,7 +117,7 @@ contract('TestOracleExample', (accounts) => {
     });
     it('oracleCoreInst permission test', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
-            value: 10000,
+            value: 20000,
         }));
         await testOracleExampleInst.trigger(
             {

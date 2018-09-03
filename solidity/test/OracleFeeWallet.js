@@ -1,9 +1,12 @@
 /* global artifacts, contract, it, assert, before, web3 */
 
 const OracleFeeWallet = artifacts.require('OracleFeeWallet');
+const OracleCore = artifacts.require('OracleCore');
+const TestOracleExample = artifacts.require('TestOracleExample');
 const BigNumber = require('bignumber.js');
 const truffleAssert = require('truffle-assertions');
 const TestUtils = require('./TestUtils.js');
+
 
 async function CheckDepositEvent(oracleFeeWalletInst, account, sentValue, accumulateValue) {
     const tx = await oracleFeeWalletInst.deposit({
@@ -110,9 +113,13 @@ function UpdateUsedBalance(sentValue, usedAccountInfo, helpAccountInfo) {
 
 contract('OracleFeeWallet Test', (accounts) => {
     let oracleFeeWalletInst = null;
+    let testOracleExampleInst = null;
+    let oracleCoreInst = null;
 
     before(async () => {
         oracleFeeWalletInst = await OracleFeeWallet.deployed();
+        oracleCoreInst = await OracleCore.deployed();
+        testOracleExampleInst = await TestOracleExample.deployed();
     });
 
     it('Deposit test', async () => {
@@ -314,5 +321,36 @@ contract('OracleFeeWallet Test', (accounts) => {
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[1] },
         ));
+    });
+
+    it('balance check test', async () => {
+        const FAKE_RESPONSE = 'simply makes you stranger';
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 20000,
+        }));
+        const beforeBalance = await oracleFeeWalletInst.getBalance.call(
+            testOracleExampleInst.address,
+        );
+        await testOracleExampleInst.trigger(
+            {
+                value: TestUtils.ALLOW_PAYMENT_VALUE,
+                from: accounts[0],
+            },
+        );
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+
+        TestUtils.AssertPass(oracleCoreInst.resultSentBack(
+            queryId,
+            FAKE_RESPONSE,
+            web3.sha3(FAKE_RESPONSE),
+        ));
+        const afterBalance = await oracleFeeWalletInst.getBalance.call(
+            testOracleExampleInst.address,
+        );
+        assert.equal(
+            beforeBalance.toNumber(),
+            afterBalance.plus(20000).toNumber(),
+            'balance should be the same',
+        );
     });
 });
