@@ -65,6 +65,9 @@ def check_transaction_meet_assert(w3, tx_hashs):
         tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
         if not tx_receipt:
             raise IOError('{0} receipt does not exist'.format(tx_hash))
+        if tx_receipt.status != 1:
+            print('tx erceipt has error {0}'.format(tx_receipt))
+            return True
         if tx_receipt.gasUsed == my_config.GAS_SPENT:
             return True
 
