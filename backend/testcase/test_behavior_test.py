@@ -12,6 +12,7 @@ from test_utils import _TEST_CONFIG, get_eth_price
 from utils.chain_utils import convert_to_wei, MyWeb3
 from test_wallet_distributor.test_wallet_distributor import TestWalletDistributor
 from test_oracle_example.test_oracle_example import TestOracleExample
+from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 
 
 class TestBehavior(unittest.TestCase):
@@ -53,6 +54,10 @@ class TestBehavior(unittest.TestCase):
 
         test_example = TestOracleExample(_TEST_CONFIG)
         test_example.deposit(value=convert_to_wei(20000, 'wei'))
+        oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
+        self.assertEqual(oracle_fee_wallet.get_balance(test_example.get_address()),
+                         convert_to_wei(20000, 'wei'),
+                         'should be the same in balance')
         test_example.trigger(value=convert_to_wei(1000, 'wei'))
 
         new_balance = test_distributor.get_balance()
@@ -80,6 +85,9 @@ class TestBehavior(unittest.TestCase):
         self.assertEqual(new_balance, 0, 'Should be the same')
 
         node_daemon.kill()
+        self.assertEqual(oracle_fee_wallet.get_balance(test_example.get_address()),
+                         convert_to_wei(0, 'wei'),
+                         'should be the same in balance')
 
 
 if __name__ == '__main__':

@@ -57,7 +57,6 @@ class TestOracleFeeWallet(unittest.TestCase):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         accounts = myWeb3.get_accounts()
         oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
-        before_wallet_balance = oracle_fee_wallet.get_balance()
 
         all_events = oracle_fee_wallet.get_all_events()
         deposit_action_event_hdr = all_events.DepositAction.createFilter(fromBlock='latest')
@@ -79,10 +78,6 @@ class TestOracleFeeWallet(unittest.TestCase):
             'sent_value': convert_to_wei(7000, 'wei'),
             'accumulate_value': convert_to_wei(12000, 'wei')
         })
-        after_wallet_balance = oracle_fee_wallet.get_balance()
-        self.assertEqual(after_wallet_balance,
-                         before_wallet_balance + convert_to_wei(5000 + 10000 + 7000, 'wei'),
-                         'should be the same in balance')
 
 
 if __name__ == '__main__':
