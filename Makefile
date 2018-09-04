@@ -44,6 +44,7 @@ uninstall:
 
 clean:
 	find . -name '*.swp' -delete
+	rm -rf backend/travisCI/datadir
 
 help:
 	@echo "Have several config for useage:"

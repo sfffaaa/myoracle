@@ -20,6 +20,14 @@ class OracleFeeWalletOnChainHandler(BaseContractOnChainHandler):
         self.wait_miner_finish(tx_hash)
         return convert_to_hex(tx_hash)
 
+    def c_payback(self, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
+        tx_hash = self.get_contract_inst().functions.payback() \
+                                                    .transact(transaction_data)
+
+        self.wait_miner_finish(tx_hash)
+        return convert_to_hex(tx_hash)
+
     def c_get_balance(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         balance = self.get_contract_inst().functions.getBalance(address).call(transaction_data)

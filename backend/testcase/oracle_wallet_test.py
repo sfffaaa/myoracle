@@ -10,6 +10,7 @@ from test_utils import _TEST_CONFIG
 from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_wei, MyWeb3
 from oracle_wallet.oracle_wallet import OracleWallet
+from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 
 
 class TestOracleWallet(unittest.TestCase):
@@ -31,14 +32,17 @@ class TestOracleWallet(unittest.TestCase):
     def test_single_event(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         test_example = TestOracleExample(_TEST_CONFIG)
-        PAYMENT_VALUE = 1000
+        PAYMENT_VALUE = 10000
         oracle_wallet = OracleWallet(_TEST_CONFIG)
         before_wallet_balance = oracle_wallet.get_balance()
-        test_example.deposit(value=convert_to_wei(20000, 'wei'))
+        test_example.deposit(value=convert_to_wei(PAYMENT_VALUE, 'wei'))
         test_example.trigger(value=convert_to_wei(PAYMENT_VALUE, 'wei'))
-        after_wallet_balance = oracle_wallet.get_balance()
 
-        self.assertEqual(before_wallet_balance + PAYMENT_VALUE,
+        oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
+        oracle_fee_wallet.payback()
+
+        after_wallet_balance = oracle_wallet.get_balance()
+        self.assertEqual(before_wallet_balance + convert_to_wei(PAYMENT_VALUE, 'wei'),
                          after_wallet_balance,
                          'balance should be the same')
 
