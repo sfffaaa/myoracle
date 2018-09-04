@@ -11,6 +11,9 @@ contract('OracleWallet Test', (accounts) => {
     let oracleWalletInst = null;
     let testOracleExampleInst = null;
     let oracleFeeWalletInst = null;
+    const oracleOwner = accounts[1];
+    const testOwner = accounts[2];
+    const otherUser = accounts[3];
 
     before(async () => {
         oracleWalletInst = await OracleWallet.deployed();
@@ -22,19 +25,16 @@ contract('OracleWallet Test', (accounts) => {
         console.log(`OracleWallet: ${OracleWallet.address}`);
         console.log(`TestOracleExample: ${TestOracleExample.address}`);
 
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        await testOracleExampleInst.deposit({
             value: 10000,
-        }));
+            from: testOwner,
+        });
 
         const myBeforeWalletBalance = BigNumber(
             await web3.eth.getBalance(oracleWalletInst.address),
         );
-        await testOracleExampleInst.trigger(
-            {
-                from: accounts[0],
-            },
-        );
-        await oracleFeeWalletInst.payback({ from: accounts[0] });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        await oracleFeeWalletInst.payback({ from: oracleOwner });
         const myAfterWalletBalance = BigNumber(
             await web3.eth.getBalance(oracleWalletInst.address),
         );
@@ -48,19 +48,18 @@ contract('OracleWallet Test', (accounts) => {
             await web3.eth.getBalance(oracleWalletInst.address),
         );
         const myBeforeAccountBalance = BigNumber(
-            await web3.eth.getBalance(accounts[0]),
+            await web3.eth.getBalance(otherUser),
         );
-        const tx = await oracleWalletInst.withdraw(accounts[0], {
-            from: accounts[0],
-        });
+        await oracleWalletInst.withdraw(
+            otherUser,
+            { from: oracleOwner },
+        );
         const myAfterAccountBalance = BigNumber(
-            await web3.eth.getBalance(accounts[0]),
+            await web3.eth.getBalance(otherUser),
         );
-        const txDetail = await web3.eth.getTransaction(tx.tx);
-        const realGasUsed = txDetail.gasPrice.mul(tx.receipt.gasUsed);
 
         assert.equal(
-            myBeforeAccountBalance.minus(realGasUsed).plus(accumulateWalletBalance).toNumber(),
+            myBeforeAccountBalance.plus(accumulateWalletBalance).toNumber(),
             myAfterAccountBalance.toNumber(),
             'balance should be the same',
         );
@@ -77,26 +76,37 @@ contract('OracleWallet Test', (accounts) => {
     });
 
     it('Update check test', async () => {
-
         TestUtils.AssertPass(testOracleExampleInst.deposit({
             value: 10000,
+            from: testOwner,
         }));
+        let balance = await oracleFeeWalletInst.getBalance(
+            testOracleExampleInst.address,
+            { from: otherUser },
+        );
         assert.equal(
-            (await oracleFeeWalletInst.getBalance(testOracleExampleInst.address)).toNumber(),
+            balance.toNumber(),
             10000,
             'balance should be the same',
         );
-        await oracleWalletInst.updateUsedBalance(testOracleExampleInst.address, 10000, {
-            from: accounts[0],
-        });
+        await oracleWalletInst.updateUsedBalance(
+            testOracleExampleInst.address,
+            10000,
+            { from: oracleOwner },
+        );
+        balance = await oracleFeeWalletInst.getBalance(
+            testOracleExampleInst.address,
+            { from: otherUser },
+        );
         assert.equal(
-            (await oracleFeeWalletInst.getBalance(testOracleExampleInst.address)).toNumber(),
+            balance.toNumber(),
             0,
             'balance should be the same',
         );
-        await oracleFeeWalletInst.payback();
+        await oracleFeeWalletInst.payback({ from: oracleOwner });
+        balance = await web3.eth.getBalance(oracleWalletInst.address);
         assert.equal(
-            (await web3.eth.getBalance(oracleWalletInst.address).toNumber()),
+            balance.toNumber(),
             10000,
             'balance should be the same',
         );

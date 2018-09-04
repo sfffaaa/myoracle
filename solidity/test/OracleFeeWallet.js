@@ -115,6 +115,15 @@ contract('OracleFeeWallet Test', (accounts) => {
     let oracleFeeWalletInst = null;
     let testOracleExampleInst = null;
     let oracleCoreInst = null;
+    const oracleOwner = accounts[1];
+    const testOwner = accounts[2];
+    const addrUserA = accounts[3];
+    const addrUserB = accounts[4];
+    const addrRegisterA = accounts[5];
+    const addrRegisterB = accounts[6];
+    const addrOtherUserA = accounts[7];
+    const addrOtherUserB = accounts[8];
+    const addrOtherUserC = accounts[9];
 
     before(async () => {
         oracleFeeWalletInst = await OracleFeeWallet.deployed();
@@ -125,55 +134,69 @@ contract('OracleFeeWallet Test', (accounts) => {
     it('Deposit test', async () => {
         console.log(`OracleFeeWallet: ${OracleFeeWallet.address}`);
 
-        await CheckDepositEvent(oracleFeeWalletInst, accounts[1], 5000, 5000);
-        await CheckDepositEvent(oracleFeeWalletInst, accounts[2], 10000, 10000);
-        await CheckDepositEvent(oracleFeeWalletInst, accounts[1], 7000, 12000);
+        await CheckDepositEvent(oracleFeeWalletInst, addrUserA, 5000, 5000);
+        await CheckDepositEvent(oracleFeeWalletInst, addrUserB, 10000, 10000);
+        await CheckDepositEvent(oracleFeeWalletInst, addrUserA, 7000, 12000);
     });
 
     it('Check balance test', async () => {
-        let balance = await oracleFeeWalletInst.getBalance.call(accounts[9]);
-        assert.equal(BigNumber(0).toNumber(), balance.toNumber());
+        let balance = await oracleFeeWalletInst.getBalance.call(
+            addrOtherUserC,
+            { from: addrOtherUserC },
+        );
+        assert.equal(
+            BigNumber(0).toNumber(),
+            balance.toNumber(),
+            'Balance should be the same',
+        );
         await oracleFeeWalletInst.deposit({
-            from: accounts[9],
+            from: addrOtherUserC,
             value: 1000,
         });
-        balance = await oracleFeeWalletInst.getBalance.call(accounts[9]);
-        assert.equal(BigNumber(1000).toNumber(), balance.toNumber());
+        balance = await oracleFeeWalletInst.getBalance.call(
+            addrOtherUserC,
+            { from: addrOtherUserC },
+        );
+        assert.equal(
+            BigNumber(1000).toNumber(),
+            balance.toNumber(),
+            'Balance should be the same',
+        );
     });
 
     it('Update check test', async () => {
         await oracleFeeWalletInst.deposit({
-            from: accounts[1],
             value: BigNumber(web3.toWei(2)).toNumber(),
+            from: addrUserA,
         });
         await oracleFeeWalletInst.deposit({
-            from: accounts[2],
             value: BigNumber(web3.toWei(3)).toNumber(),
+            from: addrUserB,
         });
 
         await oracleFeeWalletInst.registerClientAddr(
-            accounts[3],
-            { from: accounts[0] },
+            addrRegisterA,
+            { from: oracleOwner },
         );
         await oracleFeeWalletInst.registerClientAddr(
-            accounts[4],
-            { from: accounts[0] },
+            addrRegisterB,
+            { from: oracleOwner },
         );
 
         const helperInfos = [{
-            addr: accounts[3],
+            addr: addrRegisterA,
             accumulateValue: BigNumber(0),
         }, {
-            addr: accounts[4],
+            addr: addrRegisterB,
             accumulateValue: BigNumber(0),
         }];
 
         const usedInfos = [{
-            addr: accounts[1],
-            accumulateValue: await oracleFeeWalletInst.getBalance.call(accounts[1]),
+            addr: addrUserA,
+            accumulateValue: await oracleFeeWalletInst.getBalance.call(addrUserA),
         }, {
-            addr: accounts[2],
-            accumulateValue: await oracleFeeWalletInst.getBalance.call(accounts[2]),
+            addr: addrUserB,
+            accumulateValue: await oracleFeeWalletInst.getBalance.call(addrUserB),
         }];
 
         // use account1 and update in account3
@@ -225,10 +248,9 @@ contract('OracleFeeWallet Test', (accounts) => {
         );
 
         TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
-            accounts[8],
-            web3.toWei(1000), {
-                from: accounts[0],
-            },
+            addrOtherUserB,
+            web3.toWei(1000000),
+            { from: oracleOwner },
         ));
 
         const paybackInfos = [{
@@ -244,7 +266,7 @@ contract('OracleFeeWallet Test', (accounts) => {
         await CheckPaybackEvent(
             oracleFeeWalletInst,
             [paybackInfos[1], paybackInfos[0]],
-            accounts[0],
+            oracleOwner,
         );
 
         const balanceInfos = [{
@@ -262,14 +284,14 @@ contract('OracleFeeWallet Test', (accounts) => {
     });
 
     it('Permission check test', async () => {
-        const targetTestAddrs = [accounts[5], accounts[6]];
+        const targetTestAddrs = [addrOtherUserA, addrOtherUserB];
         await oracleFeeWalletInst.deposit({
+            value: BigNumber(web3.toWei(2)).toNumber(),
             from: targetTestAddrs[0],
-            value: BigNumber(web3.toWei(2)).toNumber(),
         });
         await oracleFeeWalletInst.deposit({
-            from: targetTestAddrs[1],
             value: BigNumber(web3.toWei(2)).toNumber(),
+            from: targetTestAddrs[1],
         });
 
         TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
@@ -278,44 +300,65 @@ contract('OracleFeeWallet Test', (accounts) => {
             { from: targetTestAddrs[0] },
         ));
 
-        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[0]);
+        await oracleFeeWalletInst.registerClientAddr(
+            targetTestAddrs[0],
+            { from: oracleOwner },
+        );
         TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[0],
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[0] },
         ));
-        await oracleFeeWalletInst.deregisterClientAddr(targetTestAddrs[0]);
+        await oracleFeeWalletInst.deregisterClientAddr(
+            targetTestAddrs[0],
+            { from: oracleOwner },
+        );
         TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[0],
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[0] },
         ));
 
-        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[0]);
+        await oracleFeeWalletInst.registerClientAddr(
+            targetTestAddrs[0],
+            { from: oracleOwner },
+        );
         TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[0],
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[0] },
         ));
-        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[1]);
+        await oracleFeeWalletInst.registerClientAddr(
+            targetTestAddrs[1],
+            { from: oracleOwner },
+        );
         TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[1],
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[1] },
         ));
-        await oracleFeeWalletInst.deregisterClientAddr(targetTestAddrs[0]);
+        await oracleFeeWalletInst.deregisterClientAddr(
+            targetTestAddrs[0],
+            { from: oracleOwner },
+        );
         TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[0],
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[0] },
         ));
-        await oracleFeeWalletInst.deregisterClientAddr(targetTestAddrs[1]);
+        await oracleFeeWalletInst.deregisterClientAddr(
+            targetTestAddrs[1],
+            { from: oracleOwner },
+        );
         TestUtils.AssertRevert(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[1],
             BigNumber(web3.toWei(0.1)).toNumber(),
             { from: targetTestAddrs[1] },
         ));
-        await oracleFeeWalletInst.registerClientAddr(targetTestAddrs[1]);
+        await oracleFeeWalletInst.registerClientAddr(
+            targetTestAddrs[1],
+            { from: oracleOwner },
+        );
         TestUtils.AssertPass(oracleFeeWalletInst.updateUsedBalance(
             targetTestAddrs[1],
             BigNumber(web3.toWei(0.1)).toNumber(),
@@ -327,22 +370,24 @@ contract('OracleFeeWallet Test', (accounts) => {
         const FAKE_RESPONSE = 'simply makes you stranger';
         TestUtils.AssertPass(testOracleExampleInst.deposit({
             value: 20000,
+            from: testOwner,
         }));
         const beforeBalance = await oracleFeeWalletInst.getBalance.call(
             testOracleExampleInst.address,
+            { from: addrOtherUserC },
         );
-        await testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        );
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
 
         TestUtils.AssertPass(oracleCoreInst.resultSentBack(
             queryId,
             FAKE_RESPONSE,
             web3.sha3(FAKE_RESPONSE),
+            { from: oracleOwner },
         ));
         const afterBalance = await oracleFeeWalletInst.getBalance.call(
             testOracleExampleInst.address,
+            { from: addrOtherUserC },
         );
         assert.equal(
             beforeBalance.toNumber(),

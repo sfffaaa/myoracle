@@ -11,6 +11,9 @@ contract('TestOracleExample', (accounts) => {
     const FAKE_RESPONSE = 'simply makes you stranger';
     let oracleCoreInst = null;
     let testOracleExampleInst = null;
+    const oracleOwner = accounts[1];
+    const testOwner = accounts[2];
+    const otherUser = accounts[3];
 
     before(async () => {
         oracleCoreInst = await OracleCore.deployed();
@@ -20,25 +23,19 @@ contract('TestOracleExample', (accounts) => {
     it('wallet check', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
             value: 20000,
+            from: testOwner,
         }));
-        TestUtils.AssertPass(testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        ));
-        TestUtils.AssertPass(testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        ));
+        await testOracleExampleInst.trigger({ from: testOwner });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: testOwner }));
     });
 
     it('trigger test', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
             value: 10000,
+            from: testOwner,
         }));
-        await testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        );
+        await testOracleExampleInst.trigger({ from: testOwner });
         let oracleData = {};
         const toOracleNodeEvent = oracleCoreInst.ToOracleNode({}, { fromBlock: 0, toBlock: 'latest' });
         const oracleLogs = await TestUtils.WaitContractEventGet(toOracleNodeEvent);
@@ -47,82 +44,76 @@ contract('TestOracleExample', (accounts) => {
             'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]',
             'Request should be the same');
 
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
         assert.equal(oracleData.queryId, queryId, 'QueryId should be the same');
     });
 
     it('permission check', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
             value: 20000,
+            from: testOwner,
         }));
-        TestUtils.AssertPass(testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            { from: accounts[1] },
-        ));
+        await testOracleExampleInst.trigger({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: otherUser }));
 
-        TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[0] }));
-        TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: accounts[1] }));
+        await testOracleExampleInst.getLastestQueryId({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: otherUser }));
 
-        TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
+        await testOracleExampleInst.__querySentNode(
             0,
             FAKE_REQUEST,
-            { from: accounts[0] },
-        ));
+            { from: testOwner },
+        );
         TestUtils.AssertRevert(testOracleExampleInst.__querySentNode(
             0,
             FAKE_REQUEST,
-            { from: accounts[1] },
+            { from: otherUser },
         ));
 
         const fakeQueryId = web3.sha3(FAKE_RESPONSE);
-        TestUtils.AssertPass(testOracleExampleInst.__callback(
+        await testOracleExampleInst.__callback(
             fakeQueryId,
             FAKE_REQUEST,
             fakeQueryId,
-            { from: accounts[0] },
-        ));
+            { from: testOwner },
+        );
 
         TestUtils.AssertRevert(testOracleExampleInst.__callback(
             fakeQueryId,
             FAKE_REQUEST,
             fakeQueryId,
-            { from: accounts[1] },
+            { from: otherUser },
         ));
     });
     it('oracleCoreInst permission test', async () => {
         TestUtils.AssertPass(testOracleExampleInst.deposit({
             value: 20000,
+            from: testOwner,
         }));
-        await testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        );
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
 
-        TestUtils.AssertPass(oracleCoreInst.resultSentBack(
+        await oracleCoreInst.resultSentBack(
             queryId,
             FAKE_RESPONSE,
             web3.sha3(FAKE_RESPONSE),
-        ));
+            { from: oracleOwner },
+        );
         TestUtils.AssertRevert(oracleCoreInst.resultSentBack(
             queryId,
             FAKE_RESPONSE,
             web3.sha3(FAKE_RESPONSE),
-            { from: accounts[1] },
+            { from: otherUser },
         ));
     });
 
     it('test oracle example payment test', async () => {
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        await testOracleExampleInst.deposit({
             value: 10000,
-        }));
-        TestUtils.AssertPass(testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            { from: accounts[0] },
-        ));
+            from: testOwner,
+        });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: testOwner }));
     });
 
     it('convert check', async () => {

@@ -45,7 +45,6 @@ contract OracleWallet is OracleConstant {
         payable
         public
     {
-        require(msg.value <= MAX_PAYMENT_AMOUNT && msg.value >= MIN_PAYMENT_AMOUNT);
         emit DepositAction(_sender, msg.value);
     }
 

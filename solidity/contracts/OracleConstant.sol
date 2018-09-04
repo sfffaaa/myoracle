@@ -8,7 +8,4 @@ contract OracleConstant {
     string constant ORACLE_FEE_WALLET_ADDR_KEY = 'OracleFeeWallet';
 
     string constant ORACLE_ADDR_KEY = 'OracleAddress';
-
-    uint constant MIN_PAYMENT_AMOUNT = 1000 wei;
-    uint constant MAX_PAYMENT_AMOUNT = 5000 wei;
 }
