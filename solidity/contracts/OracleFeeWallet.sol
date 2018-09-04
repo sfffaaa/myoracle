@@ -92,6 +92,7 @@ contract OracleFeeWallet is OracleConstant {
             address paybackAddr = paybackAddrList[realIdx];
             uint paybackValue = paybackValueMap[paybackAddr];
             if (paybackValue != 0) {
+                require(address(this).balance >= paybackValue);
                 paybackAddr.transfer(paybackValue);
                 emit PaybackAction(paybackAddr, paybackValue);
             }

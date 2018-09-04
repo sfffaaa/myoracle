@@ -55,6 +55,7 @@ module.exports = (deployer, network, accounts) => {
             return deployer.deploy(
                 OracleWallet,
                 accounts[0],
+                oracleRegisterInst.address,
             );
         })
         .then((inst) => {
@@ -163,7 +164,7 @@ module.exports = (deployer, network, accounts) => {
         })
         .then(() => {
             return oracleFeeWalletInst.registerClientAddr(
-                oracleCoreInst.address,
+                oracleWalletInst.address,
                 { from: accounts[0] },
             );
         })

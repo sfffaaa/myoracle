@@ -34,9 +34,6 @@ contract OracleCore is OracleConstant {
     {
 
         require(oracleRegisterAddr != 0);
-        address myFeeWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
-        OracleFeeWallet(myFeeWalletAddr).updateUsedBalance(_callee, 10000);
-
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
         require(myStorageAddr != 0);
 
@@ -45,11 +42,9 @@ contract OracleCore is OracleConstant {
         OracleStorage(myStorageAddr).setBytes32ToAddress(ORACLE_NODE_ADDR_KEY, myQueryId, _callee);
         emit ToOracleNode(timeout, myQueryId, _requests);
 
-        // [TODO] Need remove
         address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
         require(myWalletAddr != 0);
-        OracleWallet(myWalletAddr).deposit.value(msg.value)(_callee);
-        // Above should remove
+        OracleWallet(myWalletAddr).updateUsedBalance(_callee, 10000);
 
         return myQueryId;
     }
@@ -58,7 +53,7 @@ contract OracleCore is OracleConstant {
         OnlyOwner
         external
     {
-        uint leftGas = gasleft();
+        //uint leftGas = gasleft();
 
         require(oracleRegisterAddr != 0);
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
@@ -68,8 +63,9 @@ contract OracleCore is OracleConstant {
         address callee = OracleStorage(myStorageAddr).getBytes32ToAddress(ORACLE_NODE_ADDR_KEY, _queryId);
         require(callee != 0);
 
-        address myFeeWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
-        OracleFeeWallet(myFeeWalletAddr).updateUsedBalance(callee, 10000);
+        address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
+        require(myWalletAddr != 0);
+        OracleWallet(myWalletAddr).updateUsedBalance(callee, 10000);
 
         emit ToOracleCallee(_queryId, callee, _response, _hash);
         OracleBase(callee).__callback(_queryId, _response, _hash);
