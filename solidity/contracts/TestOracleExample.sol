@@ -25,14 +25,13 @@ contract TestOracleExample is OracleBase {
 
     function trigger()
         onlyOwner
-        payable
         public
     {
         // all people can call this
         // maybe I need to design pause
         string memory request = 'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]';
 
-        bytes32 queryId = this.__querySentNode.value(msg.value)(0, request);
+        bytes32 queryId = this.__querySentNode(0, request);
 
         address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
         require(myTestStorageAddr != 0);

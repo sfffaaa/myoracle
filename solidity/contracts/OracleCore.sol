@@ -28,7 +28,6 @@ contract OracleCore is OracleConstant {
 
     //[TODO] Check the callee...
     function querySentNode(uint timeout, address _callee, string _requests)
-        payable
         public
         returns (bytes32)
     {

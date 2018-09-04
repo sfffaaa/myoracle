@@ -30,10 +30,7 @@ contract('OracleCoreBasic', (accounts) => {
             0,
             testOracleExampleInst.address,
             FAKE_REQUEST,
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         );
         truffleAssert.eventEmitted(tx, 'ToOracleNode', (ev) => {
             const { queryId: queryIdTmp } = ev;
@@ -70,10 +67,7 @@ contract('OracleCoreBasic', (accounts) => {
             value: 30000,
         }));
         await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         );
         const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
 
@@ -95,10 +89,7 @@ contract('OracleCoreBasic', (accounts) => {
             value: 30000,
         }));
         await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         );
         const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
 
@@ -120,32 +111,17 @@ contract('OracleCoreBasic', (accounts) => {
             value: 10000,
         }));
 
-        TestUtils.AssertRevert(oracleCoreInst.querySentNode(
-            0,
-            testOracleExampleInst.address,
-            FAKE_REQUEST,
-            {
-                value: 1000000,
-                from: accounts[0],
-            },
-        ));
-        TestUtils.AssertRevert(oracleCoreInst.querySentNode(
-            0,
-            testOracleExampleInst.address,
-            FAKE_REQUEST,
-            {
-                value: 1,
-                from: accounts[0],
-            },
-        ));
         TestUtils.AssertPass(oracleCoreInst.querySentNode(
             0,
             testOracleExampleInst.address,
             'Why you are so serious???',
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
+        ));
+        TestUtils.AssertRevert(oracleCoreInst.querySentNode(
+            0,
+            testOracleExampleInst.address,
+            FAKE_REQUEST,
+            { from: accounts[0] },
         ));
     });
 });

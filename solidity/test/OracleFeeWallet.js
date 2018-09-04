@@ -332,10 +332,7 @@ contract('OracleFeeWallet Test', (accounts) => {
             testOracleExampleInst.address,
         );
         await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         );
         const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
 

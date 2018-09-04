@@ -22,22 +22,13 @@ contract('TestOracleExample', (accounts) => {
             value: 20000,
         }));
         TestUtils.AssertPass(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
         TestUtils.AssertPass(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
     });
 
@@ -46,10 +37,7 @@ contract('TestOracleExample', (accounts) => {
             value: 10000,
         }));
         await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         );
         let oracleData = {};
         const toOracleNodeEvent = oracleCoreInst.ToOracleNode({}, { fromBlock: 0, toBlock: 'latest' });
@@ -68,16 +56,10 @@ contract('TestOracleExample', (accounts) => {
             value: 20000,
         }));
         TestUtils.AssertPass(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[1],
-            },
+            { from: accounts[1] },
         ));
 
         TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[0] }));
@@ -86,18 +68,12 @@ contract('TestOracleExample', (accounts) => {
         TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
             0,
             FAKE_REQUEST,
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.__querySentNode(
             0,
             FAKE_REQUEST,
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[1],
-            },
+            { from: accounts[1] },
         ));
 
         const fakeQueryId = web3.sha3(FAKE_RESPONSE);
@@ -120,10 +96,7 @@ contract('TestOracleExample', (accounts) => {
             value: 20000,
         }));
         await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         );
         const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
 
@@ -145,22 +118,10 @@ contract('TestOracleExample', (accounts) => {
             value: 10000,
         }));
         TestUtils.AssertPass(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
         TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: 1000000,
-                from: accounts[0],
-            },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: 1,
-                from: accounts[0],
-            },
+            { from: accounts[0] },
         ));
     });
 
