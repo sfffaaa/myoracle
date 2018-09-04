@@ -16,6 +16,18 @@ class ConfigHandler():
     def get_chain_config(self, section, key):
         return self._config.get(section, key)
 
+    def get_test_owner(self):
+        owner_account = self.get_chain_config('Deploy', 'test_owner')
+        if not owner_account:
+            owner_account = self.get_web3().eth.accounts[2]
+        return owner_account
+
+    def get_oracle_owner(self):
+        owner_account = self.get_chain_config('Deploy', 'oracle_owner')
+        if not owner_account:
+            owner_account = self.get_web3().eth.accounts[1]
+        return owner_account
+
     def get_web3(self):
         keys = ['file_ipc', 'socket_ipc']
         ipc_configs = [self.get_chain_config('Ethereum', key) for key in keys

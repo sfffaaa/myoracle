@@ -11,6 +11,7 @@ from test_utils import _TEST_CONFIG
 from oracle_core.oracle_core import OracleCore
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 from test_oracle_example.test_oracle_example import TestOracleExample
+from handler.config_handler import ConfigHandler
 from utils.chain_utils import convert_to_wei
 import time
 from gevent.event import Event
@@ -31,6 +32,8 @@ class TestOracleNodeClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls._oracle_owner = ConfigHandler(_TEST_CONFIG).get_oracle_owner()
+        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
         cls._callback_event = Event()
         MyDeployer(_TEST_CONFIG).deploy()
 
@@ -65,7 +68,9 @@ class TestOracleNodeClient(unittest.TestCase):
         private_daemon.start()
 
         test_example = TestOracleExample(_TEST_CONFIG)
-        test_example.deposit(value=convert_to_wei(20000, 'wei'))
+        test_example.deposit(value=convert_to_wei(20000, 'wei'), **{
+            'from': self._test_owner
+        })
 
         oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
         before_balance = oracle_fee_wallet.get_balance(test_example.get_address())
@@ -73,7 +78,10 @@ class TestOracleNodeClient(unittest.TestCase):
         node = OracleCore(_TEST_CONFIG)
         node.query_sent_node(TEST_TIME,
                              test_example.get_address(),
-                             'json(https://api.kraken.com/0/public/Ticker)["error"][0]')
+                             'json(https://api.kraken.com/0/public/Ticker)["error"][0]',
+                             **{
+                                 'from': self._oracle_owner
+                             })
         self._start_time = time.time()
 
         self._callback_event.wait()

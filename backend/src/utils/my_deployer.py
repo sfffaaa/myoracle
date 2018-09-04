@@ -59,54 +59,64 @@ class MyDeployer(BaseDeployer):
 
     def _oracle_storage_register(self, contract_info):
         OracleStorage(self._config_path) \
-            .set_oracle_register_addr(contract_info['OracleRegister']['contractAddress'])
+            .set_oracle_register_addr(contract_info['OracleRegister']['contractAddress'], **{
+                'from': self._oracle_owner
+            })
 
     def _oracle_register_register(self, contract_info):
         register_args = [('OracleCore', contract_info['OracleCore']['contractAddress']),
                          ('OracleStorage', contract_info['OracleStorage']['contractAddress']),
                          ('OracleWallet', contract_info['OracleWallet']['contractAddress']),
                          ('OracleFeeWallet', contract_info['OracleFeeWallet']['contractAddress'])]
-        OracleRegister(self._config_path).regist_multiple_address(register_args)
+        OracleRegister(self._config_path).regist_multiple_address(register_args, **{
+            'from': self._oracle_owner
+        })
 
     def _test_register_register(self, contract_info):
         register_args = [('TestStorage', contract_info['TestStorage']['contractAddress']),
                          ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress']),
                          ('TestOracleExample', contract_info['TestOracleExample']['contractAddress'])]
-        TestRegister(self._config_path).regist_multiple_address(register_args)
+        TestRegister(self._config_path).regist_multiple_address(register_args, **{
+            'from': self._test_owner,
+        })
 
     def _test_stroage_allower(self, contract_info):
         allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
                         contract_info['TestOracleExample']['contractAddress']]
-        TestStorage(self._config_path).set_multiple_allower(allower_args)
+        TestStorage(self._config_path).set_multiple_allower(allower_args, **{
+            'from': self._test_owner
+        })
 
     def _oracle_fee_wallet_register(self, contract_info):
         addresses = [contract_info['OracleWallet']['contractAddress']]
-        OracleFeeWallet(self._config_path).register_multiple_client_addr(addresses)
+        OracleFeeWallet(self._config_path).register_multiple_client_addr(addresses, **{
+            'from': self._oracle_owner
+        })
 
     def compose_smart_contract_args(self, config_handler, contract_name, my_args):
         if contract_name == 'OracleCore':
-            return [self._w3.eth.accounts[0],
+            return [self._oracle_owner,
                     my_args['OracleRegister']['contractAddress']]
         elif contract_name == 'OracleStorage':
-            return [self._w3.eth.accounts[0]]
+            return [self._oracle_owner]
         elif contract_name == 'OracleRegister':
-            return [self._w3.eth.accounts[0]]
+            return [self._oracle_owner]
         elif contract_name == 'OracleWallet':
-            return [self._w3.eth.accounts[0],
+            return [self._oracle_owner,
                     my_args['OracleRegister']['contractAddress']]
         elif contract_name == 'OracleFeeWallet':
-            return [self._w3.eth.accounts[0]]
+            return [self._oracle_owner]
 
         elif contract_name == 'TestStorage':
-            return [self._w3.eth.accounts[0]]
+            return [self._test_owner]
         elif contract_name == 'TestRegister':
-            return [self._w3.eth.accounts[0]]
+            return [self._test_owner]
         elif contract_name == 'TestWalletDistributor':
-            return [self._w3.eth.accounts[0],
+            return [self._test_owner,
                     my_args['TestRegister']['contractAddress']]
 
         elif contract_name == 'TestOracleExample':
-            return [self._w3.eth.accounts[0],
+            return [self._test_owner,
                     my_args['OracleRegister']['contractAddress'],
                     my_args['TestRegister']['contractAddress']]
 

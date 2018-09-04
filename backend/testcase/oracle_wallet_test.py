@@ -11,12 +11,15 @@ from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_wei, MyWeb3
 from oracle_wallet.oracle_wallet import OracleWallet
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
+from handler.config_handler import ConfigHandler
 
 
 class TestOracleWallet(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
+        cls._oracle_owner = ConfigHandler(_TEST_CONFIG).get_oracle_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
     @classmethod
@@ -35,22 +38,31 @@ class TestOracleWallet(unittest.TestCase):
         PAYMENT_VALUE = 10000
         oracle_wallet = OracleWallet(_TEST_CONFIG)
         before_wallet_balance = oracle_wallet.get_balance()
-        test_example.deposit(value=convert_to_wei(PAYMENT_VALUE, 'wei'))
-        test_example.trigger()
+        test_example.deposit(**{
+            'value': convert_to_wei(PAYMENT_VALUE, 'wei'),
+            'from': self._test_owner
+        })
+        test_example.trigger(**{
+            'from': self._test_owner
+        })
 
         oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
-        oracle_fee_wallet.payback()
+        oracle_fee_wallet.payback(**{
+            'from': self._oracle_owner
+        })
 
         after_wallet_balance = oracle_wallet.get_balance()
         self.assertEqual(before_wallet_balance + convert_to_wei(PAYMENT_VALUE, 'wei'),
                          after_wallet_balance,
                          'balance should be the same')
 
-        accounts = myWeb3.get_accounts()
+        other_user = myWeb3.get_accounts()[3]
         before_wallet_balance = oracle_wallet.get_balance()
-        before_account_balance = myWeb3.get_address_balance(accounts[1])
-        oracle_wallet.withdraw(accounts[1])
-        after_account_balance = myWeb3.get_address_balance(accounts[1])
+        before_account_balance = myWeb3.get_address_balance(other_user)
+        oracle_wallet.withdraw(other_user, **{
+            'from': self._oracle_owner
+        })
+        after_account_balance = myWeb3.get_address_balance(other_user)
         after_wallet_balance = oracle_wallet.get_balance()
 
         self.assertEqual(before_wallet_balance - PAYMENT_VALUE,

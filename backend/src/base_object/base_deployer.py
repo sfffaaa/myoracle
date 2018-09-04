@@ -14,6 +14,9 @@ from utils.my_config import CONFIG_PATH
 class BaseDeployer():
     def __init__(self, config_path=CONFIG_PATH):
         self._config_path = config_path
+        config_handler = ConfigHandler(config_path)
+        self._oracle_owner = config_handler.get_oracle_owner()
+        self._test_owner = config_handler.get_test_owner()
 
     def _compose_contract_build_path(self, truffle_build_path, target_contract_name):
         json_filename = '{0}.json'.format(target_contract_name)
