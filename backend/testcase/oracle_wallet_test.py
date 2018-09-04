@@ -36,7 +36,7 @@ class TestOracleWallet(unittest.TestCase):
         oracle_wallet = OracleWallet(_TEST_CONFIG)
         before_wallet_balance = oracle_wallet.get_balance()
         test_example.deposit(value=convert_to_wei(PAYMENT_VALUE, 'wei'))
-        test_example.trigger(value=convert_to_wei(PAYMENT_VALUE, 'wei'))
+        test_example.trigger()
 
         oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
         oracle_fee_wallet.payback()

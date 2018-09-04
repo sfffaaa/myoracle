@@ -75,7 +75,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
 
         test_example = TestOracleExample(_TEST_CONFIG)
         test_example.deposit(value=convert_to_wei(20000, 'wei'))
-        test_example.trigger(value=convert_to_wei(1000, 'wei'))
+        test_example.trigger()
 
         self._callback_event.wait()
         self.reset_callback_event()
@@ -93,7 +93,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         self.assertEqual(new_balance, now_balance + payment_value, 'Should be the same')
         now_balance = new_balance
         test_example.deposit(value=convert_to_wei(20000, 'wei'))
-        test_example.trigger(value=convert_to_wei(1000, 'wei'))
+        test_example.trigger()
 
         self._callback_event.wait()
         self.reset_callback_event()

@@ -73,8 +73,7 @@ class TestOracleNodeClient(unittest.TestCase):
         node = OracleCore(_TEST_CONFIG)
         node.query_sent_node(TEST_TIME,
                              test_example.get_address(),
-                             'json(https://api.kraken.com/0/public/Ticker)["error"][0]',
-                             value=convert_to_wei(1000, 'wei'))
+                             'json(https://api.kraken.com/0/public/Ticker)["error"][0]')
         self._start_time = time.time()
 
         self._callback_event.wait()
@@ -101,8 +100,7 @@ class TestOracleNodeClient(unittest.TestCase):
 #        node = OracleCore(_TEST_CONFIG)
 #        tx = node.query_sent_node(TEST_TIME,
 #                                  '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b',
-#                                  'json(https://api.kraken.com/0/public/Ticker)["error"][0]',
-#                                  value=convert_to_wei(1000, 'wei'))
+#                                  'json(https://api.kraken.com/0/public/Ticker)["error"][0]')
 #        self._start_time = time.time()
 #
 #        self._callback_event.wait()

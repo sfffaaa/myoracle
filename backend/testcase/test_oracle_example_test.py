@@ -72,7 +72,7 @@ class TestTestOracleExample(unittest.TestCase):
         # self.assertEqual(0, test_example.get_lastest_query_id(), 'There is no query id')
 
         test_example.deposit(value=convert_to_wei(20000, 'wei'))
-        test_example.trigger(value=convert_to_wei(1000, 'wei'))
+        test_example.trigger()
         test_example_queryid = test_example.get_lastest_query_id()
         gevent.sleep(5)
 
