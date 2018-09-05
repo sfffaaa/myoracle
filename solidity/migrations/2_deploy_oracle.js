@@ -4,6 +4,7 @@ const OracleRegister = artifacts.require('./OracleRegister');
 const OracleStorage = artifacts.require('./OracleStorage');
 const OracleCore = artifacts.require('./OracleCore');
 const OracleWallet = artifacts.require('./OracleWallet');
+const OracleFeeWallet = artifacts.require('./OracleFeeWallet');
 
 const TestStorage = artifacts.require('./TestStorage');
 const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
@@ -16,17 +17,22 @@ module.exports = (deployer, network, accounts) => {
     let oracleCoreInst = null;
     let oracleRegisterInst = null;
     let oracleWalletInst = null;
+    let oracleFeeWalletInst = null;
+
     let testStorageInst = null;
     let testWalletDistributorInst = null;
     let testOracleExampleInst = null;
     let testRegisterInst = null;
 
-    deployer.deploy(TestStorage, accounts[0]).then((inst) => {
+    const oracleOwner = accounts[1];
+    const testOwner = accounts[2];
+
+    deployer.deploy(TestStorage, testOwner).then((inst) => {
         console.log(`TestStorage address: ${inst.address}`);
         testStorageInst = inst;
         return deployer.deploy(
             OracleStorage,
-            accounts[0],
+            oracleOwner,
         );
     })
         .then((inst) => {
@@ -34,7 +40,7 @@ module.exports = (deployer, network, accounts) => {
             oracleStorageInst = inst;
             return deployer.deploy(
                 OracleRegister,
-                accounts[0],
+                oracleOwner,
             );
         })
         .then((inst) => {
@@ -42,7 +48,7 @@ module.exports = (deployer, network, accounts) => {
             console.log(`OracleRegsiter address: ${inst.address}`);
             return deployer.deploy(
                 OracleCore,
-                accounts[0],
+                oracleOwner,
                 oracleRegisterInst.address,
             );
         })
@@ -51,15 +57,24 @@ module.exports = (deployer, network, accounts) => {
             oracleCoreInst = inst;
             return deployer.deploy(
                 OracleWallet,
-                accounts[0],
+                oracleOwner,
+                oracleRegisterInst.address,
             );
         })
         .then((inst) => {
             console.log(`OracleWallet address: ${inst.address}`);
             oracleWalletInst = inst;
             return deployer.deploy(
+                OracleFeeWallet,
+                oracleOwner,
+            );
+        })
+        .then((inst) => {
+            console.log(`OracleFeeWallet address: ${inst.address}`);
+            oracleFeeWalletInst = inst;
+            return deployer.deploy(
                 TestRegister,
-                accounts[0],
+                testOwner,
             );
         })
         .then((inst) => {
@@ -67,7 +82,7 @@ module.exports = (deployer, network, accounts) => {
             testRegisterInst = inst;
             return deployer.deploy(
                 TestWalletDistributor,
-                accounts[0],
+                testOwner,
                 testRegisterInst.address,
             );
         })
@@ -76,7 +91,7 @@ module.exports = (deployer, network, accounts) => {
             testWalletDistributorInst = inst;
             return deployer.deploy(
                 TestOracleExample,
-                accounts[0],
+                testOwner,
                 oracleRegisterInst.address,
                 testRegisterInst.address,
             );
@@ -86,61 +101,74 @@ module.exports = (deployer, network, accounts) => {
             testOracleExampleInst = inst;
             return oracleStorageInst.setOracleRegisterAddr(
                 oracleRegisterInst.address,
-                { from: accounts[0] },
+                { from: oracleOwner },
             );
         })
         .then(() => {
             return oracleRegisterInst.registAddress(
                 'OracleCore',
                 oracleCoreInst.address,
-                { from: accounts[0] },
+                { from: oracleOwner },
             );
         })
         .then(() => {
             return oracleRegisterInst.registAddress(
                 'OracleStorage',
                 oracleStorageInst.address,
-                { from: accounts[0] },
+                { from: oracleOwner },
             );
         })
         .then(() => {
             return oracleRegisterInst.registAddress(
                 'OracleWallet',
                 oracleWalletInst.address,
-                { from: accounts[0] },
+                { from: oracleOwner },
+            );
+        })
+        .then(() => {
+            return oracleRegisterInst.registAddress(
+                'OracleFeeWallet',
+                oracleFeeWalletInst.address,
+                { from: oracleOwner },
             );
         })
         .then(() => {
             return testRegisterInst.registAddress(
                 'TestWalletDistributor',
                 testWalletDistributorInst.address,
-                { from: accounts[0] },
+                { from: testOwner },
             );
         })
         .then(() => {
             return testRegisterInst.registAddress(
                 'TestOracleExample',
                 testOracleExampleInst.address,
-                { from: accounts[0] },
+                { from: testOwner },
             );
         })
         .then(() => {
             return testRegisterInst.registAddress(
                 'TestStorage',
                 testStorageInst.address,
-                { from: accounts[0] },
+                { from: testOwner },
             );
         })
         .then(() => {
             return testStorageInst.setAllower(
                 testWalletDistributorInst.address,
-                { from: accounts[0] },
+                { from: testOwner },
             );
         })
         .then(() => {
             return testStorageInst.setAllower(
                 testOracleExampleInst.address,
-                { from: accounts[0] },
+                { from: testOwner },
+            );
+        })
+        .then(() => {
+            return oracleFeeWalletInst.registerClientAddr(
+                oracleWalletInst.address,
+                { from: oracleOwner },
             );
         })
         .then(() => {

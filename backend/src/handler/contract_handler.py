@@ -19,9 +19,9 @@ class ContractHandler():
                                                     abi=contract_abi)
 
     def _check_contract_name(self, check_name):
-        contract_names = self._config_handler.get_chain_config('Deploy', 'target_contract_name')
-        if check_name not in contract_names.split(','):
-            raise IOError('Cannot find {0} in config {1}'.format(check_name, contract_names))
+        filenames = self._config_handler.get_all_contract_name()
+        if check_name not in filenames:
+            raise IOError('Cannot find {0} in config {1}'.format(check_name, filenames))
 
     def get_address(self):
         return self._contract_address

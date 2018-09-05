@@ -8,13 +8,13 @@ TODO:
 4. Deal with miner start and end time
 5. One test case, test_single_immediately_success_event, should be check again
 6. In my_deploy, we can check dependency before deploying.
-7. If some new contract added, should add into etc/config, it should have a good implemations
-8. Check class of smart contract handler, maybe it should integret to smart contract online handler...
+7. Check class of smart contract handler, maybe it should integret to smart contract online handler...
 	It means I don't need to seperate it as two class...
 
 Note:
 1. If someone want to add new smart contract, user needs add smart contract object and smart contract onchain handler object as a gateway in order let user can interact with ethereum network. For simplification's sake, the contract function should be named start from "c_" in smart contract onchain object, and the framework will automatically connect it to smart contract object. You can see the detail implementation in function "_expose_contract_function" in "BaseContract".
 2. BaseContractOnChainHandler need have the same name as BaseContract. For example, "OracleStorage"OnChainHandler the suffix should be the same as OnChainHandler, and the prefix should be the same as child class of BaseContract.
+3. Contract file should only have one contract in one file. Besides, the contract name and file name should be the same.
 
 Finish:
 1. contract object can connect to contract on chain object instead of write function for passing data again in order to avoiding carelessness.
@@ -22,3 +22,9 @@ Finish:
 3. testcase, 'bin_oracle_node_client_daemon_test', seems doesn't terminate the fork function (?, I need to check it.
 	Finally, use code to solve it and replace the original style (os.system) because it is double fork and I don't want to write any pid file.
 4. decorator of log
+5. Need to find way to check required fail...
+	https://ethereum.stackexchange.com/questions/6002/transaction-status
+6. deployer should add two parameter for oracle_owner nad test_owner
+	Setting two parameter in config
+7. If some new contract added, should add into etc/config, it should have a good implemations
+	Now it will check the build path to check whether file name of contract is consistency with input contract

@@ -9,12 +9,14 @@ from utils.my_deployer import MyDeployer
 from test_utils import _TEST_CONFIG
 from utils.chain_utils import convert_to_wei, MyWeb3
 from test_wallet_distributor.test_wallet_distributor import TestWalletDistributor
+from handler.config_handler import ConfigHandler
 
 
 class TestTestWalletDistributor(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
     @classmethod
@@ -49,7 +51,7 @@ class TestTestWalletDistributor(unittest.TestCase):
 
     def test_basic_test(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
-        accounts = myWeb3.get_accounts()
+        other_user = myWeb3.get_accounts()[3]
 
         test_distributor = TestWalletDistributor(_TEST_CONFIG)
         all_events = test_distributor.get_all_events()
@@ -60,10 +62,10 @@ class TestTestWalletDistributor(unittest.TestCase):
         now_balance = test_distributor.get_balance()
         test_distributor.deposit_balance(100, **{
             'value': convert_to_wei(PAYMENT_VALUE, 'wei'),
-            'from': accounts[0]
+            'from': other_user
         })
         deposit_balance_event = deposit_balance_event_hdr.get_new_entries()
-        self.check_event_deposit_balance(accounts[0],
+        self.check_event_deposit_balance(other_user,
                                          100,
                                          convert_to_wei(PAYMENT_VALUE, 'wei'),
                                          now_balance + convert_to_wei(PAYMENT_VALUE, 'wei'),
@@ -72,19 +74,21 @@ class TestTestWalletDistributor(unittest.TestCase):
 
         test_distributor.deposit_balance(200, **{
             'value': convert_to_wei(50000, 'wei'),
-            'from': accounts[0]
+            'from': other_user
         })
         deposit_balance_event = deposit_balance_event_hdr.get_new_entries()
-        self.check_event_deposit_balance(accounts[0],
+        self.check_event_deposit_balance(other_user,
                                          200,
                                          convert_to_wei(50000, 'wei'),
                                          now_balance + convert_to_wei(50000, 'wei'),
                                          deposit_balance_event)
         now_balance = test_distributor.get_balance()
 
-        test_distributor.withdraw_balance(199)
+        test_distributor.withdraw_balance(199, **{
+            'from': self._test_owner
+        })
         withdraw_balance_event = withdraw_balance_event_hdr.get_new_entries()
-        self.check_event_withdraw_balance(accounts[0],
+        self.check_event_withdraw_balance(other_user,
                                           200,
                                           199,
                                           False,
@@ -93,9 +97,11 @@ class TestTestWalletDistributor(unittest.TestCase):
                          test_distributor.get_balance(),
                          'balance should be the same')
 
-        test_distributor.withdraw_balance(201)
+        test_distributor.withdraw_balance(201, **{
+            'from': self._test_owner
+        })
         withdraw_balance_event = withdraw_balance_event_hdr.get_new_entries()
-        self.check_event_withdraw_balance(accounts[0],
+        self.check_event_withdraw_balance(other_user,
                                           200,
                                           201,
                                           True,

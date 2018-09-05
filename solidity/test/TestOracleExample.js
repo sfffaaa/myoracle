@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["__querySentNode", "__callback"] }] */
-/* global artifacts, contract, it, assert, web3 */
+/* global artifacts, contract, it, assert, web3, before */
 
 const TestUtils = require('./TestUtils.js');
 
@@ -9,17 +9,33 @@ const TestOracleExample = artifacts.require('TestOracleExample');
 contract('TestOracleExample', (accounts) => {
     const FAKE_REQUEST = "Whatever doesn't kill you";
     const FAKE_RESPONSE = 'simply makes you stranger';
+    let oracleCoreInst = null;
+    let testOracleExampleInst = null;
+    const oracleOwner = accounts[1];
+    const testOwner = accounts[2];
+    const otherUser = accounts[3];
+
+    before(async () => {
+        oracleCoreInst = await OracleCore.deployed();
+        testOracleExampleInst = await TestOracleExample.deployed();
+    });
+
+    it('wallet check', async () => {
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 20000,
+            from: testOwner,
+        }));
+        await testOracleExampleInst.trigger({ from: testOwner });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: testOwner }));
+    });
 
     it('trigger test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
-        await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
-        );
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 10000,
+            from: testOwner,
+        }));
+        await testOracleExampleInst.trigger({ from: testOwner });
         let oracleData = {};
         const toOracleNodeEvent = oracleCoreInst.ToOracleNode({}, { fromBlock: 0, toBlock: 'latest' });
         const oracleLogs = await TestUtils.WaitContractEventGet(toOracleNodeEvent);
@@ -28,112 +44,79 @@ contract('TestOracleExample', (accounts) => {
             'json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD)["result"]["XETHZUSD"]["c"][0]',
             'Request should be the same');
 
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
         assert.equal(oracleData.queryId, queryId, 'QueryId should be the same');
     });
 
     it('permission check', async () => {
-        const testOracleExampleInst = await TestOracleExample.deployed();
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 20000,
+            from: testOwner,
+        }));
+        await testOracleExampleInst.trigger({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: otherUser }));
 
+        await testOracleExampleInst.getLastestQueryId({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: otherUser }));
 
-        TestUtils.AssertPass(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[1],
-            },
-        ));
-
-        TestUtils.AssertPass(testOracleExampleInst.getLastestQueryId({ from: accounts[0] }));
-        TestUtils.AssertRevert(testOracleExampleInst.getLastestQueryId({ from: accounts[1] }));
-
-        TestUtils.AssertPass(testOracleExampleInst.__querySentNode(
+        await testOracleExampleInst.__querySentNode(
             0,
             FAKE_REQUEST,
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
-        ));
+            { from: testOwner },
+        );
         TestUtils.AssertRevert(testOracleExampleInst.__querySentNode(
             0,
             FAKE_REQUEST,
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[1],
-            },
+            { from: otherUser },
         ));
 
         const fakeQueryId = web3.sha3(FAKE_RESPONSE);
-        TestUtils.AssertPass(testOracleExampleInst.__callback(
+        await testOracleExampleInst.__callback(
             fakeQueryId,
             FAKE_REQUEST,
             fakeQueryId,
-            { from: accounts[0] },
-        ));
+            { from: testOwner },
+        );
 
         TestUtils.AssertRevert(testOracleExampleInst.__callback(
             fakeQueryId,
             FAKE_REQUEST,
             fakeQueryId,
-            { from: accounts[1] },
+            { from: otherUser },
         ));
     });
     it('oracleCoreInst permission test', async () => {
-        const oracleCoreInst = await OracleCore.deployed();
-        const testOracleExampleInst = await TestOracleExample.deployed();
+        TestUtils.AssertPass(testOracleExampleInst.deposit({
+            value: 20000,
+            from: testOwner,
+        }));
+        await testOracleExampleInst.trigger({ from: testOwner });
+        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
 
-        await testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
-        );
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: accounts[0] });
-
-        TestUtils.AssertPass(oracleCoreInst.resultSentBack(
+        await oracleCoreInst.resultSentBack(
             queryId,
             FAKE_RESPONSE,
             web3.sha3(FAKE_RESPONSE),
-        ));
+            { from: oracleOwner },
+        );
         TestUtils.AssertRevert(oracleCoreInst.resultSentBack(
             queryId,
             FAKE_RESPONSE,
             web3.sha3(FAKE_RESPONSE),
-            { from: accounts[1] },
+            { from: otherUser },
         ));
     });
 
     it('test oracle example payment test', async () => {
-        const testOracleExampleInst = await TestOracleExample.deployed();
-
-        TestUtils.AssertPass(testOracleExampleInst.trigger(
-            {
-                value: TestUtils.ALLOW_PAYMENT_VALUE,
-                from: accounts[0],
-            },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: 1000000,
-                from: accounts[0],
-            },
-        ));
-        TestUtils.AssertRevert(testOracleExampleInst.trigger(
-            {
-                value: 1,
-                from: accounts[0],
-            },
-        ));
+        await testOracleExampleInst.deposit({
+            value: 10000,
+            from: testOwner,
+        });
+        await testOracleExampleInst.trigger({ from: testOwner });
+        TestUtils.AssertRevert(testOracleExampleInst.trigger({ from: testOwner }));
     });
 
     it('convert check', async () => {
-        const testOracleExampleInst = await TestOracleExample.deployed();
         const result = [
             ['123', true, 123],
             ['123.123', true, 123],

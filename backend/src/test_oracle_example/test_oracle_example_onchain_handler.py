@@ -26,6 +26,13 @@ class TestOracleExampleOnChainHandler(BaseContractOnChainHandler):
         query_id = self.get_contract_inst().functions.getLastestQueryId().call(transaction_data)
         return convert_to_hex(query_id)
 
+    def c_deposit(self, **kargs):
+        transaction_data = self.compose_transaction_dict(kargs)
+        tx_hash = self.get_contract_inst().functions.deposit() \
+                                                    .transact(transaction_data)
+        self.wait_miner_finish(tx_hash)
+        return convert_to_hex(tx_hash)
+
 
 if __name__ == '__main__':
     pass

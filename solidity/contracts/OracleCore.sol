@@ -6,6 +6,7 @@ import {OracleStorage} from "./OracleStorage.sol";
 import {OracleRegister} from "./OracleRegister.sol";
 import {OracleConstant} from "./OracleConstant.sol";
 import {OracleWallet} from "./OracleWallet.sol";
+import {OracleFeeWallet} from "./OracleFeeWallet.sol";
 
 
 contract OracleCore is OracleConstant {
@@ -25,11 +26,12 @@ contract OracleCore is OracleConstant {
         _;
     }
 
+    //[TODO] Check the callee...
     function querySentNode(uint timeout, address _callee, string _requests)
-        payable
         public
         returns (bytes32)
     {
+
         require(oracleRegisterAddr != 0);
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
         require(myStorageAddr != 0);
@@ -41,7 +43,7 @@ contract OracleCore is OracleConstant {
 
         address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
         require(myWalletAddr != 0);
-        OracleWallet(myWalletAddr).deposit.value(msg.value)(_callee);
+        OracleWallet(myWalletAddr).updateUsedBalance(_callee, 10000);
 
         return myQueryId;
     }
@@ -50,6 +52,8 @@ contract OracleCore is OracleConstant {
         OnlyOwner
         external
     {
+        //uint leftGas = gasleft();
+
         require(oracleRegisterAddr != 0);
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
         require(myStorageAddr != 0);
@@ -57,7 +61,13 @@ contract OracleCore is OracleConstant {
         // only some register node and owner can call this
         address callee = OracleStorage(myStorageAddr).getBytes32ToAddress(ORACLE_NODE_ADDR_KEY, _queryId);
         require(callee != 0);
+
+        address myWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_WALLET_ADDR_KEY);
+        require(myWalletAddr != 0);
+        OracleWallet(myWalletAddr).updateUsedBalance(callee, 10000);
+
         emit ToOracleCallee(_queryId, callee, _response, _hash);
         OracleBase(callee).__callback(_queryId, _response, _hash);
+
     }
 }

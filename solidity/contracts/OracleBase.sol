@@ -3,6 +3,7 @@ pragma solidity 0.4.24;
 import {OracleRegister} from "./OracleRegister.sol";
 import {OracleCore} from "./OracleCore.sol";
 import {OracleConstant} from "./OracleConstant.sol";
+import {OracleFeeWallet} from "./OracleFeeWallet.sol";
 
 // OracleBase and its childs need deploy after oracleCore and OracleStorage.
 contract OracleBase is OracleConstant {
@@ -38,7 +39,6 @@ contract OracleBase is OracleConstant {
 
     function __querySentNode(uint timeout, string _requests)
         onlyOwnerAndMyself
-        payable
         public
         returns (bytes32)
     {
@@ -46,8 +46,18 @@ contract OracleBase is OracleConstant {
         address oracleCoreAddress = OracleRegister(myRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY);
         require(oracleCoreAddress != 0);
 
-        return OracleCore(oracleCoreAddress).querySentNode.value(msg.value)(timeout, address(this), _requests);
+        return OracleCore(oracleCoreAddress).querySentNode(timeout, address(this), _requests);
     }
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;
+
+    function deposit()
+        onlyOwner
+        payable
+        public
+    {
+        address oracleFeeWalletAddr = OracleRegister(myRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
+        require(oracleFeeWalletAddr != 0);
+        OracleFeeWallet(oracleFeeWalletAddr).deposit.value(msg.value)();
+    }
 }

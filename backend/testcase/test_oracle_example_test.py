@@ -12,6 +12,7 @@ from clients.test_oracle_example_client import TestOracleExampleClient
 from test_utils import _TEST_CONFIG
 from test_oracle_example.test_oracle_example import TestOracleExample
 from utils.chain_utils import convert_to_hex, convert_to_wei
+from handler.config_handler import ConfigHandler
 from web3 import Web3
 
 TEST_REQUEST_STR = 'json(https://api.kraken.com/0/public/Ticker)["error"][0]'
@@ -22,6 +23,7 @@ class TestTestOracleExample(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
     @classmethod
@@ -71,8 +73,16 @@ class TestTestOracleExample(unittest.TestCase):
         test_example = TestOracleExample(_TEST_CONFIG)
         # self.assertEqual(0, test_example.get_lastest_query_id(), 'There is no query id')
 
-        test_example.trigger(value=convert_to_wei(1000, 'wei'))
-        test_example_queryid = test_example.get_lastest_query_id()
+        test_example.deposit(**{
+            'value': convert_to_wei(20000, 'wei'),
+            'from': self._test_owner
+        })
+        test_example.trigger(**{
+            'from': self._test_owner
+        })
+        test_example_queryid = test_example.get_lastest_query_id(**{
+            'from': self._test_owner
+        })
         gevent.sleep(5)
 
         for idx, test_list in enumerate([self.to_oracle_node_data, self.sent_event_data, self.show_event_data]):
