@@ -6,7 +6,7 @@ from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
 from utils.chain_utils import convert_to_hex
 
 
-class TestRegisterOnChainHandler(BaseContractOnChainHandler):
+class HodlRegisterOnChainHandler(BaseContractOnChainHandler):
 
     def __init__(self, config_path=my_config.CONFIG_PATH):
         super().__init__(config_path)

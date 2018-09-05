@@ -2,26 +2,26 @@ pragma solidity 0.4.24;
 
 import './SafeMath.sol';
 import {TestStorage} from "./TestStorage.sol";
-import {TestRegister} from "./TestRegister.sol";
+import {HodlRegister} from "./HodlRegister.sol";
 
 
 contract TestWalletDistributor {
     using SafeMath for uint256;
-    address testRegisterAddr;
+    address hodlRegisterAddr;
     address owner;
 
     event DepositBalance(address myAddress, uint threshold, uint nowValue, uint accuValue);
     event WithdrawBalance(address myAddress, uint threshold, uint value, uint price, bool transfered);
     
-    constructor(address _owner, address _testRegisterAddr)
+    constructor(address _owner, address _hodlRegisterAddr)
         public
     {
         owner = _owner;
-        testRegisterAddr = _testRegisterAddr;
+        hodlRegisterAddr = _hodlRegisterAddr;
     }
 
     modifier OnlyAllowOwnerAndTestOracleExample {
-        address testOracleExampleAddr = TestRegister(testRegisterAddr).getAddress('TestOracleExample');
+        address testOracleExampleAddr = HodlRegister(hodlRegisterAddr).getAddress('TestOracleExample');
         require(0 != testOracleExampleAddr);
         require(msg.sender == owner || msg.sender == testOracleExampleAddr); 
         _;
@@ -31,7 +31,7 @@ contract TestWalletDistributor {
         payable
         public
     {
-        address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress('TestStorage');
+        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('TestStorage');
         assert(myTestStorageAddr != 0);
         TestStorage myStorage = TestStorage(myTestStorageAddr);
 
@@ -61,7 +61,7 @@ contract TestWalletDistributor {
         public
         OnlyAllowOwnerAndTestOracleExample
     {
-        address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress('TestStorage');
+        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('TestStorage');
         assert(myTestStorageAddr != 0);
         TestStorage myStorage = TestStorage(myTestStorageAddr);
 

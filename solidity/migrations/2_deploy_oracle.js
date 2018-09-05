@@ -8,7 +8,7 @@ const OracleFeeWallet = artifacts.require('./OracleFeeWallet');
 
 const TestStorage = artifacts.require('./TestStorage');
 const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
-const TestRegister = artifacts.require('./TestRegister');
+const HodlRegister = artifacts.require('./HodlRegister');
 const TestOracleExample = artifacts.require('./TestOracleExample');
 
 
@@ -22,7 +22,7 @@ module.exports = (deployer, network, accounts) => {
     let testStorageInst = null;
     let testWalletDistributorInst = null;
     let testOracleExampleInst = null;
-    let testRegisterInst = null;
+    let hodlRegisterInst = null;
 
     const oracleOwner = accounts[1];
     const testOwner = accounts[2];
@@ -73,17 +73,17 @@ module.exports = (deployer, network, accounts) => {
             console.log(`OracleFeeWallet address: ${inst.address}`);
             oracleFeeWalletInst = inst;
             return deployer.deploy(
-                TestRegister,
+                HodlRegister,
                 testOwner,
             );
         })
         .then((inst) => {
-            console.log(`TestRegister address: ${inst.address}`);
-            testRegisterInst = inst;
+            console.log(`HodlRegister address: ${inst.address}`);
+            hodlRegisterInst = inst;
             return deployer.deploy(
                 TestWalletDistributor,
                 testOwner,
-                testRegisterInst.address,
+                hodlRegisterInst.address,
             );
         })
         .then((inst) => {
@@ -93,7 +93,7 @@ module.exports = (deployer, network, accounts) => {
                 TestOracleExample,
                 testOwner,
                 oracleRegisterInst.address,
-                testRegisterInst.address,
+                hodlRegisterInst.address,
             );
         })
         .then((inst) => {
@@ -133,21 +133,21 @@ module.exports = (deployer, network, accounts) => {
             );
         })
         .then(() => {
-            return testRegisterInst.registAddress(
+            return hodlRegisterInst.registAddress(
                 'TestWalletDistributor',
                 testWalletDistributorInst.address,
                 { from: testOwner },
             );
         })
         .then(() => {
-            return testRegisterInst.registAddress(
+            return hodlRegisterInst.registAddress(
                 'TestOracleExample',
                 testOracleExampleInst.address,
                 { from: testOwner },
             );
         })
         .then(() => {
-            return testRegisterInst.registAddress(
+            return hodlRegisterInst.registAddress(
                 'TestStorage',
                 testStorageInst.address,
                 { from: testOwner },

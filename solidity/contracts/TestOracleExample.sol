@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
 
 import {OracleBase} from "./OracleBase.sol";
-import {TestRegister} from "./TestRegister.sol";
+import {HodlRegister} from "./HodlRegister.sol";
 import {TestStorage} from "./TestStorage.sol";
 import {TestWalletDistributor} from "./TestWalletDistributor.sol";
 import './SafeMath.sol';
@@ -14,13 +14,13 @@ contract TestOracleExample is OracleBase {
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
     event TriggerMyCallback(bool trigger, uint price);
-    address testRegisterAddr;
+    address hodlRegisterAddr;
 
-    constructor (address _owner, address _oracleRegisterAddr, address _testRegisterAddr)
+    constructor (address _owner, address _oracleRegisterAddr, address _hodlRegisterAddr)
         OracleBase(_owner, _oracleRegisterAddr)
         public
     {
-        testRegisterAddr = _testRegisterAddr;
+        hodlRegisterAddr = _hodlRegisterAddr;
     }
 
     function trigger()
@@ -33,7 +33,7 @@ contract TestOracleExample is OracleBase {
 
         bytes32 queryId = this.__querySentNode(0, request);
 
-        address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
+        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
         require(myTestStorageAddr != 0);
         TestStorage(myTestStorageAddr).pushBytes32ArrayEntry(TEST_STORAGE_QUERY_IDS_KEY, queryId);
         emit SentCallback(queryId, request);
@@ -47,7 +47,7 @@ contract TestOracleExample is OracleBase {
         returns (bytes32)
     {
         // all people can call this
-        address myTestStorageAddr = TestRegister(testRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
+        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
         require(myTestStorageAddr != 0);
 
         uint queryIdsLength = TestStorage(myTestStorageAddr).getBytes32ArrayLength(TEST_STORAGE_QUERY_IDS_KEY);
@@ -66,7 +66,7 @@ contract TestOracleExample is OracleBase {
         (success, price) = convertResponseToPrice(_response);
         emit TriggerMyCallback(success, price);
         if (true == success) {
-            address myTestDistributorAddr = TestRegister(testRegisterAddr).getAddress(TEST_WALLET_DISTRIBUTOR_ADDR_KEY);
+            address myTestDistributorAddr = HodlRegister(hodlRegisterAddr).getAddress(TEST_WALLET_DISTRIBUTOR_ADDR_KEY);
             require(myTestDistributorAddr != 0);
             TestWalletDistributor(myTestDistributorAddr).withdrawBalance(price);
         }
