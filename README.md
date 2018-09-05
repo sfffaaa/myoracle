@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sfffaaa/myoracle.svg?branch=issue_2)](https://travis-ci.org/sfffaaa/myoracle)
+[![Build Status](https://travis-ci.com/sfffaaa/myoracle.svg?branch=issue_2)](https://travis-ci.com/sfffaaa/myoracle)
 
 # Myoracle
 Implement an simple oracle which can communicate with the world. One application using my oracle is user allows to save ETH into test distribute wallet and the same amount of ETH will sent back when ETH price is above threshold user set.
