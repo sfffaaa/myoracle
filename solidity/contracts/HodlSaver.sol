@@ -21,9 +21,9 @@ contract HodlSaver {
     }
 
     modifier OnlyAllowOwnerAndHodlOracle {
-        address testOracleExampleAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlOracle');
-        require(0 != testOracleExampleAddr);
-        require(msg.sender == owner || msg.sender == testOracleExampleAddr); 
+        address hodlOracleAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlOracle');
+        require(0 != hodlOracleAddr);
+        require(msg.sender == owner || msg.sender == hodlOracleAddr); 
         _;
     }
 
