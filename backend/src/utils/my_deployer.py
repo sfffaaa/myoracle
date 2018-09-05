@@ -6,7 +6,7 @@ from oracle_storage.oracle_storage import OracleStorage
 from oracle_register.oracle_register import OracleRegister
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 
-from test_storage.test_storage import TestStorage
+from hodl_storage.hodl_storage import HodlStorage
 from hodl_register.hodl_register import HodlRegister
 import multiprocessing
 
@@ -20,7 +20,7 @@ class MyDeployer(BaseDeployer):
             'OracleStorage': {},
             'OracleFeeWallet': {},
 
-            'TestStorage': {},
+            'HodlStorage': {},
         })
         contract_info = {}
         contract_info.update(info)
@@ -73,7 +73,7 @@ class MyDeployer(BaseDeployer):
         })
 
     def _hodl_register_register(self, contract_info):
-        register_args = [('TestStorage', contract_info['TestStorage']['contractAddress']),
+        register_args = [('HodlStorage', contract_info['HodlStorage']['contractAddress']),
                          ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress']),
                          ('TestOracleExample', contract_info['TestOracleExample']['contractAddress'])]
         HodlRegister(self._config_path).regist_multiple_address(register_args, **{
@@ -83,7 +83,7 @@ class MyDeployer(BaseDeployer):
     def _test_stroage_allower(self, contract_info):
         allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
                         contract_info['TestOracleExample']['contractAddress']]
-        TestStorage(self._config_path).set_multiple_allower(allower_args, **{
+        HodlStorage(self._config_path).set_multiple_allower(allower_args, **{
             'from': self._test_owner
         })
 
@@ -107,7 +107,7 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'OracleFeeWallet':
             return [self._oracle_owner]
 
-        elif contract_name == 'TestStorage':
+        elif contract_name == 'HodlStorage':
             return [self._test_owner]
         elif contract_name == 'HodlRegister':
             return [self._test_owner]

@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
 
 import './SafeMath.sol';
-import {TestStorage} from "./TestStorage.sol";
+import {HodlStorage} from "./HodlStorage.sol";
 import {HodlRegister} from "./HodlRegister.sol";
 
 
@@ -31,9 +31,9 @@ contract TestWalletDistributor {
         payable
         public
     {
-        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('TestStorage');
-        assert(myTestStorageAddr != 0);
-        TestStorage myStorage = TestStorage(myTestStorageAddr);
+        address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlStorage');
+        assert(myHodlStorageAddr != 0);
+        HodlStorage myStorage = HodlStorage(myHodlStorageAddr);
 
         address sender = msg.sender;
         require(0 != _threshold);
@@ -61,9 +61,9 @@ contract TestWalletDistributor {
         public
         OnlyAllowOwnerAndTestOracleExample
     {
-        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('TestStorage');
-        assert(myTestStorageAddr != 0);
-        TestStorage myStorage = TestStorage(myTestStorageAddr);
+        address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlStorage');
+        assert(myHodlStorageAddr != 0);
+        HodlStorage myStorage = HodlStorage(myHodlStorageAddr);
 
         uint myAddressesLength = myStorage.getBytes32AddressArrayLength('TestWalletDistributorMyAddresses');
         for (uint i = 0; i < myAddressesLength; i++) {

@@ -6,7 +6,7 @@ const OracleCore = artifacts.require('./OracleCore');
 const OracleWallet = artifacts.require('./OracleWallet');
 const OracleFeeWallet = artifacts.require('./OracleFeeWallet');
 
-const TestStorage = artifacts.require('./TestStorage');
+const HodlStorage = artifacts.require('./HodlStorage');
 const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
 const HodlRegister = artifacts.require('./HodlRegister');
 const TestOracleExample = artifacts.require('./TestOracleExample');
@@ -19,7 +19,7 @@ module.exports = (deployer, network, accounts) => {
     let oracleWalletInst = null;
     let oracleFeeWalletInst = null;
 
-    let testStorageInst = null;
+    let hodlStorageInst = null;
     let testWalletDistributorInst = null;
     let testOracleExampleInst = null;
     let hodlRegisterInst = null;
@@ -27,9 +27,9 @@ module.exports = (deployer, network, accounts) => {
     const oracleOwner = accounts[1];
     const testOwner = accounts[2];
 
-    deployer.deploy(TestStorage, testOwner).then((inst) => {
-        console.log(`TestStorage address: ${inst.address}`);
-        testStorageInst = inst;
+    deployer.deploy(HodlStorage, testOwner).then((inst) => {
+        console.log(`HodlStorage address: ${inst.address}`);
+        hodlStorageInst = inst;
         return deployer.deploy(
             OracleStorage,
             oracleOwner,
@@ -148,19 +148,19 @@ module.exports = (deployer, network, accounts) => {
         })
         .then(() => {
             return hodlRegisterInst.registAddress(
-                'TestStorage',
-                testStorageInst.address,
+                'HodlStorage',
+                hodlStorageInst.address,
                 { from: testOwner },
             );
         })
         .then(() => {
-            return testStorageInst.setAllower(
+            return hodlStorageInst.setAllower(
                 testWalletDistributorInst.address,
                 { from: testOwner },
             );
         })
         .then(() => {
-            return testStorageInst.setAllower(
+            return hodlStorageInst.setAllower(
                 testOracleExampleInst.address,
                 { from: testOwner },
             );

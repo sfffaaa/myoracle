@@ -1,6 +1,6 @@
 pragma solidity 0.4.24;
 
-contract TestStorage {
+contract HodlStorage {
     mapping(bytes32 => bytes32[]) private bytes32Array;
     mapping(bytes32 => address) private bytes32AddressMap;
     mapping(bytes32 => mapping(address => uint)) private bytes32AddressToUint;

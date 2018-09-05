@@ -2,15 +2,15 @@ pragma solidity 0.4.24;
 
 import {OracleBase} from "./OracleBase.sol";
 import {HodlRegister} from "./HodlRegister.sol";
-import {TestStorage} from "./TestStorage.sol";
+import {HodlStorage} from "./HodlStorage.sol";
 import {TestWalletDistributor} from "./TestWalletDistributor.sol";
 import './SafeMath.sol';
 
 contract TestOracleExample is OracleBase {
     using SafeMath for uint256;
     string TEST_WALLET_DISTRIBUTOR_ADDR_KEY = 'TestWalletDistributor';
-    string TEST_STORAGE_ADDR_KEY = 'TestStorage';
-    string TEST_STORAGE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
+    string HODL_STORAGE_ADDR_KEY = 'HodlStorage';
+    string TEST_EXAMPLE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
     event TriggerMyCallback(bool trigger, uint price);
@@ -33,9 +33,9 @@ contract TestOracleExample is OracleBase {
 
         bytes32 queryId = this.__querySentNode(0, request);
 
-        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
-        require(myTestStorageAddr != 0);
-        TestStorage(myTestStorageAddr).pushBytes32ArrayEntry(TEST_STORAGE_QUERY_IDS_KEY, queryId);
+        address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(HODL_STORAGE_ADDR_KEY);
+        require(myHodlStorageAddr != 0);
+        HodlStorage(myHodlStorageAddr).pushBytes32ArrayEntry(TEST_EXAMPLE_QUERY_IDS_KEY, queryId);
         emit SentCallback(queryId, request);
     }
 
@@ -47,12 +47,12 @@ contract TestOracleExample is OracleBase {
         returns (bytes32)
     {
         // all people can call this
-        address myTestStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(TEST_STORAGE_ADDR_KEY);
-        require(myTestStorageAddr != 0);
+        address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(HODL_STORAGE_ADDR_KEY);
+        require(myHodlStorageAddr != 0);
 
-        uint queryIdsLength = TestStorage(myTestStorageAddr).getBytes32ArrayLength(TEST_STORAGE_QUERY_IDS_KEY);
+        uint queryIdsLength = HodlStorage(myHodlStorageAddr).getBytes32ArrayLength(TEST_EXAMPLE_QUERY_IDS_KEY);
         require(queryIdsLength > 0);
-        return TestStorage(myTestStorageAddr).getBytes32ArrayEntry(TEST_STORAGE_QUERY_IDS_KEY,
+        return HodlStorage(myHodlStorageAddr).getBytes32ArrayEntry(TEST_EXAMPLE_QUERY_IDS_KEY,
                                                                    queryIdsLength.sub(1));
     }
 
