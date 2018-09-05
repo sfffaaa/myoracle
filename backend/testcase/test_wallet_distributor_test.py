@@ -8,11 +8,11 @@ sys.path.append('src')
 from utils.my_deployer import MyDeployer
 from test_utils import _TEST_CONFIG
 from utils.chain_utils import convert_to_wei, MyWeb3
-from test_wallet_distributor.test_wallet_distributor import TestWalletDistributor
+from hodl_saver.hodl_saver import HodlSaver
 from handler.config_handler import ConfigHandler
 
 
-class TestTestWalletDistributor(unittest.TestCase):
+class TestHodlSaver(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -53,14 +53,14 @@ class TestTestWalletDistributor(unittest.TestCase):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         other_user = myWeb3.get_accounts()[3]
 
-        test_distributor = TestWalletDistributor(_TEST_CONFIG)
-        all_events = test_distributor.get_all_events()
+        hodl_saver = HodlSaver(_TEST_CONFIG)
+        all_events = hodl_saver.get_all_events()
         deposit_balance_event_hdr = all_events.DepositBalance.createFilter(fromBlock='latest')
         withdraw_balance_event_hdr = all_events.WithdrawBalance.createFilter(fromBlock='latest')
         PAYMENT_VALUE = 1000
 
-        now_balance = test_distributor.get_balance()
-        test_distributor.deposit_balance(100, **{
+        now_balance = hodl_saver.get_balance()
+        hodl_saver.deposit_balance(100, **{
             'value': convert_to_wei(PAYMENT_VALUE, 'wei'),
             'from': other_user
         })
@@ -70,9 +70,9 @@ class TestTestWalletDistributor(unittest.TestCase):
                                          convert_to_wei(PAYMENT_VALUE, 'wei'),
                                          now_balance + convert_to_wei(PAYMENT_VALUE, 'wei'),
                                          deposit_balance_event)
-        now_balance = test_distributor.get_balance()
+        now_balance = hodl_saver.get_balance()
 
-        test_distributor.deposit_balance(200, **{
+        hodl_saver.deposit_balance(200, **{
             'value': convert_to_wei(50000, 'wei'),
             'from': other_user
         })
@@ -82,9 +82,9 @@ class TestTestWalletDistributor(unittest.TestCase):
                                          convert_to_wei(50000, 'wei'),
                                          now_balance + convert_to_wei(50000, 'wei'),
                                          deposit_balance_event)
-        now_balance = test_distributor.get_balance()
+        now_balance = hodl_saver.get_balance()
 
-        test_distributor.withdraw_balance(199, **{
+        hodl_saver.withdraw_balance(199, **{
             'from': self._test_owner
         })
         withdraw_balance_event = withdraw_balance_event_hdr.get_new_entries()
@@ -94,10 +94,10 @@ class TestTestWalletDistributor(unittest.TestCase):
                                           False,
                                           withdraw_balance_event)
         self.assertEqual(now_balance,
-                         test_distributor.get_balance(),
+                         hodl_saver.get_balance(),
                          'balance should be the same')
 
-        test_distributor.withdraw_balance(201, **{
+        hodl_saver.withdraw_balance(201, **{
             'from': self._test_owner
         })
         withdraw_balance_event = withdraw_balance_event_hdr.get_new_entries()
@@ -107,7 +107,7 @@ class TestTestWalletDistributor(unittest.TestCase):
                                           True,
                                           withdraw_balance_event)
         self.assertEqual(0,
-                         test_distributor.get_balance(),
+                         hodl_saver.get_balance(),
                          'balance should be the same')
 
 

@@ -7,7 +7,7 @@ const OracleWallet = artifacts.require('./OracleWallet');
 const OracleFeeWallet = artifacts.require('./OracleFeeWallet');
 
 const HodlStorage = artifacts.require('./HodlStorage');
-const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
+const HodlSaver = artifacts.require('./HodlSaver');
 const HodlRegister = artifacts.require('./HodlRegister');
 const TestOracleExample = artifacts.require('./TestOracleExample');
 
@@ -20,7 +20,7 @@ module.exports = (deployer, network, accounts) => {
     let oracleFeeWalletInst = null;
 
     let hodlStorageInst = null;
-    let testWalletDistributorInst = null;
+    let hodlSaverInst = null;
     let testOracleExampleInst = null;
     let hodlRegisterInst = null;
 
@@ -81,14 +81,14 @@ module.exports = (deployer, network, accounts) => {
             console.log(`HodlRegister address: ${inst.address}`);
             hodlRegisterInst = inst;
             return deployer.deploy(
-                TestWalletDistributor,
+                HodlSaver,
                 testOwner,
                 hodlRegisterInst.address,
             );
         })
         .then((inst) => {
-            console.log(`TestWalletDistributor address: ${inst.address}`);
-            testWalletDistributorInst = inst;
+            console.log(`HodlSaver address: ${inst.address}`);
+            hodlSaverInst = inst;
             return deployer.deploy(
                 TestOracleExample,
                 testOwner,
@@ -134,8 +134,8 @@ module.exports = (deployer, network, accounts) => {
         })
         .then(() => {
             return hodlRegisterInst.registAddress(
-                'TestWalletDistributor',
-                testWalletDistributorInst.address,
+                'HodlSaver',
+                hodlSaverInst.address,
                 { from: testOwner },
             );
         })
@@ -155,7 +155,7 @@ module.exports = (deployer, network, accounts) => {
         })
         .then(() => {
             return hodlStorageInst.setAllower(
-                testWalletDistributorInst.address,
+                hodlSaverInst.address,
                 { from: testOwner },
             );
         })

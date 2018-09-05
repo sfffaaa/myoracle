@@ -36,7 +36,7 @@ class MyDeployer(BaseDeployer):
         info = self.deploy_multiple_smart_contract({
             'OracleWallet': contract_info,
             'OracleCore': contract_info,
-            'TestWalletDistributor': contract_info,
+            'HodlSaver': contract_info,
             'TestOracleExample': contract_info,
         })
         contract_info.update(info)
@@ -74,14 +74,14 @@ class MyDeployer(BaseDeployer):
 
     def _hodl_register_register(self, contract_info):
         register_args = [('HodlStorage', contract_info['HodlStorage']['contractAddress']),
-                         ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress']),
+                         ('HodlSaver', contract_info['HodlSaver']['contractAddress']),
                          ('TestOracleExample', contract_info['TestOracleExample']['contractAddress'])]
         HodlRegister(self._config_path).regist_multiple_address(register_args, **{
             'from': self._test_owner,
         })
 
     def _test_stroage_allower(self, contract_info):
-        allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
+        allower_args = [contract_info['HodlSaver']['contractAddress'],
                         contract_info['TestOracleExample']['contractAddress']]
         HodlStorage(self._config_path).set_multiple_allower(allower_args, **{
             'from': self._test_owner
@@ -111,7 +111,7 @@ class MyDeployer(BaseDeployer):
             return [self._test_owner]
         elif contract_name == 'HodlRegister':
             return [self._test_owner]
-        elif contract_name == 'TestWalletDistributor':
+        elif contract_name == 'HodlSaver':
             return [self._test_owner,
                     my_args['HodlRegister']['contractAddress']]
 

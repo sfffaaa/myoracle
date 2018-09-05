@@ -3,12 +3,12 @@ pragma solidity 0.4.24;
 import {OracleBase} from "./OracleBase.sol";
 import {HodlRegister} from "./HodlRegister.sol";
 import {HodlStorage} from "./HodlStorage.sol";
-import {TestWalletDistributor} from "./TestWalletDistributor.sol";
+import {HodlSaver} from "./HodlSaver.sol";
 import './SafeMath.sol';
 
 contract TestOracleExample is OracleBase {
     using SafeMath for uint256;
-    string TEST_WALLET_DISTRIBUTOR_ADDR_KEY = 'TestWalletDistributor';
+    string HODL_SAVER_ADDR_KEY = 'HodlSaver';
     string HODL_STORAGE_ADDR_KEY = 'HodlStorage';
     string TEST_EXAMPLE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
     event SentCallback(bytes32 queryId, string request);
@@ -66,9 +66,9 @@ contract TestOracleExample is OracleBase {
         (success, price) = convertResponseToPrice(_response);
         emit TriggerMyCallback(success, price);
         if (true == success) {
-            address myTestDistributorAddr = HodlRegister(hodlRegisterAddr).getAddress(TEST_WALLET_DISTRIBUTOR_ADDR_KEY);
-            require(myTestDistributorAddr != 0);
-            TestWalletDistributor(myTestDistributorAddr).withdrawBalance(price);
+            address myHodlSaverAddr = HodlRegister(hodlRegisterAddr).getAddress(HODL_SAVER_ADDR_KEY);
+            require(myHodlSaverAddr != 0);
+            HodlSaver(myHodlSaverAddr).withdrawBalance(price);
         }
         //[TODO] call oracle again
     }

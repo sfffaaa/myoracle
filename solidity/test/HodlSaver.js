@@ -3,28 +3,28 @@
 const BigNumber = require('bignumber.js');
 const truffleAssert = require('truffle-assertions');
 
-const TestWalletDistributor = artifacts.require('TestWalletDistributor');
+const HodlSaver = artifacts.require('HodlSaver');
 const TestUtils = require('./TestUtils.js');
 
 
-contract('TestWalletDistributor Test', (accounts) => {
-    let testWalletDistributorInst = null;
-    const testOwner = accounts[2];
+contract('HodlSaver Test', (accounts) => {
+    let hodlSaverInst = null;
+    const hodlOwner = accounts[2];
     const otherUserA = accounts[3];
     const otherUserB = accounts[4];
 
     before(async () => {
-        console.log(`TestWalletDistributor: ${TestWalletDistributor.address}`);
-        testWalletDistributorInst = await TestWalletDistributor.deployed();
+        console.log(`HodlSaver: ${HodlSaver.address}`);
+        hodlSaverInst = await HodlSaver.deployed();
     });
 
     it('Basic test', async () => {
         let myBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
 
         // check tx
-        let tx = await testWalletDistributorInst.depositBalance(100, {
+        let tx = await hodlSaverInst.depositBalance(100, {
             value: 10000,
             from: otherUserA,
         });
@@ -41,7 +41,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         });
 
         let checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.plus(10000).toNumber(),
@@ -50,7 +50,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         );
         myBalance = checkBalance;
 
-        tx = await testWalletDistributorInst.depositBalance(200, {
+        tx = await hodlSaverInst.depositBalance(200, {
             value: 20000,
             from: otherUserA,
         });
@@ -67,7 +67,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         });
 
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.plus(20000).toNumber(),
@@ -77,9 +77,9 @@ contract('TestWalletDistributor Test', (accounts) => {
         myBalance = checkBalance;
 
         // check tx
-        tx = await testWalletDistributorInst.withdrawBalance(
+        tx = await hodlSaverInst.withdrawBalance(
             199,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         truffleAssert.eventEmitted(tx, 'WithdrawBalance', (ev) => {
             assert.equal(ev.myAddress, otherUserA, 'address should be the same');
@@ -89,7 +89,7 @@ contract('TestWalletDistributor Test', (accounts) => {
             return true;
         });
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.toNumber(),
@@ -98,9 +98,9 @@ contract('TestWalletDistributor Test', (accounts) => {
         );
 
         // check tx
-        tx = await testWalletDistributorInst.withdrawBalance(
+        tx = await hodlSaverInst.withdrawBalance(
             201,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         truffleAssert.eventEmitted(tx, 'WithdrawBalance', (ev) => {
             assert.equal(ev.myAddress, otherUserA, 'address should be the same');
@@ -112,7 +112,7 @@ contract('TestWalletDistributor Test', (accounts) => {
 
         // check balance on accounts[0]
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             checkBalance.toNumber(),
@@ -127,11 +127,11 @@ contract('TestWalletDistributor Test', (accounts) => {
         const testPrices = [50, 150, 250];
 
         let myBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
 
         // check tx
-        let tx = await testWalletDistributorInst.depositBalance(thresholdValues[0], {
+        let tx = await hodlSaverInst.depositBalance(thresholdValues[0], {
             value: depositValues[0],
             from: otherUserA,
         });
@@ -148,7 +148,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         });
 
         let checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.plus(depositValues[0]).toNumber(),
@@ -157,7 +157,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         );
         myBalance = checkBalance;
 
-        tx = await testWalletDistributorInst.depositBalance(thresholdValues[1], {
+        tx = await hodlSaverInst.depositBalance(thresholdValues[1], {
             value: depositValues[1],
             from: otherUserB,
         });
@@ -174,7 +174,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         });
 
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.plus(depositValues[1]).toNumber(),
@@ -186,9 +186,9 @@ contract('TestWalletDistributor Test', (accounts) => {
         let myIdx = 0;
 
         // check tx (no user withdraw)
-        tx = await testWalletDistributorInst.withdrawBalance(
+        tx = await hodlSaverInst.withdrawBalance(
             testPrices[0],
-            { from: testOwner },
+            { from: hodlOwner },
         );
         truffleAssert.eventEmitted(tx, 'WithdrawBalance', (ev) => {
             if (myIdx === 0) {
@@ -207,7 +207,7 @@ contract('TestWalletDistributor Test', (accounts) => {
             return true;
         });
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.toNumber(),
@@ -218,9 +218,9 @@ contract('TestWalletDistributor Test', (accounts) => {
         myIdx = 0;
 
         // check tx (one of users withdraw)
-        tx = await testWalletDistributorInst.withdrawBalance(
+        tx = await hodlSaverInst.withdrawBalance(
             testPrices[1],
-            { from: testOwner },
+            { from: hodlOwner },
         );
         truffleAssert.eventEmitted(tx, 'WithdrawBalance', (ev) => {
             if (myIdx === 0) {
@@ -239,7 +239,7 @@ contract('TestWalletDistributor Test', (accounts) => {
             return true;
         });
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             myBalance.toNumber(),
@@ -250,9 +250,9 @@ contract('TestWalletDistributor Test', (accounts) => {
         myIdx = 0;
 
         // check tx (one of users withdraw)
-        tx = await testWalletDistributorInst.withdrawBalance(
+        tx = await hodlSaverInst.withdrawBalance(
             testPrices[2],
-            { from: testOwner },
+            { from: hodlOwner },
         );
         truffleAssert.eventEmitted(tx, 'WithdrawBalance', (ev) => {
             if (myIdx === 0) {
@@ -273,7 +273,7 @@ contract('TestWalletDistributor Test', (accounts) => {
 
         // check balance on accounts[0]
         checkBalance = BigNumber(
-            await web3.eth.getBalance(testWalletDistributorInst.address),
+            await web3.eth.getBalance(hodlSaverInst.address),
         );
         assert.equal(
             checkBalance.toNumber(),
@@ -282,7 +282,7 @@ contract('TestWalletDistributor Test', (accounts) => {
         );
     });
     it('Permission test', async () => {
-        TestUtils.AssertRevert(testWalletDistributorInst.withdrawBalance(0, {
+        TestUtils.AssertRevert(hodlSaverInst.withdrawBalance(0, {
             from: otherUserA,
         }));
     });

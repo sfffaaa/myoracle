@@ -9,7 +9,7 @@ sys.path.append('src')
 from utils.my_deployer import MyDeployer
 from test_utils import _TEST_CONFIG, get_eth_price
 from utils.chain_utils import convert_to_wei, MyWeb3
-from test_wallet_distributor.test_wallet_distributor import TestWalletDistributor
+from hodl_saver.hodl_saver import HodlSaver
 from test_oracle_example.test_oracle_example import TestOracleExample
 from clients.oracle_node_client import OracleNodeClient
 from handler.config_handler import ConfigHandler
@@ -63,15 +63,15 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         other_user = myWeb3.get_accounts()[3]
         payment_value = convert_to_wei(1000, 'wei')
 
-        test_distributor = TestWalletDistributor(_TEST_CONFIG)
-        now_balance = test_distributor.get_balance()
+        hodl_saver = HodlSaver(_TEST_CONFIG)
+        now_balance = hodl_saver.get_balance()
 
         eth_price = get_eth_price()
-        test_distributor.deposit_balance(int(eth_price * 2), **{
+        hodl_saver.deposit_balance(int(eth_price * 2), **{
             'value': payment_value,
             'from': other_user
         })
-        new_balance = test_distributor.get_balance()
+        new_balance = hodl_saver.get_balance()
         self.assertEqual(new_balance, now_balance + payment_value, 'Should be the same')
         now_balance = new_balance
 
@@ -85,16 +85,16 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         self._callback_event.wait()
         self.reset_callback_event()
 
-        new_balance = test_distributor.get_balance()
+        new_balance = hodl_saver.get_balance()
         self.assertEqual(new_balance, now_balance, 'Should be the same')
         now_balance = new_balance
 
         eth_price = get_eth_price()
-        test_distributor.deposit_balance(int(eth_price / 2), **{
+        hodl_saver.deposit_balance(int(eth_price / 2), **{
             'value': payment_value,
             'from': other_user
         })
-        new_balance = test_distributor.get_balance()
+        new_balance = hodl_saver.get_balance()
         self.assertEqual(new_balance, now_balance + payment_value, 'Should be the same')
         now_balance = new_balance
         test_example.deposit(**{
@@ -106,7 +106,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         self._callback_event.wait()
         self.reset_callback_event()
 
-        new_balance = test_distributor.get_balance()
+        new_balance = hodl_saver.get_balance()
         self.assertEqual(new_balance, 0, 'Should be the same')
 
         p.terminate()

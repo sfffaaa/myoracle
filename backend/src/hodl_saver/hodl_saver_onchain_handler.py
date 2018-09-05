@@ -6,7 +6,7 @@ from utils.chain_utils import convert_to_hex
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
 
 
-class TestWalletDistributorOnChainHandler(BaseContractOnChainHandler):
+class HodlSaverOnChainHandler(BaseContractOnChainHandler):
 
     def __init__(self, config_path=my_config.CONFIG_PATH):
         super().__init__(config_path)
