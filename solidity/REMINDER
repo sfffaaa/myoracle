@@ -2,10 +2,8 @@ Todo
 Q: Right now, oracle can be called repeated, but how can user pay the oracle fee when calling oracle repeatly...
 Q: The permission should be checked again, because I found TestStorage didn't have permission check.
 Q: How about the gas spent in multiple users
-Q: Move storage in TestWalletDistributor to TestStorage
 Q: Use TestRegister instead of OracleRegister
 Q: Use TestRegister in TestStorage for avoid setting address here
-Q: Change permission for TestWalletDistributor
 Q: If sent Request back function error, the fee wallet won't update...
 
 Pending:
@@ -39,3 +37,9 @@ A: Add TestOracleExample + OracleCore test case
 
 Q: TestWallet not use right now, maybe the code should be removed.
 A: Remove it
+
+Q: Move storage in TestWalletDistributor to TestStorage
+A: Finished
+
+Q: Change permission for TestWalletDistributor
+A: Implement it.
