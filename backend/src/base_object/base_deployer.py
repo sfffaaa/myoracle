@@ -14,9 +14,9 @@ from utils.my_config import CONFIG_PATH
 class BaseDeployer():
     def __init__(self, config_path=CONFIG_PATH):
         self._config_path = config_path
-        config_handler = ConfigHandler(config_path)
-        self._oracle_owner = config_handler.get_oracle_owner()
-        self._test_owner = config_handler.get_test_owner()
+        self._config_handler = ConfigHandler(config_path)
+        self._oracle_owner = self._config_handler.get_oracle_owner()
+        self._test_owner = self._config_handler.get_test_owner()
 
     def _compose_contract_build_path(self, truffle_build_path, target_contract_name):
         json_filename = '{0}.json'.format(target_contract_name)
@@ -64,9 +64,9 @@ class BaseDeployer():
 
         return tx_receipts, self._w3.eth.accounts[0]
 
-    def _get_contract_instance(self, config_handler, contract_name):
+    def _get_contract_instance(self, contract_name):
         print('==== Deploy started {0} ===='.format(contract_name))
-        build_path = config_handler.get_chain_config('Deploy', 'truffle_build_path')
+        build_path = self._config_handler.get_chain_config('Deploy', 'truffle_build_path')
         contract_path = self._compose_contract_build_path(build_path, contract_name)
         assert os.path.isfile(contract_path), 'file compiled path {0} doesn\'t exist'.format(contract_path)
 
@@ -75,13 +75,14 @@ class BaseDeployer():
 
         return self._w3.eth.contract(abi=abi, bytecode=bytecode)
 
-    def _dump_multiple_smart_contract(self, config_handler, contract_detail_dict, contract_owner):
+    def _dump_multiple_smart_contract(self, contract_detail_dict, contract_owner):
         for contract_name, contract_detail in contract_detail_dict.items():
-            build_path = config_handler.get_chain_config('Deploy', 'truffle_build_path')
+            build_path = self._config_handler.get_chain_config('Deploy', 'truffle_build_path')
             contract_path = self._compose_contract_build_path(build_path, contract_name)
             assert os.path.isfile(contract_path), 'file compiled path {0} doesn\'t exist'.format(contract_path)
 
-            output_path = os.path.join(config_handler.get_chain_config('Output', 'file_path'),
+            output_path = self._config_handler.get_chain_config('Output', 'file_path')
+            output_path = os.path.join(output_path,
                                        '{0}.json'.format(contract_name))
 
             self._dump_contract_info(contract_path,
@@ -101,45 +102,45 @@ class BaseDeployer():
             print('Contract owner:')
             print('    owner: {0}'.format(contract_owner))
 
-    def deploy_multiple_smart_contract(self, config_handler, infos):
+    def deploy_multiple_smart_contract(self, infos):
         contract_insts = {}
         for contract_name, my_args in infos.items():
             print('==== Deploy started {0} ===='.format(contract_name))
-            my_args = self.compose_smart_contract_args(config_handler, contract_name, my_args)
+            my_args = self.compose_smart_contract_args(contract_name, my_args)
 
-            contract_inst = self._get_contract_instance(config_handler, contract_name)
+            contract_inst = self._get_contract_instance(contract_name)
             contract_inst = contract_inst.constructor(*my_args)
             contract_insts[contract_name] = contract_inst
 
         contract_detail_dict, contract_owner = self._start_multiple_deploy_to_chain(contract_insts)
-        self._dump_multiple_smart_contract(config_handler, contract_detail_dict, contract_owner)
+        self._dump_multiple_smart_contract(contract_detail_dict, contract_owner)
 
         self._show_multiple_smart_contract_detail(contract_detail_dict, contract_owner)
         return contract_detail_dict
 
     def deploy(self):
-        config_handler = ConfigHandler(self._config_path)
-        self._w3 = config_handler.get_web3()
+        self._w3 = self._config_handler.get_web3()
 
         print('==== Compile smart contract ====')
-        cmd = '(cd {0}; truffle compile)'.format(config_handler.get_chain_config('Deploy', 'truffle_path'))
+        truffle_path = self._config_handler.get_chain_config('Deploy', 'truffle_path')
+        cmd = '(cd {0}; truffle compile)'.format(truffle_path)
         print('run command {0}'.format(cmd))
         os.system(cmd)
 
-        self.deploy_implement(config_handler)
+        self.deploy_implement()
 
     def undeploy(self):
         ''' Actually, smart contract cannot undeploy, but I need an function to remove unused intermediate file'''
-        config_handler = ConfigHandler(self._config_path)
-        contract_names = config_handler.get_chain_config('Deploy', 'target_contract_name')
-        for contract_name in contract_names.split(','):
-            contract_path = os.path.join(config_handler.get_chain_config('Output', 'file_path'),
+        contract_names = self._config_handler.get_all_contract_name()
+        for contract_name in contract_names:
+            contract_path = os.path.join(self._config_handler.get_chain_config('Output', 'file_path'),
                                          '{0}.json'.format(contract_name))
-            os.unlink(contract_path)
+            if os.path.exists(contract_path):
+                os.unlink(contract_path)
 
     # ===== You should change this =====
-    def compose_smart_contract_args(self, config_handler, contract_name, my_args):
+    def compose_smart_contract_args(self, contract_name, my_args):
         raise IOError('Child should implement it')
 
-    def deploy_implement(self, config_handler):
+    def deploy_implement(self):
         raise IOError('Child should finish it')

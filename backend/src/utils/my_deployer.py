@@ -13,10 +13,10 @@ import multiprocessing
 
 class MyDeployer(BaseDeployer):
 
-    def deploy_implement(self, config_handler):
+    def deploy_implement(self):
 
         # step 1
-        info = self.deploy_multiple_smart_contract(config_handler, {
+        info = self.deploy_multiple_smart_contract({
             'OracleStorage': {},
             'OracleFeeWallet': {},
 
@@ -26,14 +26,14 @@ class MyDeployer(BaseDeployer):
         contract_info.update(info)
 
         # step 2
-        info = self.deploy_multiple_smart_contract(config_handler, {
+        info = self.deploy_multiple_smart_contract({
             'OracleRegister': contract_info,
             'TestRegister': contract_info,
         })
         contract_info.update(info)
 
         # step 3
-        info = self.deploy_multiple_smart_contract(config_handler, {
+        info = self.deploy_multiple_smart_contract({
             'OracleWallet': contract_info,
             'OracleCore': contract_info,
             'TestWalletDistributor': contract_info,
@@ -93,7 +93,7 @@ class MyDeployer(BaseDeployer):
             'from': self._oracle_owner
         })
 
-    def compose_smart_contract_args(self, config_handler, contract_name, my_args):
+    def compose_smart_contract_args(self, contract_name, my_args):
         if contract_name == 'OracleCore':
             return [self._oracle_owner,
                     my_args['OracleRegister']['contractAddress']]

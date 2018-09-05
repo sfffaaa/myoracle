@@ -21,12 +21,7 @@ class OracleNodeClient(BaseChainNode):
                  deployed=False,
                  deployed_event=None):
         if deployed:
-            try:
-                MyDeployer(config_path).undeploy()
-            except IOError:
-                pass
-            else:
-                raise
+            MyDeployer(config_path).undeploy()
             MyDeployer(config_path).deploy()
 
         if deployed_event:

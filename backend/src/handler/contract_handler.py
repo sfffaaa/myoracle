@@ -19,10 +19,7 @@ class ContractHandler():
                                                     abi=contract_abi)
 
     def _check_contract_name(self, check_name):
-        contract_path = self._config_handler.get_chain_config('Deploy', 'truffle_build_path')
-        contract_path = os.path.join(contract_path, 'contracts')
-        filenames = [f.split('.')[0] for f in os.listdir(contract_path)]
-        filenames = [f for f in filenames if f != 'Migrations']
+        filenames = self._config_handler.get_all_contract_name()
         if check_name not in filenames:
             raise IOError('Cannot find {0} in config {1}'.format(check_name, filenames))
 
