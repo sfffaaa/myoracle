@@ -1,6 +1,6 @@
 /* global artifacts, contract, it, web3, assert, before */
 
-const TestOracleExample = artifacts.require('TestOracleExample');
+const HodlOracle = artifacts.require('HodlOracle');
 const OracleWallet = artifacts.require('OracleWallet');
 const OracleFeeWallet = artifacts.require('OracleFeeWallet');
 const BigNumber = require('bignumber.js');
@@ -9,31 +9,31 @@ const TestUtils = require('./TestUtils.js');
 
 contract('OracleWallet Test', (accounts) => {
     let oracleWalletInst = null;
-    let testOracleExampleInst = null;
+    let hodlOracleInst = null;
     let oracleFeeWalletInst = null;
     const oracleOwner = accounts[1];
-    const testOwner = accounts[2];
+    const hodlOwner = accounts[2];
     const otherUser = accounts[3];
 
     before(async () => {
         oracleWalletInst = await OracleWallet.deployed();
         oracleFeeWalletInst = await OracleFeeWallet.deployed();
-        testOracleExampleInst = await TestOracleExample.deployed();
+        hodlOracleInst = await HodlOracle.deployed();
     });
 
     it('Basic test', async () => {
         console.log(`OracleWallet: ${OracleWallet.address}`);
-        console.log(`TestOracleExample: ${TestOracleExample.address}`);
+        console.log(`HodlOracle: ${HodlOracle.address}`);
 
-        await testOracleExampleInst.deposit({
+        await hodlOracleInst.deposit({
             value: 10000,
-            from: testOwner,
+            from: hodlOwner,
         });
 
         const myBeforeWalletBalance = BigNumber(
             await web3.eth.getBalance(oracleWalletInst.address),
         );
-        await testOracleExampleInst.trigger({ from: testOwner });
+        await hodlOracleInst.trigger({ from: hodlOwner });
         await oracleFeeWalletInst.payback({ from: oracleOwner });
         const myAfterWalletBalance = BigNumber(
             await web3.eth.getBalance(oracleWalletInst.address),
@@ -76,12 +76,12 @@ contract('OracleWallet Test', (accounts) => {
     });
 
     it('Update check test', async () => {
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        TestUtils.AssertPass(hodlOracleInst.deposit({
             value: 10000,
-            from: testOwner,
+            from: hodlOwner,
         }));
         let balance = await oracleFeeWalletInst.getBalance(
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             { from: otherUser },
         );
         assert.equal(
@@ -90,12 +90,12 @@ contract('OracleWallet Test', (accounts) => {
             'balance should be the same',
         );
         await oracleWalletInst.updateUsedBalance(
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             10000,
             { from: oracleOwner },
         );
         balance = await oracleFeeWalletInst.getBalance(
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             { from: otherUser },
         );
         assert.equal(

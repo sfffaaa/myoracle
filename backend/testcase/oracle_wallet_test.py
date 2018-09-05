@@ -7,7 +7,7 @@ sys.path.append('src')
 
 from utils.my_deployer import MyDeployer
 from test_utils import _TEST_CONFIG
-from test_oracle_example.test_oracle_example import TestOracleExample
+from hodl_oracle.hodl_oracle import HodlOracle
 from utils.chain_utils import convert_to_wei, MyWeb3
 from oracle_wallet.oracle_wallet import OracleWallet
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
@@ -18,7 +18,7 @@ class TestOracleWallet(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
+        cls._hodl_owner = ConfigHandler(_TEST_CONFIG).get_hodl_owner()
         cls._oracle_owner = ConfigHandler(_TEST_CONFIG).get_oracle_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
@@ -34,16 +34,16 @@ class TestOracleWallet(unittest.TestCase):
 
     def test_single_event(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
-        test_example = TestOracleExample(_TEST_CONFIG)
+        hodl_oracle = HodlOracle(_TEST_CONFIG)
         PAYMENT_VALUE = 10000
         oracle_wallet = OracleWallet(_TEST_CONFIG)
         before_wallet_balance = oracle_wallet.get_balance()
-        test_example.deposit(**{
+        hodl_oracle.deposit(**{
             'value': convert_to_wei(PAYMENT_VALUE, 'wei'),
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
-        test_example.trigger(**{
-            'from': self._test_owner
+        hodl_oracle.trigger(**{
+            'from': self._hodl_owner
         })
 
         oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)

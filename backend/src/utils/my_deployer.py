@@ -6,8 +6,8 @@ from oracle_storage.oracle_storage import OracleStorage
 from oracle_register.oracle_register import OracleRegister
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 
-from test_storage.test_storage import TestStorage
-from test_register.test_register import TestRegister
+from hodl_storage.hodl_storage import HodlStorage
+from hodl_register.hodl_register import HodlRegister
 import multiprocessing
 
 
@@ -20,7 +20,7 @@ class MyDeployer(BaseDeployer):
             'OracleStorage': {},
             'OracleFeeWallet': {},
 
-            'TestStorage': {},
+            'HodlStorage': {},
         })
         contract_info = {}
         contract_info.update(info)
@@ -28,7 +28,7 @@ class MyDeployer(BaseDeployer):
         # step 2
         info = self.deploy_multiple_smart_contract({
             'OracleRegister': contract_info,
-            'TestRegister': contract_info,
+            'HodlRegister': contract_info,
         })
         contract_info.update(info)
 
@@ -36,8 +36,8 @@ class MyDeployer(BaseDeployer):
         info = self.deploy_multiple_smart_contract({
             'OracleWallet': contract_info,
             'OracleCore': contract_info,
-            'TestWalletDistributor': contract_info,
-            'TestOracleExample': contract_info,
+            'HodlSaver': contract_info,
+            'HodlOracle': contract_info,
         })
         contract_info.update(info)
 
@@ -47,8 +47,8 @@ class MyDeployer(BaseDeployer):
         # step 5 (because it has dependency)
         func_args_pairs = [
             (self._oracle_register_register, contract_info),
-            (self._test_register_register, contract_info),
-            (self._test_stroage_allower, contract_info),
+            (self._hodl_register_register, contract_info),
+            (self._hodl_storage_allower, contract_info),
             (self._oracle_fee_wallet_register, contract_info),
         ]
         procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
@@ -72,19 +72,19 @@ class MyDeployer(BaseDeployer):
             'from': self._oracle_owner
         })
 
-    def _test_register_register(self, contract_info):
-        register_args = [('TestStorage', contract_info['TestStorage']['contractAddress']),
-                         ('TestWalletDistributor', contract_info['TestWalletDistributor']['contractAddress']),
-                         ('TestOracleExample', contract_info['TestOracleExample']['contractAddress'])]
-        TestRegister(self._config_path).regist_multiple_address(register_args, **{
-            'from': self._test_owner,
+    def _hodl_register_register(self, contract_info):
+        register_args = [('HodlStorage', contract_info['HodlStorage']['contractAddress']),
+                         ('HodlSaver', contract_info['HodlSaver']['contractAddress']),
+                         ('HodlOracle', contract_info['HodlOracle']['contractAddress'])]
+        HodlRegister(self._config_path).regist_multiple_address(register_args, **{
+            'from': self._hodl_owner,
         })
 
-    def _test_stroage_allower(self, contract_info):
-        allower_args = [contract_info['TestWalletDistributor']['contractAddress'],
-                        contract_info['TestOracleExample']['contractAddress']]
-        TestStorage(self._config_path).set_multiple_allower(allower_args, **{
-            'from': self._test_owner
+    def _hodl_storage_allower(self, contract_info):
+        allower_args = [contract_info['HodlSaver']['contractAddress'],
+                        contract_info['HodlOracle']['contractAddress']]
+        HodlStorage(self._config_path).set_multiple_allower(allower_args, **{
+            'from': self._hodl_owner
         })
 
     def _oracle_fee_wallet_register(self, contract_info):
@@ -107,18 +107,18 @@ class MyDeployer(BaseDeployer):
         elif contract_name == 'OracleFeeWallet':
             return [self._oracle_owner]
 
-        elif contract_name == 'TestStorage':
-            return [self._test_owner]
-        elif contract_name == 'TestRegister':
-            return [self._test_owner]
-        elif contract_name == 'TestWalletDistributor':
-            return [self._test_owner,
-                    my_args['TestRegister']['contractAddress']]
+        elif contract_name == 'HodlStorage':
+            return [self._hodl_owner]
+        elif contract_name == 'HodlRegister':
+            return [self._hodl_owner]
+        elif contract_name == 'HodlSaver':
+            return [self._hodl_owner,
+                    my_args['HodlRegister']['contractAddress']]
 
-        elif contract_name == 'TestOracleExample':
-            return [self._test_owner,
+        elif contract_name == 'HodlOracle':
+            return [self._hodl_owner,
                     my_args['OracleRegister']['contractAddress'],
-                    my_args['TestRegister']['contractAddress']]
+                    my_args['HodlRegister']['contractAddress']]
 
         else:
             raise IOError('Wrong contract name {0}'.format(contract_name))

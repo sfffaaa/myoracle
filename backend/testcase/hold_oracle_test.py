@@ -8,9 +8,9 @@ sys.path.append('src')
 
 from utils.my_deployer import MyDeployer
 from clients.oracle_node_client import OracleNodeClient
-from clients.test_oracle_example_client import TestOracleExampleClient
+from clients.hodl_oracle_client import HodlOracleClient
 from test_utils import _TEST_CONFIG
-from test_oracle_example.test_oracle_example import TestOracleExample
+from hodl_oracle.hodl_oracle import HodlOracle
 from utils.chain_utils import convert_to_hex, convert_to_wei
 from handler.config_handler import ConfigHandler
 from web3 import Web3
@@ -19,11 +19,11 @@ TEST_REQUEST_STR = 'json(https://api.kraken.com/0/public/Ticker)["error"][0]'
 TEST_RESPONSE_STR = 'EGeneral:Invalid arguments'
 
 
-class TestTestOracleExample(unittest.TestCase):
+class TestHodlOracle(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
+        cls._hodl_owner = ConfigHandler(_TEST_CONFIG).get_hodl_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
     @classmethod
@@ -59,10 +59,10 @@ class TestTestOracleExample(unittest.TestCase):
         self.to_oracle_node_data = []
         self.show_event_data = []
         self.sent_event_data = []
-        example_daemon = TestOracleExampleClient(config_path=_TEST_CONFIG,
-                                                 sent_callback_objs=[self],
-                                                 show_callback_objs=[self],
-                                                 wait_time=1)
+        example_daemon = HodlOracleClient(config_path=_TEST_CONFIG,
+                                          sent_callback_objs=[self],
+                                          show_callback_objs=[self],
+                                          wait_time=1)
         example_daemon.start()
 
         node_daemon = OracleNodeClient(config_path=_TEST_CONFIG,
@@ -70,18 +70,18 @@ class TestTestOracleExample(unittest.TestCase):
                                        wait_time=1)
         node_daemon.start()
 
-        test_example = TestOracleExample(_TEST_CONFIG)
-        # self.assertEqual(0, test_example.get_lastest_query_id(), 'There is no query id')
+        hodl_oracle = HodlOracle(_TEST_CONFIG)
+        # self.assertEqual(0, hodl_oracle.get_lastest_query_id(), 'There is no query id')
 
-        test_example.deposit(**{
+        hodl_oracle.deposit(**{
             'value': convert_to_wei(20000, 'wei'),
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
-        test_example.trigger(**{
-            'from': self._test_owner
+        hodl_oracle.trigger(**{
+            'from': self._hodl_owner
         })
-        test_example_queryid = test_example.get_lastest_query_id(**{
-            'from': self._test_owner
+        hodl_oracle_queryid = hodl_oracle.get_lastest_query_id(**{
+            'from': self._hodl_owner
         })
         gevent.sleep(5)
 
@@ -93,9 +93,9 @@ class TestTestOracleExample(unittest.TestCase):
         # check queryid
         for idx, test_list in enumerate([self.to_oracle_node_data, self.sent_event_data, self.show_event_data]):
             self.assertEqual(test_list[0]['queryId'],
-                             test_example_queryid,
+                             hodl_oracle_queryid,
                              'query id {0} != {1}, {2}'.format(test_list[0]['queryId'],
-                                                               test_example_queryid,
+                                                               hodl_oracle_queryid,
                                                                idx))
 
         # check resquest

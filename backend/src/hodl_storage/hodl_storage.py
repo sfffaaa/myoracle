@@ -3,17 +3,17 @@
 
 from utils import my_config
 from base_object.base_contract import BaseContract
-from test_oracle_example.test_oracle_example_onchain_handler import TestOracleExampleOnChainHandler
+from hodl_storage.hodl_storage_onchain_handler import HodlStorageOnChainHandler
 
 
-class TestOracleExample(BaseContract):
+class HodlStorage(BaseContract):
 
     def __init__(self, config=my_config.CONFIG_PATH):
         super().__init__(config)
 
     def create_onchain_handler(self, config):
-        return TestOracleExampleOnChainHandler(config)
+        return HodlStorageOnChainHandler(config)
 
 
 if __name__ == '__main__':
-    pass
+    HodlStorage()

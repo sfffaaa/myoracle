@@ -2,7 +2,7 @@
 truffle_path=
 truffle_build_path=
 oracle_owner=
-test_owner=
+hodl_owner=
 
 [Ethereum]
 file_ipc=

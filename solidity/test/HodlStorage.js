@@ -1,21 +1,21 @@
 /* global artifacts, contract, it, assert, before */
 
-const TestStorage = artifacts.require('TestStorage');
+const HodlStorage = artifacts.require('HodlStorage');
 
-contract('TestStorageBasic', (accounts) => {
-    let testStorageInst = null;
-    const testOwner = accounts[2];
+contract('HodlStorageBasic', (accounts) => {
+    let hodlStorageInst = null;
+    const hodlOwner = accounts[2];
 
     before(async () => {
-        testStorageInst = await TestStorage.deployed();
+        hodlStorageInst = await HodlStorage.deployed();
     });
 
     // Bytes32Array related test
     it('Action on addressArray checking', async () => {
         const ARRAY_TEST_KEYS = 'Bytes32ArrayChecking';
-        let length = await testStorageInst.getBytes32ArrayLength(
+        let length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(
             length,
@@ -23,22 +23,22 @@ contract('TestStorageBasic', (accounts) => {
             'There is no any array entry',
         );
 
-        testStorageInst.pushBytes32ArrayEntry(
+        hodlStorageInst.pushBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             '0x0000000000000000000000000000000000000000000000000000000000000001',
-            { from: testOwner },
+            { from: hodlOwner },
         );
 
-        length = await testStorageInst.getBytes32ArrayLength(
+        length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(length, 1,
             'Length should be the same');
-        let checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        let checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(
             checkEntry,
@@ -46,21 +46,21 @@ contract('TestStorageBasic', (accounts) => {
             'Entry should be the same',
         );
 
-        await testStorageInst.setBytes32ArrayEntry(
+        await hodlStorageInst.setBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
             '0x2000000000000000000000000000000000000000000000000000000000000000',
-            { from: testOwner },
+            { from: hodlOwner },
         );
-        length = await testStorageInst.getBytes32ArrayLength(
+        length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(length, 1, 'Length should be the same');
-        checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(
             checkEntry,
@@ -68,30 +68,30 @@ contract('TestStorageBasic', (accounts) => {
             'Entry should be the same',
         );
 
-        await testStorageInst.pushBytes32ArrayEntry(
+        await hodlStorageInst.pushBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             '0x3000000000000000000000000000000000000000000000000000000000000000',
-            { from: testOwner },
+            { from: hodlOwner },
         );
-        length = await testStorageInst.getBytes32ArrayLength(
+        length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(length, 2, 'Length should be the same');
-        checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(
             checkEntry,
             '0x2000000000000000000000000000000000000000000000000000000000000000',
             'Entry should be the same',
         );
-        checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             1,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(
             checkEntry,
@@ -99,26 +99,26 @@ contract('TestStorageBasic', (accounts) => {
             'Entry should be the same',
         );
 
-        await testStorageInst.delBytes32ArrayEntry(
+        await hodlStorageInst.delBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
-            { from: testOwner },
+            { from: hodlOwner },
         );
-        length = await testStorageInst.getBytes32ArrayLength(
+        length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(length, 2, 'Length should be the same');
-        checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(checkEntry, 0, 'Entry should be the same');
-        checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             1,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(
             checkEntry,
@@ -126,30 +126,30 @@ contract('TestStorageBasic', (accounts) => {
             'Entry should be the same',
         );
 
-        await testStorageInst.changeBytes32ArrayLength(
+        await hodlStorageInst.changeBytes32ArrayLength(
             ARRAY_TEST_KEYS,
             1,
-            { from: testOwner },
+            { from: hodlOwner },
         );
-        length = await testStorageInst.getBytes32ArrayLength(
+        length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(length, 1, 'Length should be the same');
-        checkEntry = await testStorageInst.getBytes32ArrayEntry(
+        checkEntry = await hodlStorageInst.getBytes32ArrayEntry(
             ARRAY_TEST_KEYS,
             0,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(checkEntry, 0, 'Entry should be the same');
 
-        await testStorageInst.delBytes32Array(
+        await hodlStorageInst.delBytes32Array(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
-        length = await testStorageInst.getBytes32ArrayLength(
+        length = await hodlStorageInst.getBytes32ArrayLength(
             ARRAY_TEST_KEYS,
-            { from: testOwner },
+            { from: hodlOwner },
         );
         assert.equal(length, 0, 'Length should be the same');
     });

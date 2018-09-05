@@ -16,7 +16,7 @@ class BaseDeployer():
         self._config_path = config_path
         self._config_handler = ConfigHandler(config_path)
         self._oracle_owner = self._config_handler.get_oracle_owner()
-        self._test_owner = self._config_handler.get_test_owner()
+        self._hodl_owner = self._config_handler.get_hodl_owner()
 
     def _compose_contract_build_path(self, truffle_build_path, target_contract_name):
         json_filename = '{0}.json'.format(target_contract_name)

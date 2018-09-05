@@ -1,7 +1,7 @@
 /* global artifacts, contract, it, web3, assert, before */
 
 const OracleCore = artifacts.require('OracleCore');
-const TestOracleExample = artifacts.require('TestOracleExample');
+const HodlOracle = artifacts.require('HodlOracle');
 const truffleAssert = require('truffle-assertions');
 const TestUtils = require('./TestUtils.js');
 
@@ -10,29 +10,29 @@ contract('OracleCoreBasic', (accounts) => {
     const FAKE_REQUEST = "Whatever doesn't kill you";
     const FAKE_RESPONSE = 'simply makes you stranger';
     let oracleCoreInst = null;
-    let testOracleExampleInst = null;
+    let hodlOracleInst = null;
     const oracleOwner = accounts[1];
-    const testOwner = accounts[2];
+    const hodlOwner = accounts[2];
     const otherUser = accounts[3];
 
     before(async () => {
         oracleCoreInst = await OracleCore.deployed();
-        testOracleExampleInst = await TestOracleExample.deployed();
+        hodlOracleInst = await HodlOracle.deployed();
     });
 
     it('Basic test', async () => {
         console.log(`OracleCore: ${OracleCore.address}`);
-        console.log(`TestOracleExample: ${TestOracleExample.address}`);
+        console.log(`HodlOracle: ${HodlOracle.address}`);
 
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        TestUtils.AssertPass(hodlOracleInst.deposit({
             value: 20000,
-            from: testOwner,
+            from: hodlOwner,
         }));
 
         let queryId = 0;
         let tx = await oracleCoreInst.querySentNode(
             0,
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             FAKE_REQUEST,
             { from: oracleOwner },
         );
@@ -49,7 +49,7 @@ contract('OracleCoreBasic', (accounts) => {
             { from: oracleOwner },
         );
         truffleAssert.eventEmitted(tx, 'ToOracleCallee', (ev) => {
-            return ev.queryId === queryId && ev.callee === TestOracleExample.address;
+            return ev.queryId === queryId && ev.callee === HodlOracle.address;
         });
 
         let oracleData = {};
@@ -58,24 +58,24 @@ contract('OracleCoreBasic', (accounts) => {
         oracleData = oracleLogs[oracleLogs.length - 1].args;
 
         let calleeData = {};
-        const showCallbackEvent = testOracleExampleInst.ShowCallback({}, { fromBlock: 0, toBlock: 'latest' });
+        const showCallbackEvent = hodlOracleInst.ShowCallback({}, { fromBlock: 0, toBlock: 'latest' });
         const calleeLogs = await TestUtils.WaitContractEventGet(showCallbackEvent);
         calleeData = calleeLogs[calleeLogs.length - 1].args;
-        calleeData.callee = testOracleExampleInst.address;
+        calleeData.callee = hodlOracleInst.address;
         if (TestUtils.CheckObjectEqual(oracleData, calleeData) === false) {
             assert.equal(oracleData, calleeData, 'Two object should be the same');
         }
     });
 
     it('oracleCoreInst permission test', async () => {
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        TestUtils.AssertPass(hodlOracleInst.deposit({
             value: 30000,
-            from: testOwner,
+            from: hodlOwner,
         }));
-        await testOracleExampleInst.trigger(
-            { from: testOwner },
+        await hodlOracleInst.trigger(
+            { from: hodlOwner },
         );
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
+        const queryId = await hodlOracleInst.getLastestQueryId({ from: hodlOwner });
 
         TestUtils.AssertPass(oracleCoreInst.resultSentBack(
             queryId,
@@ -92,14 +92,14 @@ contract('OracleCoreBasic', (accounts) => {
     });
 
     it('oracleCoreInst payment test', async () => {
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        TestUtils.AssertPass(hodlOracleInst.deposit({
             value: 30000,
-            from: testOwner,
+            from: hodlOwner,
         }));
-        await testOracleExampleInst.trigger(
-            { from: testOwner },
+        await hodlOracleInst.trigger(
+            { from: hodlOwner },
         );
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
+        const queryId = await hodlOracleInst.getLastestQueryId({ from: hodlOwner });
 
         TestUtils.AssertPass(oracleCoreInst.resultSentBack(
             queryId,
@@ -116,20 +116,20 @@ contract('OracleCoreBasic', (accounts) => {
     });
 
     it('Payment test', async () => {
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        TestUtils.AssertPass(hodlOracleInst.deposit({
             value: 10000,
-            from: testOwner,
+            from: hodlOwner,
         }));
 
         TestUtils.AssertPass(oracleCoreInst.querySentNode(
             0,
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             'Why you are so serious???',
             { from: oracleOwner },
         ));
         TestUtils.AssertRevert(oracleCoreInst.querySentNode(
             0,
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             FAKE_REQUEST,
             { from: oracleOwner },
         ));

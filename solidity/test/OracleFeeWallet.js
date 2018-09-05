@@ -2,7 +2,7 @@
 
 const OracleFeeWallet = artifacts.require('OracleFeeWallet');
 const OracleCore = artifacts.require('OracleCore');
-const TestOracleExample = artifacts.require('TestOracleExample');
+const HodlOracle = artifacts.require('HodlOracle');
 const BigNumber = require('bignumber.js');
 const truffleAssert = require('truffle-assertions');
 const TestUtils = require('./TestUtils.js');
@@ -113,10 +113,10 @@ function UpdateUsedBalance(sentValue, usedAccountInfo, helpAccountInfo) {
 
 contract('OracleFeeWallet Test', (accounts) => {
     let oracleFeeWalletInst = null;
-    let testOracleExampleInst = null;
+    let hodlOracleInst = null;
     let oracleCoreInst = null;
     const oracleOwner = accounts[1];
-    const testOwner = accounts[2];
+    const hodlOwner = accounts[2];
     const addrUserA = accounts[3];
     const addrUserB = accounts[4];
     const addrRegisterA = accounts[5];
@@ -128,7 +128,7 @@ contract('OracleFeeWallet Test', (accounts) => {
     before(async () => {
         oracleFeeWalletInst = await OracleFeeWallet.deployed();
         oracleCoreInst = await OracleCore.deployed();
-        testOracleExampleInst = await TestOracleExample.deployed();
+        hodlOracleInst = await HodlOracle.deployed();
     });
 
     it('Deposit test', async () => {
@@ -368,16 +368,16 @@ contract('OracleFeeWallet Test', (accounts) => {
 
     it('balance check test', async () => {
         const FAKE_RESPONSE = 'simply makes you stranger';
-        TestUtils.AssertPass(testOracleExampleInst.deposit({
+        TestUtils.AssertPass(hodlOracleInst.deposit({
             value: 20000,
-            from: testOwner,
+            from: hodlOwner,
         }));
         const beforeBalance = await oracleFeeWalletInst.getBalance.call(
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             { from: addrOtherUserC },
         );
-        await testOracleExampleInst.trigger({ from: testOwner });
-        const queryId = await testOracleExampleInst.getLastestQueryId({ from: testOwner });
+        await hodlOracleInst.trigger({ from: hodlOwner });
+        const queryId = await hodlOracleInst.getLastestQueryId({ from: hodlOwner });
 
         TestUtils.AssertPass(oracleCoreInst.resultSentBack(
             queryId,
@@ -386,7 +386,7 @@ contract('OracleFeeWallet Test', (accounts) => {
             { from: oracleOwner },
         ));
         const afterBalance = await oracleFeeWalletInst.getBalance.call(
-            testOracleExampleInst.address,
+            hodlOracleInst.address,
             { from: addrOtherUserC },
         );
         assert.equal(

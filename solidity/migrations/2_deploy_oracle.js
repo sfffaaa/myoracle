@@ -6,10 +6,10 @@ const OracleCore = artifacts.require('./OracleCore');
 const OracleWallet = artifacts.require('./OracleWallet');
 const OracleFeeWallet = artifacts.require('./OracleFeeWallet');
 
-const TestStorage = artifacts.require('./TestStorage');
-const TestWalletDistributor = artifacts.require('./TestWalletDistributor');
-const TestRegister = artifacts.require('./TestRegister');
-const TestOracleExample = artifacts.require('./TestOracleExample');
+const HodlStorage = artifacts.require('./HodlStorage');
+const HodlSaver = artifacts.require('./HodlSaver');
+const HodlRegister = artifacts.require('./HodlRegister');
+const HodlOracle = artifacts.require('./HodlOracle');
 
 
 module.exports = (deployer, network, accounts) => {
@@ -19,17 +19,17 @@ module.exports = (deployer, network, accounts) => {
     let oracleWalletInst = null;
     let oracleFeeWalletInst = null;
 
-    let testStorageInst = null;
-    let testWalletDistributorInst = null;
-    let testOracleExampleInst = null;
-    let testRegisterInst = null;
+    let hodlStorageInst = null;
+    let hodlSaverInst = null;
+    let hodlOracleInst = null;
+    let hodlRegisterInst = null;
 
     const oracleOwner = accounts[1];
-    const testOwner = accounts[2];
+    const hodlOwner = accounts[2];
 
-    deployer.deploy(TestStorage, testOwner).then((inst) => {
-        console.log(`TestStorage address: ${inst.address}`);
-        testStorageInst = inst;
+    deployer.deploy(HodlStorage, hodlOwner).then((inst) => {
+        console.log(`HodlStorage address: ${inst.address}`);
+        hodlStorageInst = inst;
         return deployer.deploy(
             OracleStorage,
             oracleOwner,
@@ -73,32 +73,32 @@ module.exports = (deployer, network, accounts) => {
             console.log(`OracleFeeWallet address: ${inst.address}`);
             oracleFeeWalletInst = inst;
             return deployer.deploy(
-                TestRegister,
-                testOwner,
+                HodlRegister,
+                hodlOwner,
             );
         })
         .then((inst) => {
-            console.log(`TestRegister address: ${inst.address}`);
-            testRegisterInst = inst;
+            console.log(`HodlRegister address: ${inst.address}`);
+            hodlRegisterInst = inst;
             return deployer.deploy(
-                TestWalletDistributor,
-                testOwner,
-                testRegisterInst.address,
+                HodlSaver,
+                hodlOwner,
+                hodlRegisterInst.address,
             );
         })
         .then((inst) => {
-            console.log(`TestWalletDistributor address: ${inst.address}`);
-            testWalletDistributorInst = inst;
+            console.log(`HodlSaver address: ${inst.address}`);
+            hodlSaverInst = inst;
             return deployer.deploy(
-                TestOracleExample,
-                testOwner,
+                HodlOracle,
+                hodlOwner,
                 oracleRegisterInst.address,
-                testRegisterInst.address,
+                hodlRegisterInst.address,
             );
         })
         .then((inst) => {
-            console.log(`TestOracleExample address: ${inst.address}`);
-            testOracleExampleInst = inst;
+            console.log(`HodlOracle address: ${inst.address}`);
+            hodlOracleInst = inst;
             return oracleStorageInst.setOracleRegisterAddr(
                 oracleRegisterInst.address,
                 { from: oracleOwner },
@@ -133,36 +133,36 @@ module.exports = (deployer, network, accounts) => {
             );
         })
         .then(() => {
-            return testRegisterInst.registAddress(
-                'TestWalletDistributor',
-                testWalletDistributorInst.address,
-                { from: testOwner },
+            return hodlRegisterInst.registAddress(
+                'HodlSaver',
+                hodlSaverInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {
-            return testRegisterInst.registAddress(
-                'TestOracleExample',
-                testOracleExampleInst.address,
-                { from: testOwner },
+            return hodlRegisterInst.registAddress(
+                'HodlOracle',
+                hodlOracleInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {
-            return testRegisterInst.registAddress(
-                'TestStorage',
-                testStorageInst.address,
-                { from: testOwner },
+            return hodlRegisterInst.registAddress(
+                'HodlStorage',
+                hodlStorageInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {
-            return testStorageInst.setAllower(
-                testWalletDistributorInst.address,
-                { from: testOwner },
+            return hodlStorageInst.setAllower(
+                hodlSaverInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {
-            return testStorageInst.setAllower(
-                testOracleExampleInst.address,
-                { from: testOwner },
+            return hodlStorageInst.setAllower(
+                hodlOracleInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {

@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
 
 
-contract TestRegister {
+contract HodlRegister {
     address owner;
     mapping (string => address) stringAddressMap;
     
