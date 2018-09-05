@@ -1,9 +1,7 @@
 Todo
-Q: Right now, oracle can be called repeated, but how can user pay the oracle fee when calling oracle repeatly...
-Q: The permission should be checked again, because I found TestStorage didn't have permission check.
+Q: The permission should be checked again, because I found HodlStorage didn't have permission check.
 Q: How about the gas spent in multiple users
-Q: Use TestRegister instead of OracleRegister
-Q: Use TestRegister in TestStorage for avoid setting address here
+Q: Use HodlRegister in HodlStorage for avoid setting address here
 Q: If sent Request back function error, the fee wallet won't update...
 
 Pending:
@@ -38,8 +36,14 @@ A: Add TestOracleExample + OracleCore test case
 Q: TestWallet not use right now, maybe the code should be removed.
 A: Remove it
 
-Q: Move storage in TestWalletDistributor to TestStorage
+Q: Move storage in TestWalletDistributor to HodlStorage
 A: Finished
 
 Q: Change permission for TestWalletDistributor
+A: Implement it.
+
+Q: oracle can be called repeated, but how can user pay the oracle fee when calling oracle repeatly...
+A: Deposit eth into oracle fee wallet and each time functions which need spent ETH (trigger and resultSentBack) are called, the balance in oracle fee wallet is spent.
+
+Q: Use HodlRegister instead of OracleRegister
 A: Implement it.

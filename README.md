@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.com/sfffaaa/myoracle.svg?branch=issue_2)](https://travis-ci.com/sfffaaa/myoracle)
+[![Build Status](https://travis-ci.com/sfffaaa/myoracle.svg?branch=master)](https://travis-ci.com/sfffaaa/myoracle)
 
 # Myoracle
-Implement an simple oracle which can communicate with the world. One application using my oracle is user allows to save ETH into test distribute wallet and the same amount of ETH will sent back when ETH price is above threshold user set.
+Implement an simple oracle which can communicate with the world. One application using my oracle is user allows to save ETH into hodl saver and the same amount of ETH will sent back when ETH price is above threshold user set.
 
 # Deploy
 ## Smart contract
@@ -22,29 +22,29 @@ pip3 install -r requirements.txt
 2. Deploy all smart contract and register related address.
 	1. Deploy all smart contract with owner.
 	2. Smart contract, oracle register, regists address.
-	3. Smart contract, test register, regists address.
-	4. Smart contract, Test storage, regists allower.
+	3. Smart contract, hodl register, regists address.
+	4. Smart contract, hodl storage, regists allower.
 	5. Smart contract, oracle fee wallet, registers client address.
 3. Execute daemon in oracle\_node\_client\_daemon.py.
-4. Deposit some eth into TestOracleExample by deposit function.
-5. Interested user set threshold and transfer ETH to TestWalletDistributor by deposit function.
-6. Execute trigger function in TestOracleExample smart contract.
+4. Deposit some eth into HodlOracle by deposit function.
+5. Interested user set threshold and transfer ETH to HodlSaver by deposit function.
+6. Execute trigger function in HodlOracle smart contract.
 If ETH price is above threshold, money will send back to user who deposit ETH in step 5, otherwise, no action will execute.
 7. Oracle owner can execute payback function for transfer money all record into oracle fee wallet.
 8. Repeat step 6.
 
 ### Trigger Flow
-1. Execute trigger function in TestOracleExample (called by TestOracleExample owner).
-2. Run \_\_queryNode in OracleBase (called by TestOracleExample contract address). </br>
-Because \_\_queryNode has permission check, it only allowes TestOracleExample owner or TestOracleExample itself.
-3. Execute querySentNode in OracleCore (called by TestOracleExample contract address).
+1. Execute trigger function in HodlOracle (called by HodlOracle owner).
+2. Run \_\_queryNode in OracleBase (called by HodlOracle contract address). </br>
+Because \_\_queryNode has permission check, it only allowes HodlOracle owner or HodlOracle itself.
+3. Execute querySentNode in OracleCore (called by HodlOracle contract address).
 4. Emit ToOracleNode. </br>
 Emit ToOracleNode will trigger node to execute request outside. We'll discuss the flow later.
 5. Return qureyID back.
 ### Oracle Node Flow
 1. OracleNode execute some requests.
 2. Execute function, resultSentBack, in OracleCore (called by OracleCore owner).
-3. Run \_\_callback in TestOracleExample (called by OracleCore contract address).
+3. Run \_\_callback in HodlOracle (called by OracleCore contract address).
 ### TODO
 1. Deposit fee wallet in OracleBase.
 2. resultSentBack should change the owner for seperating the setting.
