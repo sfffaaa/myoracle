@@ -11,7 +11,7 @@ from clients.oracle_node_client import OracleNodeClient
 from test_utils import _TEST_CONFIG, get_eth_price
 from utils.chain_utils import convert_to_wei, MyWeb3
 from hodl_saver.hodl_saver import HodlSaver
-from test_oracle_example.test_oracle_example import TestOracleExample
+from hodl_oracle.hodl_oracle import HodlOracle
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 from handler.config_handler import ConfigHandler
 
@@ -20,7 +20,7 @@ class TestBehavior(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
+        cls._hodl_owner = ConfigHandler(_TEST_CONFIG).get_hodl_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
     @classmethod
@@ -54,17 +54,17 @@ class TestBehavior(unittest.TestCase):
                                        wait_time=1)
         node_daemon.start()
 
-        test_example = TestOracleExample(_TEST_CONFIG)
+        test_example = HodlOracle(_TEST_CONFIG)
         test_example.deposit(**{
             'value': convert_to_wei(20000, 'wei'),
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
         oracle_fee_wallet = OracleFeeWallet(_TEST_CONFIG)
         self.assertEqual(oracle_fee_wallet.get_balance(test_example.get_address()),
                          convert_to_wei(20000, 'wei'),
                          'should be the same in balance')
         test_example.trigger(**{
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
 
         new_balance = hodl_saver.get_balance()
@@ -81,10 +81,10 @@ class TestBehavior(unittest.TestCase):
         now_balance = new_balance
         test_example.deposit(**{
             'value': convert_to_wei(20000, 'wei'),
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
         test_example.trigger(**{
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
 
         for _ in range(15):

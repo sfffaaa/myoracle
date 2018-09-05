@@ -16,7 +16,7 @@ class TestHodlSaver(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
+        cls._hodl_owner = ConfigHandler(_TEST_CONFIG).get_hodl_owner()
         MyDeployer(_TEST_CONFIG).deploy()
 
     @classmethod
@@ -85,7 +85,7 @@ class TestHodlSaver(unittest.TestCase):
         now_balance = hodl_saver.get_balance()
 
         hodl_saver.withdraw_balance(199, **{
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
         withdraw_balance_event = withdraw_balance_event_hdr.get_new_entries()
         self.check_event_withdraw_balance(other_user,
@@ -98,7 +98,7 @@ class TestHodlSaver(unittest.TestCase):
                          'balance should be the same')
 
         hodl_saver.withdraw_balance(201, **{
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
         withdraw_balance_event = withdraw_balance_event_hdr.get_new_entries()
         self.check_event_withdraw_balance(other_user,

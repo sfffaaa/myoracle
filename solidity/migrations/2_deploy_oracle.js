@@ -9,7 +9,7 @@ const OracleFeeWallet = artifacts.require('./OracleFeeWallet');
 const HodlStorage = artifacts.require('./HodlStorage');
 const HodlSaver = artifacts.require('./HodlSaver');
 const HodlRegister = artifacts.require('./HodlRegister');
-const TestOracleExample = artifacts.require('./TestOracleExample');
+const HodlOracle = artifacts.require('./HodlOracle');
 
 
 module.exports = (deployer, network, accounts) => {
@@ -21,13 +21,13 @@ module.exports = (deployer, network, accounts) => {
 
     let hodlStorageInst = null;
     let hodlSaverInst = null;
-    let testOracleExampleInst = null;
+    let hodlOracleInst = null;
     let hodlRegisterInst = null;
 
     const oracleOwner = accounts[1];
-    const testOwner = accounts[2];
+    const hodlOwner = accounts[2];
 
-    deployer.deploy(HodlStorage, testOwner).then((inst) => {
+    deployer.deploy(HodlStorage, hodlOwner).then((inst) => {
         console.log(`HodlStorage address: ${inst.address}`);
         hodlStorageInst = inst;
         return deployer.deploy(
@@ -74,7 +74,7 @@ module.exports = (deployer, network, accounts) => {
             oracleFeeWalletInst = inst;
             return deployer.deploy(
                 HodlRegister,
-                testOwner,
+                hodlOwner,
             );
         })
         .then((inst) => {
@@ -82,7 +82,7 @@ module.exports = (deployer, network, accounts) => {
             hodlRegisterInst = inst;
             return deployer.deploy(
                 HodlSaver,
-                testOwner,
+                hodlOwner,
                 hodlRegisterInst.address,
             );
         })
@@ -90,15 +90,15 @@ module.exports = (deployer, network, accounts) => {
             console.log(`HodlSaver address: ${inst.address}`);
             hodlSaverInst = inst;
             return deployer.deploy(
-                TestOracleExample,
-                testOwner,
+                HodlOracle,
+                hodlOwner,
                 oracleRegisterInst.address,
                 hodlRegisterInst.address,
             );
         })
         .then((inst) => {
-            console.log(`TestOracleExample address: ${inst.address}`);
-            testOracleExampleInst = inst;
+            console.log(`HodlOracle address: ${inst.address}`);
+            hodlOracleInst = inst;
             return oracleStorageInst.setOracleRegisterAddr(
                 oracleRegisterInst.address,
                 { from: oracleOwner },
@@ -136,33 +136,33 @@ module.exports = (deployer, network, accounts) => {
             return hodlRegisterInst.registAddress(
                 'HodlSaver',
                 hodlSaverInst.address,
-                { from: testOwner },
+                { from: hodlOwner },
             );
         })
         .then(() => {
             return hodlRegisterInst.registAddress(
-                'TestOracleExample',
-                testOracleExampleInst.address,
-                { from: testOwner },
+                'HodlOracle',
+                hodlOracleInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {
             return hodlRegisterInst.registAddress(
                 'HodlStorage',
                 hodlStorageInst.address,
-                { from: testOwner },
+                { from: hodlOwner },
             );
         })
         .then(() => {
             return hodlStorageInst.setAllower(
                 hodlSaverInst.address,
-                { from: testOwner },
+                { from: hodlOwner },
             );
         })
         .then(() => {
             return hodlStorageInst.setAllower(
-                testOracleExampleInst.address,
-                { from: testOwner },
+                hodlOracleInst.address,
+                { from: hodlOwner },
             );
         })
         .then(() => {

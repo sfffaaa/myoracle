@@ -20,8 +20,8 @@ contract HodlSaver {
         hodlRegisterAddr = _hodlRegisterAddr;
     }
 
-    modifier OnlyAllowOwnerAndTestOracleExample {
-        address testOracleExampleAddr = HodlRegister(hodlRegisterAddr).getAddress('TestOracleExample');
+    modifier OnlyAllowOwnerAndHodlOracle {
+        address testOracleExampleAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlOracle');
         require(0 != testOracleExampleAddr);
         require(msg.sender == owner || msg.sender == testOracleExampleAddr); 
         _;
@@ -59,7 +59,7 @@ contract HodlSaver {
 
     function withdrawBalance(uint _price)
         public
-        OnlyAllowOwnerAndTestOracleExample
+        OnlyAllowOwnerAndHodlOracle
     {
         address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlStorage');
         assert(myHodlStorageAddr != 0);

@@ -6,11 +6,11 @@ import {HodlStorage} from "./HodlStorage.sol";
 import {HodlSaver} from "./HodlSaver.sol";
 import './SafeMath.sol';
 
-contract TestOracleExample is OracleBase {
+contract HodlOracle is OracleBase {
     using SafeMath for uint256;
     string HODL_SAVER_ADDR_KEY = 'HodlSaver';
     string HODL_STORAGE_ADDR_KEY = 'HodlStorage';
-    string TEST_EXAMPLE_QUERY_IDS_KEY = 'TestOracleExampleQueryIds';
+    string HODL_ORACLE_QUERY_IDS_KEY = 'HodlOracleQueryIds';
     event SentCallback(bytes32 queryId, string request);
     event ShowCallback(bytes32 queryId, string response, bytes32 hash);
     event TriggerMyCallback(bool trigger, uint price);
@@ -35,7 +35,7 @@ contract TestOracleExample is OracleBase {
 
         address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(HODL_STORAGE_ADDR_KEY);
         require(myHodlStorageAddr != 0);
-        HodlStorage(myHodlStorageAddr).pushBytes32ArrayEntry(TEST_EXAMPLE_QUERY_IDS_KEY, queryId);
+        HodlStorage(myHodlStorageAddr).pushBytes32ArrayEntry(HODL_ORACLE_QUERY_IDS_KEY, queryId);
         emit SentCallback(queryId, request);
     }
 
@@ -50,9 +50,9 @@ contract TestOracleExample is OracleBase {
         address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress(HODL_STORAGE_ADDR_KEY);
         require(myHodlStorageAddr != 0);
 
-        uint queryIdsLength = HodlStorage(myHodlStorageAddr).getBytes32ArrayLength(TEST_EXAMPLE_QUERY_IDS_KEY);
+        uint queryIdsLength = HodlStorage(myHodlStorageAddr).getBytes32ArrayLength(HODL_ORACLE_QUERY_IDS_KEY);
         require(queryIdsLength > 0);
-        return HodlStorage(myHodlStorageAddr).getBytes32ArrayEntry(TEST_EXAMPLE_QUERY_IDS_KEY,
+        return HodlStorage(myHodlStorageAddr).getBytes32ArrayEntry(HODL_ORACLE_QUERY_IDS_KEY,
                                                                    queryIdsLength.sub(1));
     }
 

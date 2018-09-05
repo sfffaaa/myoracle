@@ -10,7 +10,7 @@ from utils.my_deployer import MyDeployer
 from test_utils import _TEST_CONFIG, get_eth_price
 from utils.chain_utils import convert_to_wei, MyWeb3
 from hodl_saver.hodl_saver import HodlSaver
-from test_oracle_example.test_oracle_example import TestOracleExample
+from hodl_oracle.hodl_oracle import HodlOracle
 from clients.oracle_node_client import OracleNodeClient
 from handler.config_handler import ConfigHandler
 
@@ -19,7 +19,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._test_owner = ConfigHandler(_TEST_CONFIG).get_test_owner()
+        cls._hodl_owner = ConfigHandler(_TEST_CONFIG).get_hodl_owner()
         try:
             MyDeployer(_TEST_CONFIG).undeploy()
         except IOError:
@@ -75,12 +75,12 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         self.assertEqual(new_balance, now_balance + payment_value, 'Should be the same')
         now_balance = new_balance
 
-        test_example = TestOracleExample(_TEST_CONFIG)
-        test_example.deposit(**{
+        hodl_oracle = HodlOracle(_TEST_CONFIG)
+        hodl_oracle.deposit(**{
             'value': convert_to_wei(20000, 'wei'),
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
-        test_example.trigger(**{'from': self._test_owner})
+        hodl_oracle.trigger(**{'from': self._hodl_owner})
 
         self._callback_event.wait()
         self.reset_callback_event()
@@ -97,11 +97,11 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         new_balance = hodl_saver.get_balance()
         self.assertEqual(new_balance, now_balance + payment_value, 'Should be the same')
         now_balance = new_balance
-        test_example.deposit(**{
+        hodl_oracle.deposit(**{
             'value': convert_to_wei(20000, 'wei'),
-            'from': self._test_owner
+            'from': self._hodl_owner
         })
-        test_example.trigger(**{'from': self._test_owner})
+        hodl_oracle.trigger(**{'from': self._hodl_owner})
 
         self._callback_event.wait()
         self.reset_callback_event()

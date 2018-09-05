@@ -24,8 +24,8 @@ class ConfigHandler():
         filenames = [f for f in filenames if f != 'Migrations']
         return filenames
 
-    def get_test_owner(self):
-        owner_account = self.get_chain_config('Deploy', 'test_owner')
+    def get_hodl_owner(self):
+        owner_account = self.get_chain_config('Deploy', 'hodl_owner')
         if not owner_account:
             owner_account = self.get_web3().eth.accounts[2]
         return owner_account
