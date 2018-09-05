@@ -14,7 +14,6 @@ import gevent
 
 class OracleNodeClient(BaseChainNode):
 
-    # [TODO] Need to pass test owner and oracle owner
     def __init__(self,
                  config_path=my_config.CONFIG_PATH,
                  to_oracle_node_callback_objs=[],
