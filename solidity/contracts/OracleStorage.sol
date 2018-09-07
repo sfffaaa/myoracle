@@ -21,9 +21,10 @@ contract OracleStorage is OracleConstant {
         _;
     }
 
-    modifier onlyOwnerAndOracleCore {
+    modifier onlyOwnerAndOracleCoreAndFeeWallet {
         require(msg.sender == owner ||
-                msg.sender == OracleRegister(oracleRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY));
+                msg.sender == OracleRegister(oracleRegisterAddr).getAddress(ORACLE_CORE_ADDR_KEY) ||
+                msg.sender == OracleRegister(oracleRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY));
         _;
     }
 
@@ -41,7 +42,7 @@ contract OracleStorage is OracleConstant {
 
     // bytes32ToAddress related function
     function delBytes32ToAddress(string _name, bytes32 _key)
-        onlyOwnerAndOracleCore
+        onlyOwnerAndOracleCoreAndFeeWallet
         public
     {
         // only two contract can call this (and owner)
@@ -50,7 +51,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function setBytes32ToAddress(string _name, bytes32 _key, address _val)
-        onlyOwnerAndOracleCore
+        onlyOwnerAndOracleCoreAndFeeWallet
         public
     {
         // only two contract can call this (and owner)
@@ -60,7 +61,7 @@ contract OracleStorage is OracleConstant {
 
     // Partial allow, allow everybody to get OracleAddress but other attribute is locked
     function getBytes32ToAddress(string _name, bytes32 _key)
-        onlyOwnerAndOracleCore
+        onlyOwnerAndOracleCoreAndFeeWallet
         view
         public
         returns(address)
@@ -72,7 +73,7 @@ contract OracleStorage is OracleConstant {
 
     // addressToUint related function
     function delAddressToUint(string _name, address _key)
-        onlyOwnerAndOracleCore
+        onlyOwnerAndOracleCoreAndFeeWallet
         public
     {
         // only two contract can call this (and owner)
@@ -81,7 +82,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function setAddressToUint(string _name, address _key, uint _val)
-        onlyOwnerAndOracleCore
+        onlyOwnerAndOracleCoreAndFeeWallet
         public
     {
         // only two contract can call this (and owner)
@@ -90,7 +91,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function getAddressToUint(string _name, address _key)
-        onlyOwnerAndOracleCore
+        onlyOwnerAndOracleCoreAndFeeWallet
         view
         public
         returns(uint)

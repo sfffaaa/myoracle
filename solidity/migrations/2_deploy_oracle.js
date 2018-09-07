@@ -67,6 +67,7 @@ module.exports = (deployer, network, accounts) => {
             return deployer.deploy(
                 OracleFeeWallet,
                 oracleOwner,
+                oracleRegisterInst.address,
             );
         })
         .then((inst) => {
