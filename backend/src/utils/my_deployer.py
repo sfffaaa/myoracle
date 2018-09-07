@@ -49,13 +49,13 @@ class MyDeployer(BaseDeployer):
             (self._oracle_register_register, contract_info),
             (self._hodl_register_register, contract_info),
             (self._hodl_storage_allower, contract_info),
-            (self._oracle_fee_wallet_register, contract_info),
         ]
         procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
         for p in procs:
             p.start()
         for p in procs:
             p.join()
+        self._oracle_fee_wallet_register(contract_info)
 
     def _oracle_storage_register(self, contract_info):
         OracleStorage(self._config_path) \
