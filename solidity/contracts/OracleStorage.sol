@@ -6,6 +6,7 @@ import {OracleRegister} from "./OracleRegister.sol";
 contract OracleStorage is OracleConstant {
     mapping(bytes32 => mapping(bytes32 => address)) private bytes32ToAddress;
     mapping(bytes32 => mapping(address => uint)) private addressToUint;
+    mapping(bytes32 => address[]) private bytes32AddressArray;
 
     address owner;
     address oracleRegisterAddr;
@@ -99,5 +100,79 @@ contract OracleStorage is OracleConstant {
         // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
         return addressToUint[name][_key];
+    }
+
+
+    // bytes32Array related function
+    function getBytes32AddressArrayLength(string _name)
+        view
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+        returns(uint)
+    {
+        // only two contract can call this (and owner)
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        return bytes32AddressArray[name].length;
+    }
+
+    function getBytes32AddressArrayEntry(string _name, uint _idx)
+        view
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+        returns(address)
+    {
+        // only two contract can call this (and owner)
+        require(getBytes32AddressArrayLength(_name) > _idx);
+
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        return bytes32AddressArray[name][_idx];
+    }
+
+    function setBytes32AddressArrayEntry(string _name, uint _idx, address  _val)
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+    {
+        // only two contract can call this (and owner)
+        require(getBytes32AddressArrayLength(_name) > _idx);
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        bytes32AddressArray[name][_idx] = _val;
+    }
+
+    function pushBytes32AddressArrayEntry(string _name, address _val)
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+    {
+        // only two contract can call this (and owner)
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        bytes32AddressArray[name].push(_val);
+    }
+
+    function delBytes32AddressArrayEntry(string _name, uint _idx)
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+    {
+        // only two contract can call this (and owner)
+        require(getBytes32AddressArrayLength(_name) > _idx);
+
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        delete bytes32AddressArray[name][_idx];
+    }
+
+    function delBytes32AddressArray(string _name)
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+    {
+        // only two contract can call this (and owner)
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        delete bytes32AddressArray[name];
+    }
+
+    function changeBytes32AddressArrayLength(string _name, uint _length)
+        public
+        onlyOwnerAndOracleCoreAndFeeWallet
+    {
+        // only two contract can call this (and owner)
+        bytes32 name = keccak256(abi.encodePacked(_name));
+        bytes32AddressArray[name].length = _length;
     }
 }
