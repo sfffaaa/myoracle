@@ -2,7 +2,6 @@
 # encoding: utf-8
 
 from web3 import Web3
-from utils import my_config
 from handler.contract_handler import ConfigHandler
 
 
@@ -67,8 +66,6 @@ def check_transaction_meet_assert(w3, tx_hashs):
             raise IOError('{0} receipt does not exist'.format(tx_hash))
         if tx_receipt.status != 1:
             print('tx erceipt has error {0}'.format(tx_receipt))
-            return True
-        if tx_receipt.gasUsed == my_config.GAS_SPENT:
             return True
 
     return False

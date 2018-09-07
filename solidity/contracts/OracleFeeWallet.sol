@@ -1,21 +1,15 @@
 pragma solidity 0.4.24;
 
 import {OracleConstant} from "./OracleConstant.sol";
+import {OracleStorage} from "./OracleStorage.sol";
+import {OracleRegister} from "./OracleRegister.sol";
 import './SafeMath.sol';
 
 
 contract OracleFeeWallet is OracleConstant {
     using SafeMath for uint256;
-
+    address oracleRegisterAddr;
     address owner;
-    mapping(address => uint) private addressValueMap;
-    mapping(address => uint) private paybackValueMap;
-
-    address[] private paybackAddrList;
-    mapping(address => uint) private paybackAddrToIdxP1;
-
-    address[] private clientRegisterAddrList;
-    mapping(address => uint) private clientRegisterAddrToIdxP1;
 
     event DepositAction(address  sender, uint value, uint accumulateValue);
     event UpdateUsedAction(address  helperAddr, address  balanceAddr,
@@ -25,8 +19,9 @@ contract OracleFeeWallet is OracleConstant {
     event PaybackAction(address paybackAddr, uint paybackValue);
 
 
-    constructor (address _owner) public {
+    constructor (address _owner, address _oracleRegisterAddr) public {
         owner = _owner;
+        oracleRegisterAddr = _oracleRegisterAddr;
     }
 
     modifier onlyOwner {
@@ -39,9 +34,27 @@ contract OracleFeeWallet is OracleConstant {
         public
     {
         require(_addr != 0);
-        if (0 == clientRegisterAddrToIdxP1[_addr]) {
-            clientRegisterAddrList.push(_addr);
-            clientRegisterAddrToIdxP1[_addr] = clientRegisterAddrList.length;
+        address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+        require(myStorageAddr != 0);
+
+        uint idxP1 = OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletClientRegisterAddrToIdxP1",
+            _addr
+        );
+
+        if (0 == idxP1) {
+            OracleStorage(myStorageAddr).pushBytes32AddressArrayEntry(
+                "OracleFeeWalletClientRegisterAddrList",
+                _addr
+            );
+            uint length = OracleStorage(myStorageAddr).getBytes32AddressArrayLength(
+                "OracleFeeWalletClientRegisterAddrList"
+            );
+            OracleStorage(myStorageAddr).setAddressToUint(
+                "OracleFeeWalletClientRegisterAddrToIdxP1",
+                _addr,
+                length
+            );
         }
     }
 
@@ -50,20 +63,48 @@ contract OracleFeeWallet is OracleConstant {
         public
     {
         require(_addr != 0);
+        address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+        require(myStorageAddr != 0);
 
-        uint idxP1 = clientRegisterAddrToIdxP1[_addr];
+        uint idxP1 = OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletClientRegisterAddrToIdxP1",
+            _addr
+        );
+
         if (idxP1 == 0) {
             return;
         }
 
         uint idx = idxP1 - 1;
-        uint lastIdx = clientRegisterAddrList.length - 1;
-        address lastAddr = clientRegisterAddrList[lastIdx];
-        clientRegisterAddrList[idx] = clientRegisterAddrList[lastIdx];
-        clientRegisterAddrToIdxP1[lastAddr] = idx + 1;
+        uint length = OracleStorage(myStorageAddr).getBytes32AddressArrayLength(
+            "OracleFeeWalletClientRegisterAddrList"
+        );
+        uint lastIdx = length - 1;
+        address lastAddr = OracleStorage(myStorageAddr).getBytes32AddressArrayEntry(
+            "OracleFeeWalletClientRegisterAddrList",
+            lastIdx
+        );
+        OracleStorage(myStorageAddr).setBytes32AddressArrayEntry(
+            "OracleFeeWalletClientRegisterAddrList",
+            idx,
+            lastAddr
+        );
+        OracleStorage(myStorageAddr).setAddressToUint(
+            "OracleFeeWalletClientRegisterAddrToIdxP1",
+            lastAddr,
+            idx + 1
+        );
 
-        delete clientRegisterAddrList[lastIdx];
-        clientRegisterAddrToIdxP1[_addr] = 0;
+        OracleStorage(myStorageAddr).delBytes32AddressArrayEntry(
+            "OracleFeeWalletClientRegisterAddrList",
+            lastIdx
+        );
+
+        OracleStorage(myStorageAddr).setAddressToUint(
+            "OracleFeeWalletClientRegisterAddrToIdxP1",
+            _addr,
+            0
+        );
     }
 
     modifier checkOwnerAndRegister() {
@@ -71,8 +112,17 @@ contract OracleFeeWallet is OracleConstant {
         if (msg.sender == owner) {
             checked = true;
         } else {
-            for (uint i = 0; i < clientRegisterAddrList.length; i++) {
-                if (clientRegisterAddrList[i] == msg.sender) {
+            address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+            require(myStorageAddr != 0);
+            uint length = OracleStorage(myStorageAddr).getBytes32AddressArrayLength(
+                "OracleFeeWalletClientRegisterAddrList"
+            );
+            for (uint i = 0; i < length; i++) {
+                address checkAddr = OracleStorage(myStorageAddr).getBytes32AddressArrayEntry(
+                    "OracleFeeWalletClientRegisterAddrList",
+                    i
+                );
+                if (checkAddr == msg.sender) {
                     checked = true;
                     break;
                 }
@@ -87,18 +137,41 @@ contract OracleFeeWallet is OracleConstant {
         onlyOwner
         public
     {
-        for (uint idxP1 = paybackAddrList.length; idxP1 > 0; idxP1--) {
+        address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+        require(myStorageAddr != 0);
+
+        uint length = OracleStorage(myStorageAddr).getBytes32AddressArrayLength(
+            'OracleFeeWalletPaybackAddrList'
+        );
+        for (uint idxP1 = length; idxP1 > 0; idxP1--) {
             uint realIdx = idxP1 - 1;
-            address paybackAddr = paybackAddrList[realIdx];
-            uint paybackValue = paybackValueMap[paybackAddr];
+            address paybackAddr = OracleStorage(myStorageAddr).getBytes32AddressArrayEntry(
+                'OracleFeeWalletPaybackAddrList',
+                realIdx
+            );
+            uint paybackValue = OracleStorage(myStorageAddr).getAddressToUint(
+                "OracleFeeWalletPaybackValueMap",
+                paybackAddr
+            );
             if (paybackValue != 0) {
                 require(address(this).balance >= paybackValue);
                 paybackAddr.transfer(paybackValue);
                 emit PaybackAction(paybackAddr, paybackValue);
+                OracleStorage(myStorageAddr).setAddressToUint(
+                    "OracleFeeWalletPaybackValueMap",
+                    paybackAddr,
+                    0
+                );
             }
-            paybackValueMap[paybackAddr] = 0;
-            paybackAddrToIdxP1[paybackAddr] = 0;
-            delete paybackAddrList[realIdx];
+            OracleStorage(myStorageAddr).setAddressToUint(
+                "OracleFeeWalletPaybackAddrToIdxP1",
+                paybackAddr,
+                0
+            );
+            OracleStorage(myStorageAddr).delBytes32AddressArrayEntry(
+                'OracleFeeWalletPaybackAddrList',
+                realIdx
+            );
         }
     }
 
@@ -118,20 +191,53 @@ contract OracleFeeWallet is OracleConstant {
     {
         require(_addr != 0);
 
-        uint remainValue = addressValueMap[_addr];
-        require(remainValue >= _value);
-        addressValueMap[_addr] = remainValue.sub(_value);
+        address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+        require(myStorageAddr != 0);
 
-        paybackValueMap[msg.sender] = paybackValueMap[msg.sender].add(_value);
+        uint remainValue = OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletAddressValueMap",
+            _addr
+        );
+        require(remainValue >= _value);
+        remainValue = remainValue.sub(_value);
+        OracleStorage(myStorageAddr).setAddressToUint(
+            "OracleFeeWalletAddressValueMap",
+            _addr,
+            remainValue
+        );
+
+        uint paybackValue = OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletPaybackValueMap",
+            msg.sender
+        );
+        paybackValue = paybackValue.add(_value);
+        OracleStorage(myStorageAddr).setAddressToUint(
+            "OracleFeeWalletPaybackValueMap",
+            msg.sender,
+            paybackValue
+        );
         
-        uint idxP1 = paybackAddrToIdxP1[msg.sender];
+        uint idxP1 = OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletPaybackAddrToIdxP1",
+            msg.sender
+        );
         if (0 == idxP1) {
-            paybackAddrList.push(msg.sender);
-            paybackAddrToIdxP1[msg.sender] = paybackAddrList.length;
+            OracleStorage(myStorageAddr).pushBytes32AddressArrayEntry(
+                'OracleFeeWalletPaybackAddrList',
+                msg.sender
+            );
+            uint length = OracleStorage(myStorageAddr).getBytes32AddressArrayLength(
+                'OracleFeeWalletPaybackAddrList'
+            );
+            OracleStorage(myStorageAddr).setAddressToUint(
+                "OracleFeeWalletPaybackAddrToIdxP1",
+                msg.sender,
+                length
+            );       
         }
 
-        emit UpdatePaybackAction(msg.sender, _addr, _value, paybackValueMap[msg.sender]);
-        emit UpdateUsedAction(msg.sender, _addr, _value, addressValueMap[_addr]);
+        emit UpdatePaybackAction(msg.sender, _addr, _value, paybackValue);
+        emit UpdateUsedAction(msg.sender, _addr, _value, remainValue);
     }
 
     // [TODO] Only register node addrress can do this (or owner)
@@ -141,7 +247,13 @@ contract OracleFeeWallet is OracleConstant {
         returns (uint)
     {
         require(_addr != 0);
-        return addressValueMap[_addr];
+        address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+        require(myStorageAddr != 0);
+
+        return OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletAddressValueMap",
+            _addr
+        );
     }
 
     function deposit()
@@ -149,7 +261,19 @@ contract OracleFeeWallet is OracleConstant {
         public
     {
         address sender = msg.sender;
-        addressValueMap[sender] = addressValueMap[sender].add(msg.value);
-        emit DepositAction(sender, msg.value, addressValueMap[sender]);
+        address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
+        require(myStorageAddr != 0);
+
+        uint value = OracleStorage(myStorageAddr).getAddressToUint(
+            "OracleFeeWalletAddressValueMap",
+            sender
+        );
+        value = value.add(msg.value);
+        OracleStorage(myStorageAddr).setAddressToUint(
+            "OracleFeeWalletAddressValueMap",
+            sender,
+            value
+        );
+        emit DepositAction(sender, msg.value, value);
     }
 }

@@ -8,6 +8,7 @@ from web3 import Web3
 import hexbytes
 from handler.config_handler import ConfigHandler
 from utils.my_config import CONFIG_PATH
+from utils.chain_utils import check_transaction_meet_assert
 
 
 # User should implement compose_smart_contract_args + deploy_implement
@@ -61,6 +62,10 @@ class BaseDeployer():
         # self._w3.miner.stop()
         if None in tx_receipts.values():
             raise IOError('still cannot get contract result')
+
+        if check_transaction_meet_assert(self._w3, [_ for _ in contract_tx_hash.values()]):
+            print(contract_tx_hash)
+            raise IOError('delpoy fail...')
 
         return tx_receipts, self._w3.eth.accounts[0]
 

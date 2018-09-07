@@ -18,7 +18,6 @@ class MyDeployer(BaseDeployer):
         # step 1
         info = self.deploy_multiple_smart_contract({
             'OracleStorage': {},
-            'OracleFeeWallet': {},
 
             'HodlStorage': {},
         })
@@ -34,6 +33,7 @@ class MyDeployer(BaseDeployer):
 
         # step 3
         info = self.deploy_multiple_smart_contract({
+            'OracleFeeWallet': contract_info,
             'OracleWallet': contract_info,
             'OracleCore': contract_info,
             'HodlSaver': contract_info,
@@ -49,13 +49,13 @@ class MyDeployer(BaseDeployer):
             (self._oracle_register_register, contract_info),
             (self._hodl_register_register, contract_info),
             (self._hodl_storage_allower, contract_info),
-            (self._oracle_fee_wallet_register, contract_info),
         ]
         procs = [multiprocessing.Process(target=func, args=(args,)) for func, args in func_args_pairs]
         for p in procs:
             p.start()
         for p in procs:
             p.join()
+        self._oracle_fee_wallet_register(contract_info)
 
     def _oracle_storage_register(self, contract_info):
         OracleStorage(self._config_path) \
@@ -105,7 +105,8 @@ class MyDeployer(BaseDeployer):
             return [self._oracle_owner,
                     my_args['OracleRegister']['contractAddress']]
         elif contract_name == 'OracleFeeWallet':
-            return [self._oracle_owner]
+            return [self._oracle_owner,
+                    my_args['OracleRegister']['contractAddress']]
 
         elif contract_name == 'HodlStorage':
             return [self._hodl_owner]
