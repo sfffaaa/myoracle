@@ -14,6 +14,7 @@ from hodl_saver.hodl_saver import HodlSaver
 from hodl_oracle.hodl_oracle import HodlOracle
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
 from handler.config_handler import ConfigHandler
+from utils.fee_collector_utils import start_fee_server_in_new_process, get_all_fee_reports
 
 
 class TestBehavior(unittest.TestCase):
@@ -33,6 +34,7 @@ class TestBehavior(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @start_fee_server_in_new_process
     def test_behavior(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         other_user = myWeb3.get_accounts()[3]
@@ -100,6 +102,7 @@ class TestBehavior(unittest.TestCase):
         self.assertEqual(oracle_fee_wallet.get_balance(test_example.get_address()),
                          convert_to_wei(0, 'wei'),
                          'should be the same in balance')
+        get_all_fee_reports()
 
 
 if __name__ == '__main__':

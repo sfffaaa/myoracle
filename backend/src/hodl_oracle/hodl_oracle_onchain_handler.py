@@ -18,9 +18,9 @@ class HodlOracleOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
-    def c_get_lastest_query_id(self, **kargs):
+    def l_get_lastest_query_id(self, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
 
         query_id = self.get_contract_inst().functions.getLastestQueryId().call(transaction_data)
@@ -31,7 +31,7 @@ class HodlOracleOnChainHandler(BaseContractOnChainHandler):
         tx_hash = self.get_contract_inst().functions.deposit() \
                                                     .transact(transaction_data)
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
 
 if __name__ == '__main__':

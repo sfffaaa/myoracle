@@ -18,7 +18,7 @@ class HodlRegisterOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
     def c_regist_multiple_address(self, address_pairs, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
@@ -27,9 +27,9 @@ class HodlRegisterOnChainHandler(BaseContractOnChainHandler):
                      for name, address in address_pairs]
 
         self.wait_miner_finish(tx_hashes)
-        return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
+        return [self._w3.eth.getTransactionReceipt(tx_hash) for tx_hash in tx_hashes]
 
-    def c_get_address(self, name, **kargs):
+    def l_get_address(self, name, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         address = self.get_contract_inst().functions.getAddress(name).call(transaction_data)
         return convert_to_hex(address)

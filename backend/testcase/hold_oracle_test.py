@@ -14,6 +14,7 @@ from hodl_oracle.hodl_oracle import HodlOracle
 from utils.chain_utils import convert_to_hex, convert_to_wei
 from handler.config_handler import ConfigHandler
 from web3 import Web3
+from utils.fee_collector_utils import start_fee_server_in_new_process, get_all_fee_reports
 
 TEST_REQUEST_STR = 'json(https://api.kraken.com/0/public/Ticker)["error"][0]'
 TEST_RESPONSE_STR = 'EGeneral:Invalid arguments'
@@ -55,6 +56,7 @@ class TestHodlOracle(unittest.TestCase):
             'hash': convert_to_hex(event['args']['hash'])
         })
 
+    @start_fee_server_in_new_process
     def test_single_event(self):
         self.to_oracle_node_data = []
         self.show_event_data = []
@@ -112,6 +114,7 @@ class TestHodlOracle(unittest.TestCase):
         # check the result is correct
         example_daemon.kill()
         node_daemon.kill()
+        get_all_fee_reports()
 
 
 if __name__ == '__main__':

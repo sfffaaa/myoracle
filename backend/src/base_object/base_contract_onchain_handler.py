@@ -3,7 +3,7 @@
 
 from utils import my_config
 from handler.contract_handler import ContractHandler
-from utils.chain_utils import wait_miner, check_transaction_meet_assert
+from utils.chain_utils import wait_miner, check_tx_receipts_meet_assert
 
 
 class BaseContractOnChainHandler():
@@ -49,6 +49,6 @@ class BaseContractOnChainHandler():
 
     def wait_miner_finish(self, tx_hash):
         w3 = self.get_w3_inst()
-        wait_miner(w3, tx_hash)
-        if check_transaction_meet_assert(w3, tx_hash):
+        tx_receipts = wait_miner(w3, tx_hash)
+        if check_tx_receipts_meet_assert(tx_receipts):
             raise IOError('assert encounter..')

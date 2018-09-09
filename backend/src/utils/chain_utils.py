@@ -43,7 +43,6 @@ def wait_miner(w3, tx_hashs):
     else:
         test_tx_hashs = [tx_hashs]
 
-    tx_receipts = [w3.eth.getTransactionReceipt(_) for _ in test_tx_hashs]
     w3.miner.start(1)
     tx_receipts = [w3.eth.waitForTransactionReceipt(_, timeout=240) for _ in test_tx_hashs]
 
@@ -54,16 +53,13 @@ def wait_miner(w3, tx_hashs):
     return tx_receipts
 
 
-def check_transaction_meet_assert(w3, tx_hashs):
-    if isinstance(tx_hashs, list):
-        test_tx_hashs = tx_hashs
+def check_tx_receipts_meet_assert(tx_receipts):
+    if isinstance(tx_receipts, list):
+        test_tx_receipts = tx_receipts
     else:
-        test_tx_hashs = [tx_hashs]
+        test_tx_receipts = [tx_receipts]
 
-    for tx_hash in test_tx_hashs:
-        tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
-        if not tx_receipt:
-            raise IOError('{0} receipt does not exist'.format(tx_hash))
+    for tx_receipt in test_tx_receipts:
         if tx_receipt.status != 1:
             print('tx erceipt has error {0}'.format(tx_receipt))
             return True

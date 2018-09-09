@@ -15,6 +15,7 @@ from handler.config_handler import ConfigHandler
 from utils.chain_utils import convert_to_wei
 import time
 from gevent.event import Event
+from utils.fee_collector_utils import start_fee_server_in_new_process, get_all_fee_reports
 
 
 OVERHEAD_TIME = 15
@@ -58,6 +59,7 @@ class TestOracleNodeClient(unittest.TestCase):
         self._callback_event.set()
         # fail if sent different request
 
+    @start_fee_server_in_new_process
     def test_single_late_event(self):
         self._callback_event.clear()
         TEST_TIME = 60
@@ -94,6 +96,7 @@ class TestOracleNodeClient(unittest.TestCase):
         self.assertEqual(self._tested, True, 'Should be tested')
         after_balance = oracle_fee_wallet.get_balance(hodl_oracle.get_address())
         self.assertEqual(before_balance, after_balance + 20000, 'Should be the same')
+        get_all_fee_reports()
 
 #    def test_single_immediately_success_event(self):
 #        self._callback_event.clear()

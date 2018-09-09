@@ -10,6 +10,7 @@ from test_utils import _TEST_CONFIG
 from utils.chain_utils import convert_to_wei, MyWeb3
 from hodl_saver.hodl_saver import HodlSaver
 from handler.config_handler import ConfigHandler
+from utils.fee_collector_utils import start_fee_server_in_new_process, get_all_fee_reports
 
 
 class TestHodlSaver(unittest.TestCase):
@@ -49,6 +50,7 @@ class TestHodlSaver(unittest.TestCase):
         self.assertEqual(price, event.price, 'price shold be the same')
         self.assertEqual(transfered, event.transfered, 'transfered should be the same')
 
+    @start_fee_server_in_new_process
     def test_basic_test(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         other_user = myWeb3.get_accounts()[3]
@@ -109,6 +111,7 @@ class TestHodlSaver(unittest.TestCase):
         self.assertEqual(0,
                          hodl_saver.get_balance(),
                          'balance should be the same')
+        get_all_fee_reports()
 
 
 if __name__ == '__main__':

@@ -3,7 +3,6 @@
 
 from utils import my_config
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
-from utils.chain_utils import convert_to_hex
 
 
 class OracleStorageOnChainHandler(BaseContractOnChainHandler):
@@ -18,7 +17,7 @@ class OracleStorageOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
 
 if __name__ == '__main__':
