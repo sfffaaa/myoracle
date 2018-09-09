@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-import os
 from fee_collector.fee_collector_server import FeeCollectServer
 from fee_collector.fee_collector_client import FeeCollectClient
-from utils.my_config import FEE_IPC_FILE
 import multiprocessing
 
 
 def start_fee_server_in_new_process(f):
     def start_server(start_event):
-        fee_collector_server = FeeCollectServer()
-        start_event.set()
-        fee_collector_server.run()
+        with FeeCollectServer() as fee_collector_server:
+            start_event.set()
+            fee_collector_server.run()
 
     def my_wrapper(*args, **kargs):
         start_event = multiprocessing.Event()
@@ -22,9 +20,8 @@ def start_fee_server_in_new_process(f):
         try:
             ret = f(*args, **kargs)
         finally:
-            p.terminate()
+            FeeCollectClient().stop()
             p.join()
-            os.unlink(FEE_IPC_FILE)
 
         return ret
 

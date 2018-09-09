@@ -14,6 +14,12 @@ class FeeCollectServer():
         self._server_socket.bind(FEE_IPC_URL)
         self._attach_data = []
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, trace):
+        os.unlink(FEE_IPC_FILE)
+
     def _command_dispatcher(self, raw_data):
         if 'command' not in raw_data:
             print('skip data {0}'.format(raw_data))
@@ -36,7 +42,6 @@ class FeeCollectServer():
         while self._run:
             raw_data = self._server_socket.recv_json()
             self._command_dispatcher(raw_data)
-        os.unlink(FEE_IPC_FILE)
 
 
 if __name__ == '__main__':
