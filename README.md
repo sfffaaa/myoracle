@@ -59,6 +59,17 @@ Emit ToOracleNode will trigger node to execute request outside. We'll discuss th
 1. I want other people can also take responsibility for running node client. So maybe they need to stake some money inside the wallet in order to avoid some illegal activities. And before the money in wallet exceeds client's staking, I should pay back ETH in wallet to other clients where they help to call oracle. </br> It implies below things.
     - The function which pay back to all clients is needed.
     - All receipts need to be recorded for sent back money.
+## Elements
+### Solidity
+#### Smart contract
+### Backend
+#### Smart contract
+1. Implement smart contract with on chain handler class.
+	1. c\_function is for eth transaction.
+	2. l\_function is for eth call which means it doesn't need transaction.
+2. Implement smart contract class.
+#### Fee Recorder
+The architecture is based on server/client model. Server takes responsibility with collecting different command, stop and attach, from client. Users should use with statement for server because there is something need to do after server is terminated.
 ## Q&A
 ### How to create your oracle related contract
 ### How to run your oracle node
