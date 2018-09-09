@@ -12,7 +12,7 @@ class FeeCollectClient():
             self.connect()
 
     def is_connected(self):
-        return os.path.isfile(FEE_IPC_FILE)
+        return os.path.exists(FEE_IPC_FILE)
 
     def connect(self):
         context = zmq.Context()
@@ -21,27 +21,23 @@ class FeeCollectClient():
 
     def stop(self):
         if not self.is_connected():
-            self.connect()
-        else:
             return
+
         self._client_socket.send_json({
             'command': 'stop'
         })
         self._client_socket.recv_string()
 
-    def gas_attach(self, name, function, execute_time, fee):
+    def gas_attach(self, name, function, fee):
         data = {
             'name': name,
             'func': function,
-            'time': execute_time,
             'fee': fee
         }
         self.attach(data)
 
     def attach(self, data):
         if not self.is_connected():
-            self.connect()
-        else:
             return
 
         self._client_socket.send_json({
@@ -52,8 +48,6 @@ class FeeCollectClient():
 
     def get(self):
         if not self.is_connected():
-            self.connect()
-        else:
             return None
 
         self._client_socket.send_json({

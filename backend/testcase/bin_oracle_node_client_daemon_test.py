@@ -13,6 +13,7 @@ from hodl_saver.hodl_saver import HodlSaver
 from hodl_oracle.hodl_oracle import HodlOracle
 from clients.oracle_node_client import OracleNodeClient
 from handler.config_handler import ConfigHandler
+from utils.fee_collector_utils import start_fee_server_in_new_process, get_all_fee_reports
 
 
 class TestOracleNodeClientDaemon(unittest.TestCase):
@@ -51,6 +52,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         oracle_node_client.start()
         oracle_node_client.join()
 
+    @start_fee_server_in_new_process
     def test_daemon_brandnew(self):
         self._callback_event = multiprocessing.Event()
         self._deployed_event = multiprocessing.Event()
@@ -111,6 +113,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
 
         p.terminate()
         p.join()
+        get_all_fee_reports()
 
 
 if __name__ == '__main__':

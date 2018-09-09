@@ -36,11 +36,7 @@ class FeeCollectServer():
         while self._run:
             raw_data = self._server_socket.recv_json()
             self._command_dispatcher(raw_data)
-        print('wwww???')
-        print(os.path.isfile(FEE_IPC_FILE))
         os.unlink(FEE_IPC_FILE)
-        print(os.path.isfile(FEE_IPC_FILE))
-        print('@@@')
 
 
 if __name__ == '__main__':

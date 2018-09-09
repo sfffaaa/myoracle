@@ -9,6 +9,7 @@ from utils.my_deployer import MyDeployer
 from test_utils import _TEST_CONFIG
 from utils.chain_utils import convert_to_wei, MyWeb3
 from oracle_fee_wallet.oracle_fee_wallet import OracleFeeWallet
+from utils.fee_collector_utils import start_fee_server_in_new_process, get_all_fee_reports
 
 
 class TestOracleFeeWallet(unittest.TestCase):
@@ -53,6 +54,7 @@ class TestOracleFeeWallet(unittest.TestCase):
         deposit_action_events = deposit_action_event_hdr.get_new_entries()
         self._check_deposit_action_event(deposit_action_events, check_dict)
 
+    @start_fee_server_in_new_process
     def test_single_event(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         accounts = myWeb3.get_accounts()
@@ -78,6 +80,7 @@ class TestOracleFeeWallet(unittest.TestCase):
             'sent_value': convert_to_wei(7000, 'wei'),
             'accumulate_value': convert_to_wei(12000, 'wei')
         })
+        get_all_fee_reports()
 
 
 if __name__ == '__main__':

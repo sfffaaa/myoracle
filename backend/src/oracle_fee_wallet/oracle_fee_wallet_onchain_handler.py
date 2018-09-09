@@ -2,7 +2,6 @@
 # encoding: utf-8
 
 from utils import my_config
-from utils.chain_utils import convert_to_hex
 from base_object.base_contract_onchain_handler import BaseContractOnChainHandler
 
 
@@ -18,7 +17,7 @@ class OracleFeeWalletOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
     def c_payback(self, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
@@ -26,9 +25,9 @@ class OracleFeeWalletOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
-    def c_get_balance(self, address, **kargs):
+    def l_get_balance(self, address, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
         balance = self.get_contract_inst().functions.getBalance(address).call(transaction_data)
         return balance
@@ -39,7 +38,7 @@ class OracleFeeWalletOnChainHandler(BaseContractOnChainHandler):
                                                     .transact(transaction_data)
 
         self.wait_miner_finish(tx_hash)
-        return convert_to_hex(tx_hash)
+        return self._w3.eth.getTransactionReceipt(tx_hash)
 
     def c_register_multiple_client_addr(self, addresses, **kargs):
         transaction_data = self.compose_transaction_dict(kargs)
@@ -48,7 +47,7 @@ class OracleFeeWalletOnChainHandler(BaseContractOnChainHandler):
                      for address in addresses]
 
         self.wait_miner_finish(tx_hashes)
-        return [convert_to_hex(tx_hash) for tx_hash in tx_hashes]
+        return [self._w3.eth.getTransactionReceipt(tx_hash) for tx_hash in tx_hashes]
 
 
 if __name__ == '__main__':

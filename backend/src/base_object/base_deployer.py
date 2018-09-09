@@ -8,7 +8,8 @@ from web3 import Web3
 import hexbytes
 from handler.config_handler import ConfigHandler
 from utils.my_config import CONFIG_PATH
-from utils.chain_utils import check_transaction_meet_assert
+from utils.chain_utils import check_tx_receipts_meet_assert
+from utils.fee_collector_utils import record_gas_from_tx_receipts
 
 
 # User should implement compose_smart_contract_args + deploy_implement
@@ -50,8 +51,6 @@ class BaseDeployer():
             tx_hash = contract_inst.transact({'from': self._w3.eth.accounts[0]})
             contract_tx_hash[contract_name] = tx_hash
 
-        tx_receipts = {contract_name: self._w3.eth.getTransactionReceipt(tx_hash)
-                       for contract_name, tx_hash in contract_tx_hash.items()}
         self._w3.miner.start(1)
         tx_receipts = {
             contract_name: self._w3.eth.waitForTransactionReceipt(tx_hash,
@@ -63,10 +62,17 @@ class BaseDeployer():
         if None in tx_receipts.values():
             raise IOError('still cannot get contract result')
 
-        if check_transaction_meet_assert(self._w3, [_ for _ in contract_tx_hash.values()]):
-            print(contract_tx_hash)
+        if check_tx_receipts_meet_assert([_ for _ in tx_receipts.values()]):
+            print(tx_receipts)
             raise IOError('delpoy fail...')
 
+        record_data = [{
+            'name': contract_name,
+            'func': 'transact',
+            'txReceipt': my_txreceipt
+        } for contract_name, my_txreceipt in tx_receipts.items()]
+
+        record_gas_from_tx_receipts(record_data)
         return tx_receipts, self._w3.eth.accounts[0]
 
     def _get_contract_instance(self, contract_name):
