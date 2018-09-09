@@ -19,10 +19,13 @@ def start_fee_server_in_new_process(f):
         p = multiprocessing.Process(target=start_server, args=(start_event,))
         p.start()
         start_event.wait()
-        ret = f(*args, **kargs)
-        p.terminate()
-        p.join()
-        os.unlink(FEE_IPC_FILE)
+        try:
+            ret = f(*args, **kargs)
+        finally:
+            p.terminate()
+            p.join()
+            os.unlink(FEE_IPC_FILE)
+
         return ret
 
     return my_wrapper
