@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
+import functools
 from web3 import Web3
 from handler.contract_handler import ConfigHandler
 
 
 def contract_function_log(func):
+    @functools.wraps(func)
     def func_wrapper(*args, **kargs):
         func_name = func.__name__[:]
         if func_name.startswith('c_'):
