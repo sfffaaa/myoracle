@@ -36,7 +36,7 @@ contract HodlStorage {
     }
 
     function setAllower(address _allower)
-        public
+        external
         onlyOwner
     {
         require(_allower != address(0));
@@ -45,7 +45,7 @@ contract HodlStorage {
 
     function getBytes32AddressToUint(string _name, address _addr)
         view
-        public
+        external
         allowOnwerAndAllower
         returns(uint)
     {
@@ -54,7 +54,7 @@ contract HodlStorage {
     }
 
     function setBytes32AddressToUint(string _name, address _addr, uint _value)
-        public
+        external
         allowOnwerAndAllower
     {
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -75,7 +75,7 @@ contract HodlStorage {
 
     function getBytes32AddressArrayEntry(string _name, uint _idx)
         view
-        public
+        external
         allowOnwerAndAllower
         returns(address)
     {
@@ -87,7 +87,7 @@ contract HodlStorage {
     }
 
     function setBytes32AddressArrayEntry(string _name, uint _idx, address  _val)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -97,7 +97,7 @@ contract HodlStorage {
     }
 
     function pushBytes32AddressArrayEntry(string _name, address _val)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -106,7 +106,7 @@ contract HodlStorage {
     }
 
     function delBytes32AddressArrayEntry(string _name, uint _idx)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -117,7 +117,7 @@ contract HodlStorage {
     }
 
     function delBytes32AddressArray(string _name)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -126,7 +126,7 @@ contract HodlStorage {
     }
 
     function changeBytes32AddressArrayLength(string _name, uint _length)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -149,7 +149,7 @@ contract HodlStorage {
 
     function getBytes32ArrayEntry(string _name, uint _idx)
         view
-        public
+        external
         allowOnwerAndAllower
         returns(bytes32)
     {
@@ -161,7 +161,7 @@ contract HodlStorage {
     }
 
     function setBytes32ArrayEntry(string _name, uint _idx, bytes32 _val)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -171,7 +171,7 @@ contract HodlStorage {
     }
 
     function pushBytes32ArrayEntry(string _name, bytes32 _val)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -180,7 +180,7 @@ contract HodlStorage {
     }
 
     function delBytes32ArrayEntry(string _name, uint _idx)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -191,7 +191,7 @@ contract HodlStorage {
     }
 
     function delBytes32Array(string _name)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)
@@ -200,7 +200,7 @@ contract HodlStorage {
     }
 
     function changeBytes32ArrayLength(string _name, uint _length)
-        public
+        external
         allowOnwerAndAllower
     {
         // only two contract can call this (and owner)

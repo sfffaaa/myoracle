@@ -17,7 +17,7 @@ contract HodlRegister {
 
     function registAddress(string _key, address _address)
         onlyOwner
-        public
+        external
     {
         stringAddressMap[_key] = _address;
     }

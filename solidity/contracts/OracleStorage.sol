@@ -36,7 +36,7 @@ contract OracleStorage is OracleConstant {
 
     function setOracleRegisterAddr(address _oracleRegisterAddr)
         onlyOwner
-        public
+        external
     {
         oracleRegisterAddr = _oracleRegisterAddr;
     }
@@ -44,7 +44,7 @@ contract OracleStorage is OracleConstant {
     // bytes32ToAddress related function
     function delBytes32ToAddress(string _name, bytes32 _key)
         onlyOwnerAndOracleCoreAndFeeWallet
-        public
+        external
     {
         // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -53,7 +53,7 @@ contract OracleStorage is OracleConstant {
 
     function setBytes32ToAddress(string _name, bytes32 _key, address _val)
         onlyOwnerAndOracleCoreAndFeeWallet
-        public
+        external
     {
         // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -64,7 +64,7 @@ contract OracleStorage is OracleConstant {
     function getBytes32ToAddress(string _name, bytes32 _key)
         onlyOwnerAndOracleCoreAndFeeWallet
         view
-        public
+        external
         returns(address)
     {
         // only two contract can call this (and owner)
@@ -75,7 +75,7 @@ contract OracleStorage is OracleConstant {
     // addressToUint related function
     function delAddressToUint(string _name, address _key)
         onlyOwnerAndOracleCoreAndFeeWallet
-        public
+        external
     {
         // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -84,7 +84,7 @@ contract OracleStorage is OracleConstant {
 
     function setAddressToUint(string _name, address _key, uint _val)
         onlyOwnerAndOracleCoreAndFeeWallet
-        public
+        external
     {
         // only two contract can call this (and owner)
         bytes32 name = keccak256(abi.encodePacked(_name));
@@ -94,7 +94,7 @@ contract OracleStorage is OracleConstant {
     function getAddressToUint(string _name, address _key)
         onlyOwnerAndOracleCoreAndFeeWallet
         view
-        public
+        external
         returns(uint)
     {
         // only two contract can call this (and owner)
@@ -117,7 +117,7 @@ contract OracleStorage is OracleConstant {
 
     function getBytes32AddressArrayEntry(string _name, uint _idx)
         view
-        public
+        external
         onlyOwnerAndOracleCoreAndFeeWallet
         returns(address)
     {
@@ -129,7 +129,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function setBytes32AddressArrayEntry(string _name, uint _idx, address  _val)
-        public
+        external
         onlyOwnerAndOracleCoreAndFeeWallet
     {
         // only two contract can call this (and owner)
@@ -139,7 +139,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function pushBytes32AddressArrayEntry(string _name, address _val)
-        public
+        external
         onlyOwnerAndOracleCoreAndFeeWallet
     {
         // only two contract can call this (and owner)
@@ -148,7 +148,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function delBytes32AddressArrayEntry(string _name, uint _idx)
-        public
+        external
         onlyOwnerAndOracleCoreAndFeeWallet
     {
         // only two contract can call this (and owner)
@@ -159,7 +159,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function delBytes32AddressArray(string _name)
-        public
+        external
         onlyOwnerAndOracleCoreAndFeeWallet
     {
         // only two contract can call this (and owner)
@@ -168,7 +168,7 @@ contract OracleStorage is OracleConstant {
     }
 
     function changeBytes32AddressArrayLength(string _name, uint _length)
-        public
+        external
         onlyOwnerAndOracleCoreAndFeeWallet
     {
         // only two contract can call this (and owner)

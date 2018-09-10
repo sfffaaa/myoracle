@@ -43,7 +43,7 @@ contract HodlOracle is OracleBase {
     function getLastestQueryId()
         onlyOwner
         view
-        public
+        external
         returns (bytes32)
     {
         // all people can call this
@@ -58,7 +58,7 @@ contract HodlOracle is OracleBase {
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash)
         onlyOwnerAndOracleCore
-        public
+        external
     {
         emit ShowCallback(_queryId, _response, _hash);
         bool success = false;

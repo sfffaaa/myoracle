@@ -49,12 +49,12 @@ contract OracleBase is OracleConstant {
         return OracleCore(oracleCoreAddress).querySentNode(timeout, address(this), _requests);
     }
 
-    function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;
+    function __callback(bytes32 _queryId, string _response, bytes32 _hash) external;
 
     function deposit()
         onlyOwner
         payable
-        public
+        external
     {
         address oracleFeeWalletAddr = OracleRegister(myRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
         require(oracleFeeWalletAddr != 0);
