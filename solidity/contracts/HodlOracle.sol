@@ -43,7 +43,7 @@ contract HodlOracle is OracleBase {
     function getLastestQueryId()
         onlyOwner
         view
-        public
+        external
         returns (bytes32)
     {
         // all people can call this

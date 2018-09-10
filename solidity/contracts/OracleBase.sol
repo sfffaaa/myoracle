@@ -54,7 +54,7 @@ contract OracleBase is OracleConstant {
     function deposit()
         onlyOwner
         payable
-        public
+        external
     {
         address oracleFeeWalletAddr = OracleRegister(myRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
         require(oracleFeeWalletAddr != 0);

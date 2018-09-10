@@ -1,0 +1,94 @@
+======== start fee report ======== 
+name func fee count avg_fee
+OracleStorage transact 4543964 1 4543964.0
+HodlStorage transact 3849977 1 3849977.0
+OracleFeeWallet transact 3451501 1 3451501.0
+HodlOracle transact 2002799 1 2002799.0
+HodlSaver transact 1629619 1 1629619.0
+OracleCore transact 1198102 1 1198102.0
+OracleWallet transact 580503 1 580503.0
+HodlOracle trigger 532853 2 266426.5
+OracleCore result_sent_back 376873 2 188436.5
+OracleRegister transact 245012 1 245012.0
+HodlRegister transact 245012 1 245012.0
+HodlSaver deposit_balance 223546 2 111773.0
+OracleRegister regist_multiple_address 179864 4 44966.0
+HodlOracle deposit 152246 2 76123.0
+HodlRegister regist_multiple_address 134354 3 44784.666666666664
+OracleFeeWallet register_multiple_client_addr 123602 1 123602.0
+HodlStorage set_multiple_allower 112680 2 56340.0
+OracleStorage set_oracle_register_addr 43640 1 43640.0
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/bin_oracle_node_client_daemon_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------
+======== start fee report ======== 
+name func fee count avg_fee
+HodlOracle trigger 325258 1 325258.0
+OracleCore result_sent_back 157828 1 157828.0
+HodlOracle deposit 76123 1 76123.0
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/hodl_oracle_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------
+======== start fee report ======== 
+name func fee count avg_fee
+HodlSaver deposit_balance 223482 2 111741.0
+HodlSaver withdraw_balance 124299 2 62149.5
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/hodl_saver_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------
+======== start fee report ======== 
+name func fee count avg_fee
+OracleFeeWallet deposit 178221 3 59407.0
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/oracle_fee_wallet_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------
+======== start fee report ======== 
+name func fee count avg_fee
+OracleCore query_sent_node 269983 1 269983.0
+OracleCore result_sent_back 141683 1 141683.0
+HodlOracle deposit 76123 1 76123.0
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/oracle_node_client_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------
+======== start fee report ======== 
+name func fee count avg_fee
+OracleStorage transact 4543964 1 4543964.0
+HodlStorage transact 3849977 1 3849977.0
+OracleFeeWallet transact 3451501 1 3451501.0
+HodlOracle transact 2002799 1 2002799.0
+HodlSaver transact 1629619 1 1629619.0
+OracleCore transact 1198102 1 1198102.0
+OracleWallet transact 580503 1 580503.0
+OracleRegister transact 245012 1 245012.0
+HodlRegister transact 245012 1 245012.0
+OracleRegister regist_multiple_address 179864 4 44966.0
+HodlRegister regist_multiple_address 134418 3 44806.0
+OracleFeeWallet register_multiple_client_addr 123602 1 123602.0
+HodlStorage set_multiple_allower 112744 2 56372.0
+OracleStorage set_oracle_register_addr 43640 1 43640.0
+======== end fee report ========
+======== start fee report ======== 
+name func fee count avg_fee
+HodlOracle trigger 310258 1 310258.0
+HodlOracle deposit 76123 1 76123.0
+OracleFeeWallet payback 74316 1 74316.0
+OracleWallet withdraw 32823 1 32823.0
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/oracle_wallet_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------
+======== start fee report ======== 
+name func fee count avg_fee
+HodlOracle trigger 532853 2 266426.5
+OracleCore result_sent_back 391862 2 195931.0
+HodlSaver deposit_balance 223546 2 111773.0
+HodlOracle deposit 137246 2 68623.0
+======== end fee report ========
+---------------------------------------------------------------------------------------------------------------
+----------------- finish testing testcase/test_behavior_test.py ------------------------
+---------------------------------------------------------------------------------------------------------------

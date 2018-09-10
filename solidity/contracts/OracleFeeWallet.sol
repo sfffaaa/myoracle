@@ -31,7 +31,7 @@ contract OracleFeeWallet is OracleConstant {
 
     function registerClientAddr(address _addr)
         onlyOwner
-        public
+        external
     {
         require(_addr != 0);
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
@@ -60,7 +60,7 @@ contract OracleFeeWallet is OracleConstant {
 
     function deregisterClientAddr(address _addr)
         onlyOwner
-        public
+        external
     {
         require(_addr != 0);
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
@@ -135,7 +135,7 @@ contract OracleFeeWallet is OracleConstant {
 
     function payback()
         onlyOwner
-        public
+        external
     {
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);
         require(myStorageAddr != 0);
@@ -178,7 +178,7 @@ contract OracleFeeWallet is OracleConstant {
     // [TODO] Not implement right now
     function returnAllMoney()
         onlyOwner
-        public
+        external
         view
     {
         require(1 == 0);
@@ -187,7 +187,7 @@ contract OracleFeeWallet is OracleConstant {
     // [TODO] Should be internal function (?
     function updateUsedBalance(address _addr, uint _value)
         checkOwnerAndRegister
-        public
+        external
     {
         require(_addr != 0);
 
@@ -242,7 +242,7 @@ contract OracleFeeWallet is OracleConstant {
 
     // [TODO] Only register node addrress can do this (or owner)
     function getBalance(address _addr)
-        public
+        external
         view
         returns (uint)
     {
@@ -258,7 +258,7 @@ contract OracleFeeWallet is OracleConstant {
 
     function deposit()
         payable
-        public
+        external
     {
         address sender = msg.sender;
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);

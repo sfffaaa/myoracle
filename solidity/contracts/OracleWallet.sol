@@ -35,7 +35,7 @@ contract OracleWallet is OracleConstant {
     function withdraw(address _outAddr)
         onlyOwner
         payable
-        public
+        external
     {
         _outAddr.transfer(address(this).balance);
         emit WithdrawAction(_outAddr, address(this).balance);
@@ -43,14 +43,14 @@ contract OracleWallet is OracleConstant {
 
     function deposit(address _sender)
         payable
-        public
+        external
     {
         emit DepositAction(_sender, msg.value);
     }
 
     function updateUsedBalance(address _addr, uint _value)
         onlyOwnerAndOracleCore
-        public
+        external
     {
         address myFeeWalletAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_FEE_WALLET_ADDR_KEY);
         OracleFeeWallet(myFeeWalletAddr).updateUsedBalance(_addr, _value);

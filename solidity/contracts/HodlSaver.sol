@@ -29,7 +29,7 @@ contract HodlSaver {
 
     function depositBalance(uint _threshold)
         payable
-        public
+        external
     {
         address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlStorage');
         assert(myHodlStorageAddr != 0);
@@ -58,7 +58,7 @@ contract HodlSaver {
     }
 
     function withdrawBalance(uint _price)
-        public
+        external
         OnlyAllowOwnerAndHodlOracle
     {
         address myHodlStorageAddr = HodlRegister(hodlRegisterAddr).getAddress('HodlStorage');
