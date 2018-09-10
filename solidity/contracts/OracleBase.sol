@@ -49,7 +49,7 @@ contract OracleBase is OracleConstant {
         return OracleCore(oracleCoreAddress).querySentNode(timeout, address(this), _requests);
     }
 
-    function __callback(bytes32 _queryId, string _response, bytes32 _hash) external;
+    function __callback(bytes32 _queryId, string _response, bytes32 _hash) public;
 
     function deposit()
         onlyOwner

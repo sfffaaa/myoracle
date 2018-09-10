@@ -58,7 +58,7 @@ contract HodlOracle is OracleBase {
 
     function __callback(bytes32 _queryId, string _response, bytes32 _hash)
         onlyOwnerAndOracleCore
-        external
+        public
     {
         emit ShowCallback(_queryId, _response, _hash);
         bool success = false;
