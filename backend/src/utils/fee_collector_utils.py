@@ -3,6 +3,7 @@
 
 from fee_collector.fee_collector_server import FeeCollectServer
 from fee_collector.fee_collector_client import FeeCollectClient
+import functools
 import multiprocessing
 
 
@@ -12,6 +13,7 @@ def start_fee_server_in_new_process(f):
             start_event.set()
             fee_collector_server.run()
 
+    @functools.wraps(f)
     def my_wrapper(*args, **kargs):
         start_event = multiprocessing.Event()
         p = multiprocessing.Process(target=start_server, args=(start_event,))
@@ -29,6 +31,7 @@ def start_fee_server_in_new_process(f):
 
 
 def record_fee_client(obj_name, func_name, f):
+    @functools.wraps(f)
     def my_wrapper(*args, **kargs):
         client = FeeCollectClient()
         ret = f(*args, **kargs)
