@@ -52,15 +52,7 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         oracle_node_client.start()
         oracle_node_client.join()
 
-    @start_fee_server_in_new_process
-    def test_daemon_brandnew(self):
-        self._callback_event = multiprocessing.Event()
-        self._deployed_event = multiprocessing.Event()
-        p = multiprocessing.Process(target=self.run_node_client_daemon)
-        p.start()
-
-        self._deployed_event.wait()
-
+    def daemon_brandnew_test_logic(self):
         myWeb3 = MyWeb3(_TEST_CONFIG)
         other_user = myWeb3.get_accounts()[3]
         payment_value = convert_to_wei(1000, 'wei')
@@ -111,8 +103,19 @@ class TestOracleNodeClientDaemon(unittest.TestCase):
         new_balance = hodl_saver.get_balance()
         self.assertEqual(new_balance, 0, 'Should be the same')
 
-        p.terminate()
-        p.join()
+    @start_fee_server_in_new_process
+    def test_daemon_brandnew(self):
+        self._callback_event = multiprocessing.Event()
+        self._deployed_event = multiprocessing.Event()
+        p = multiprocessing.Process(target=self.run_node_client_daemon)
+        p.start()
+
+        self._deployed_event.wait()
+        try:
+            self.daemon_brandnew_test_logic()
+        finally:
+            p.terminate()
+            p.join()
         get_all_fee_reports()
 
 
