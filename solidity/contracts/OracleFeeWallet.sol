@@ -258,7 +258,7 @@ contract OracleFeeWallet is OracleConstant {
 
     function deposit()
         payable
-        public
+        external
     {
         address sender = msg.sender;
         address myStorageAddr = OracleRegister(oracleRegisterAddr).getAddress(ORACLE_STORAGE_ADDR_KEY);

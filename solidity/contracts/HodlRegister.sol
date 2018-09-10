@@ -24,7 +24,7 @@ contract HodlRegister {
 
     function getAddress(string _key)
         view
-        public
+        external
         returns (address)
     {
        return stringAddressMap[_key];
