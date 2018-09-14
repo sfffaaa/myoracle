@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# encoding: utf-8
 
 from fee_collector.fee_collector_server import FeeCollectServer
 from fee_collector.fee_collector_client import FeeCollectClient
