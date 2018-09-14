@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# encoding: utf-8
 
 from base_object.base_chain_node import BaseChainNode
 from utils import my_config

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# encoding: utf-8
 
 from utils import my_config
 from utils.chain_utils import contract_function_log
