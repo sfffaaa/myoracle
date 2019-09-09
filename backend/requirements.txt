@@ -1,5 +1,5 @@
 web3==4.2.1
 gevent==1.2.2
 hexbytes==0.1.0
-requests==2.18.4
+requests>=2.20.0
 pyzmq==17.1.2
